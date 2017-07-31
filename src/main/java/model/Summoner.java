@@ -61,4 +61,11 @@ public class Summoner {
     public void setSummonerLevel(int summonerLevel) {
         this.summonerLevel = summonerLevel;
     }
+
+    @Override
+    public String toString() {
+        String result = String.format("Id: %s\nAccountId: %s\nName: %s\nProfileIconId: %s\nSummonerLevel: %s\nRevisionDate: %s",
+                id, accountId, name, profileIconId, summonerLevel, revisionDate);
+        return result;
+    }
 }
