@@ -12,9 +12,7 @@ class ChampionDAO(val dbHelper: DBHelper) {
 
     val CHAMPION_TABLE = "champion"
     val CHAMPION_IMAGE_TABLE = "championimage"
-
     val CHAMP_ID_COLUMN = "Id"
-
     val FULL_COLUMN = "Full"
     val SPRITE_COLUMN = "Sprite"
     val IMAGE_GROUP_COLUMN = "ImageGroup"
