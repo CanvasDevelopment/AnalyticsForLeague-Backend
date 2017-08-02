@@ -19,6 +19,7 @@ import java.util.logging.Logger;
  * A helper class for the connecting to and run queries against a database.
  */
 public class DBHelper {
+
     private String host;
     private String username;
     private String password;

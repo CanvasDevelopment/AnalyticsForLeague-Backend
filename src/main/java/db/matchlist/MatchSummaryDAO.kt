@@ -1,6 +1,7 @@
 package db.matchlist
 
 import db.DBHelper
+import extensions.produceMatchSummary
 import model.matchlist.MatchSummary
 import java.sql.ResultSet
 
@@ -93,21 +94,5 @@ class MatchSummaryDAO(val dbHelper: DBHelper) {
         }
 
         return summaries
-    }
-
-    fun ResultSet.produceMatchSummary() : MatchSummary {
-        val result = this
-        val ms = MatchSummary()
-        ms.id = result.getInt(ID)
-        ms.platformId = result.getString(PLATFORM_ID)
-        ms.gameId = result.getLong(GAME_ID)
-        ms.champion = result.getInt(CHAMPION)
-        ms.queue = result.getInt(QUEUE)
-        ms.season = result.getInt(SEASON)
-        ms.timestamp = result.getLong(TIMESTAMP)
-        ms.role = result.getString(ROLE)
-        ms.lane = result.getString(LANE)
-        ms.summonerId = result.getLong(SUMMONER_ID)
-        return ms
     }
 }
