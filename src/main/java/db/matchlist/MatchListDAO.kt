@@ -15,5 +15,6 @@ class MatchListDAO(val dbHelper: DBHelper) {
      */
     fun saveMatchList(matchList: MatchList) : Int {
         val queryString = String.format("")
+        return 0
     }
 }

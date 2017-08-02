@@ -15,6 +15,7 @@ public class MatchSummary {
     private long timestamp;
     private String role;
     private String lane;
+    private long summonerId;
 
 
     public int getId() {
@@ -88,4 +89,13 @@ public class MatchSummary {
     public String getRole() {
         return role;
     }
+
+    public long getSummonerId() {
+        return summonerId;
+    }
+
+    public void setSummonerId(long summonerId) {
+        this.summonerId = summonerId;
+    }
+
 }
