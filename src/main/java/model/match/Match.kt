@@ -15,4 +15,4 @@ data class Match(val gameId : Long,
                  val gameType : String,
                  val teams : ArrayList<Team>,
                  val participants : ArrayList<Participants>,
-                 val participantIdentities: ParticipantIdentities)
+                 val participantIdentity: ParticipantIdentity)
