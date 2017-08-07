@@ -8,7 +8,8 @@ import model.match.Match
  */
 class MatchDAO(val dbHelper : DBHelper) {
 
-    fun saveMatch(val match : Match) {
-
+    fun saveMatch(match : Match) {
+        // saveTeam
+        // Save
     }
 }

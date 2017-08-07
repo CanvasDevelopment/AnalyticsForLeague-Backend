@@ -3,7 +3,6 @@ package db_test.stats;
 import Util.TableNames;
 import db.DBHelper;
 import db.stats.GameStageDeltaDAOImpl;
-import model.stats.CreepsPerMin;
 import model.stats.GameStageDelta;
 import org.junit.After;
 import org.junit.Assert;
@@ -21,13 +20,13 @@ public class GameStageDeltaStatTests {
     @Before
     public void setUp() {
         dbHelper = new DBHelper();
-        dbHelper.Connect();
+        dbHelper.connect();
         gameStageDeltaDAO = new GameStageDeltaDAOImpl(dbHelper);
     }
 
     @After
     public void tearDown() {
-        dbHelper.Disconnect();
+        dbHelper.disconnect();
     }
 
     @Test

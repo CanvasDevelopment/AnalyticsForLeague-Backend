@@ -5,7 +5,6 @@ import db.champion.ChampionDAO
 import junit.framework.Assert.assertTrue
 import model.champion.Champion
 import model.champion.ChampionImage
-import org.junit.Assert
 import org.junit.Test
 
 /**
@@ -18,7 +17,7 @@ class Champion_Tests {
     fun ensure_WeCanSaveAndLoadAChampionWithChampionImageOnIt() {
 
         val dbHelper = DBHelper()
-        dbHelper.Connect()
+        dbHelper.connect()
         val championImage = ChampionImage("test", "test", "test", 1, 1, 1, 1)
         val champion = Champion(23,"jax","jax", "Grandmaster", championImage)
 

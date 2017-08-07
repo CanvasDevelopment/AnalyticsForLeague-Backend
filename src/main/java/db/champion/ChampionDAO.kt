@@ -33,7 +33,7 @@ class ChampionDAO(val dbHelper: DBHelper) {
                 "$CHAMP_KEY_COLUMN = '${champion.key}'," +
                 "$CHAMP_NAME_COLUMN = '${champion.name}'," +
                 "$CHAMP_TITLE_COLUMN = '${champion.title}'"
-        return dbHelper.ExecuteSqlScript(insertString)
+        return dbHelper.executeSQLScript(insertString)
     }
 
     internal fun saveChampionImage(champImage : ChampionImage) : Int {
@@ -60,7 +60,7 @@ class ChampionDAO(val dbHelper: DBHelper) {
                 "$H_COLUMN = ${champImage.h}," +
                 "$W_COLUMN = ${champImage.w}"
 
-        return dbHelper.ExecuteSqlScript(insertString)
+        return dbHelper.executeSQLScript(insertString)
     }
 
     fun getChampion(champId : Int) : Champion? {

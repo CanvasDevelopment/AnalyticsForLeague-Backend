@@ -56,7 +56,7 @@ public class SummonerDAOImpl implements SummonerDAO {
         );
 
         try {
-            int result = dbHelper.ExecuteSqlScript(queryString);
+            int result = dbHelper.executeSQLScript(queryString);
             log.info("Successfully saved with Id : " + result);
             return result;
         } catch (SQLException ex) {
@@ -73,7 +73,7 @@ public class SummonerDAOImpl implements SummonerDAO {
         log.info("Attempting to delete summoner with id : " + summonerId);
         String queryString = String.format("DELETE from %s WHERE %s = %s", SUMMONER_TABLE, ID, summonerId);
         try {
-            dbHelper.ExecuteSqlScript(queryString);
+            dbHelper.executeSQLScript(queryString);
         } catch (SQLException e) {
             log.info("An error was found deleting summoner with id: " + summonerId);
             log.severe(e.getMessage());

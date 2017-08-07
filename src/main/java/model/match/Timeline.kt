@@ -12,6 +12,6 @@ data class Timeline(val participantId : Int,
                     val csDiffPerMin : GameStageDelta,
                     val xpDiffPerMin: GameStageDelta,
                     val damageTakenPerMin : GameStageDelta,
-                    val damageTakemDiffPerMin : GameStageDelta,
+                    val damageTakenDiffPerMin : GameStageDelta,
                     val role : String,
                     val lane : String)

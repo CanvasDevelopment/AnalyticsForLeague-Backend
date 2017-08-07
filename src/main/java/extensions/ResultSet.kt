@@ -1,7 +1,9 @@
 package extensions
 
+import db.DBHelper
 import model.champion.Champion
 import model.champion.ChampionImage
+import model.match.Player
 import model.matchlist.MatchSummary
 import java.sql.ResultSet
 
@@ -22,7 +24,11 @@ val ROLE = "Role"
 val LANE = "Lane"
 val ID = "Id"
 val SUMMONER_ID = "SummonerId"
-
+val ACCOUNT_ID = "accountId"
+val SUMMONER_NAME = "summonerName"
+val CURRENT_PLATFORM_ID = "currentPlatformId"
+val MATCH_HISTORY_URI = "matchHistoryUri"
+val PROFILE_ICON = "profileIcon"
 // Champ column references
 val CHAMP_KEY_COLUMN = "ChampKey"
 val CHAMP_TITLE_COLUMN = "ChampTitle"
@@ -74,4 +80,17 @@ fun ResultSet.produceChampionImage() : ChampionImage {
     val h = getInt(H_COLUMN)
 
     return ChampionImage(full, sprite, imageGroup, x, y, w, h)
+}
+
+fun ResultSet.producePlayer() : Player {
+    this.next() // Should this be in here?
+    val platformId : String = getString(PLATFORM_ID)
+    val accountId : Long = getLong(ACCOUNT_ID)
+    val summonerName : String = getString(SUMMONER_NAME)
+    val summonerId : Long = getLong(SUMMONER_ID)
+    val currentPlatformId : String = getString(CURRENT_PLATFORM_ID)
+    val matchHistoryUri : String = getString(MATCH_HISTORY_URI)
+    val profileIcon : Int = getInt(PROFILE_ICON)
+
+    return Player(platformId, accountId, summonerName, summonerId, currentPlatformId, matchHistoryUri, profileIcon)
 }

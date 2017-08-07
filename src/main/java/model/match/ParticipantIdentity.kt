@@ -4,4 +4,5 @@ package model.match
  * @author Josiah Kendall
  */
 data class ParticipantIdentity(val participantId : Int,
-                               val player : Int)
+                               val gameId : Long,
+                               val player : Player)

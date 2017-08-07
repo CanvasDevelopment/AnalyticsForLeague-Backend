@@ -2,12 +2,8 @@ package db_test.matchlist
 
 import db.DBHelper
 import db.matchlist.MatchSummaryDAO
-import db.stats.CreepsPerMinDAOImpl
 import model.matchlist.MatchSummary
-import model.stats.CreepsPerMin
-import org.junit.After
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
 
 /**
@@ -21,7 +17,7 @@ class MatchSummary_tests {
 
         val dbHelper: DBHelper = DBHelper()
         val matchSummaryDAO: MatchSummaryDAO = MatchSummaryDAO(dbHelper)
-        dbHelper.Connect()
+        dbHelper.connect()
         val matchSummary = MatchSummary()
         matchSummary.lane = "TOP"
         matchSummary.timestamp = 1234567
@@ -44,14 +40,14 @@ class MatchSummary_tests {
         Assert.assertTrue(ms2.gameId == matchSummary.gameId)
         Assert.assertTrue(ms2.platformId == matchSummary.platformId)
         Assert.assertTrue(ms2.summonerId == matchSummary.summonerId)
-        dbHelper.Disconnect()
+        dbHelper.disconnect()
     }
 
     @Test
     fun EnsureThatWeCanSaveAndFetchAMatchSummaryByGameId() {
         val dbHelper: DBHelper = DBHelper()
         val matchSummaryDAO: MatchSummaryDAO = MatchSummaryDAO(dbHelper)
-        dbHelper.Connect()
+        dbHelper.connect()
         val matchSummary = MatchSummary()
         matchSummary.lane = "TOP"
         matchSummary.timestamp = 1234567
@@ -75,7 +71,7 @@ class MatchSummary_tests {
         Assert.assertTrue(ms2.platformId == matchSummary.platformId)
         Assert.assertTrue(ms2.summonerId == matchSummary.summonerId)
 
-        dbHelper.Disconnect()
+        dbHelper.disconnect()
     }
 
     @Test
@@ -83,7 +79,7 @@ class MatchSummary_tests {
         val summonerId :Long = 12345
         val dbHelper: DBHelper = DBHelper()
         val matchSummaryDAO: MatchSummaryDAO = MatchSummaryDAO(dbHelper)
-        dbHelper.Connect()
+        dbHelper.connect()
         val matchSummary = MatchSummary()
         matchSummary.lane = "TOP"
         matchSummary.timestamp = 1234567
@@ -111,6 +107,6 @@ class MatchSummary_tests {
 
         val matchSummaries = matchSummaryDAO.getAllMatchesBySummonerId(summonerId.toInt())
         Assert.assertTrue(matchSummaries.size == 2)
-        dbHelper.Disconnect()
+        dbHelper.disconnect()
     }
 }

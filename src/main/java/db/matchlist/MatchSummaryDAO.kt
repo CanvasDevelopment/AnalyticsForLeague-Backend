@@ -48,7 +48,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) {
                         "'${matchSummary.lane}'," +
                         "${matchSummary.summonerId})"
 
-        return dbHelper.ExecuteSqlScript(queryString)
+        return dbHelper.executeSQLScript(queryString)
     }
 
     fun getMatchSummary(id : Int) : MatchSummary {

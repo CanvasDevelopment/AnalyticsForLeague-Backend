@@ -20,13 +20,13 @@ public class Summoner_Tests {
     @Before
     public void setUp() {
         dbHelper = new DBHelper();
-        dbHelper.Connect();
+        dbHelper.connect();
         summonerDAO = new SummonerDAOImpl(dbHelper);
     }
 
     @After
     public void tearDown() {
-        dbHelper.Disconnect();
+        dbHelper.disconnect();
     }
 
     @Test
