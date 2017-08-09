@@ -6,7 +6,7 @@
 package db
 
 import com.google.appengine.api.utils.SystemProperty
-import Util.Constant
+import util.Constant
 
 import java.sql.*
 import java.util.logging.Level
@@ -30,6 +30,7 @@ class DBHelper {
     val PROFILE_ICON_COLUMN = "profileIcon"
     val ID_COLUMN = "id"
     val GAME_ID_COLUMN = "gameId"
+    val PARTICIPANT_ID_COLUMN = "ParticipantId"
 
     private var host: String? = null
     private var username: String? = null

@@ -3,6 +3,7 @@ package extensions
 import db.DBHelper
 import model.champion.Champion
 import model.champion.ChampionImage
+import model.match.ParticipantIdentity
 import model.match.Player
 import model.matchlist.MatchSummary
 import java.sql.ResultSet
@@ -43,6 +44,7 @@ val X_COLUMN = "X"
 val Y_COLUMN = "Y"
 val W_COLUMN = "W"
 val H_COLUMN = "H"
+val PARTICIPANT_ID = "ParticipantId"
 
 fun ResultSet.produceMatchSummary() : MatchSummary {
     val result = this
@@ -93,4 +95,11 @@ fun ResultSet.producePlayer() : Player {
     val profileIcon : Int = getInt(PROFILE_ICON)
 
     return Player(platformId, accountId, summonerName, summonerId, currentPlatformId, matchHistoryUri, profileIcon)
+}
+
+fun ResultSet.produceParticipantIdentity() : ParticipantIdentity {
+    val player = producePlayer()
+    val participantId = getInt(PARTICIPANT_ID)
+    val gameId = getLong(GAME_ID)
+    return ParticipantIdentity(participantId, gameId, player)
 }

@@ -1,6 +1,6 @@
 package db_test.stats;
 
-import Util.TableNames;
+import util.TableNames;
 import db.DBHelper;
 import db.stats.GameStageDeltaDAOImpl;
 import model.stats.GameStageDelta;
