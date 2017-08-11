@@ -65,7 +65,7 @@ class ChampionDAO(val dbHelper: DBHelper) {
 
     fun getChampion(champId : Int) : Champion? {
         val queryString = "Select * from $CHAMPION_TABLE WHERE $CHAMP_ID_COLUMN = $champId"
-        val result = dbHelper.ExecuteSqlQuery(queryString)
+        val result = dbHelper.executeSqlQuery(queryString)
 
         if (result.next()) {
             val champImageId = result.getInt(CHAMP_IMAGE_ID_COLUMN)
@@ -77,7 +77,7 @@ class ChampionDAO(val dbHelper: DBHelper) {
 
     internal fun getChampionImage(champImageId: Int) : ChampionImage {
         val queryString = "SELECT * from $CHAMPION_IMAGE_TABLE WHERE $CHAMP_ID_COLUMN = $champImageId"
-        val result = dbHelper.ExecuteSqlQuery(queryString)
+        val result = dbHelper.executeSqlQuery(queryString)
         result.next()
         return result.produceChampionImage()
     }

@@ -28,7 +28,7 @@ class ParticipantIdentityDAO(val dbHelper: DBHelper, val playerDAO: PlayerDAO) {
         val selectSQL = "select * from $PARTICIPANT_IDENTITY_TABLE\n" +
                 "join player on participantidentity.Id = player.ParticipantIdentityRowId\n" +
                 "where participantidentity.gameId = $gameId and player.summonerId = $summonerId"
-        val result : ResultSet = dbHelper.ExecuteSqlQuery(selectSQL)
+        val result : ResultSet = dbHelper.executeSqlQuery(selectSQL)
 
         return result.produceParticipantIdentity()
     }

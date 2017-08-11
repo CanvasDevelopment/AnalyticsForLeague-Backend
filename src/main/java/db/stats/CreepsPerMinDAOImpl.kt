@@ -46,7 +46,7 @@ class CreepsPerMinDAOImpl(private val dbHelper: DBHelper) : CreepsPerMinDAO {
     override fun getCreepsPerMin(creepsPerMinId: Long): CreepsPerMin {
         try {
             val query = "SELECT * from creepspermindeltas WHERE Id = " + creepsPerMinId
-            val resultSet = dbHelper.ExecuteSqlQuery(query)
+            val resultSet = dbHelper.executeSqlQuery(query)
             if (resultSet.next()) {
                 val cmpd = CreepsPerMin()
                 cmpd.id = creepsPerMinId

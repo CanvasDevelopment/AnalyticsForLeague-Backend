@@ -53,7 +53,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) {
 
     fun getMatchSummary(id : Int) : MatchSummary {
         val queryString = String.format("SELECT * FROM %s WHERE Id = %s", MATCH_SUMMARY, id)
-        val result : ResultSet = dbHelper.ExecuteSqlQuery(queryString)
+        val result : ResultSet = dbHelper.executeSqlQuery(queryString)
         if (result.next()) {
             val ms = MatchSummary()
             ms.id = id
@@ -77,7 +77,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) {
      */
     fun getMatchSummaryByGameId(gameId : Long) : MatchSummary {
         val queryString = "SELECT * FROM $MATCH_SUMMARY WHERE GameId = $gameId"
-        val result : ResultSet = dbHelper.ExecuteSqlQuery(queryString)
+        val result : ResultSet = dbHelper.executeSqlQuery(queryString)
         if (result.next()) {
             return result.produceMatchSummary()
         }
@@ -87,7 +87,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) {
 
     fun getAllMatchesBySummonerId(summonerId: Int) : ArrayList<MatchSummary> {
         val queryString = "SELECT * FROM $MATCH_SUMMARY WHERE $SUMMONER_ID = $summonerId"
-        val result = dbHelper.ExecuteSqlQuery(queryString)
+        val result = dbHelper.executeSqlQuery(queryString)
         val summaries = ArrayList<MatchSummary>()
         while (result.next()) {
             summaries.add(result.produceMatchSummary())

@@ -46,7 +46,7 @@ class GameStageDeltaDAOImpl(private val dbHelper: DBHelper) : GameStageDeltasDAO
         try {
             // #sorrynotsorry
             val query = "SELECT * from $tableName WHERE Id = $gameStageDeltasId"
-            val resultSet = dbHelper.ExecuteSqlQuery(query)
+            val resultSet = dbHelper.executeSqlQuery(query)
             if (resultSet.next()) {
                 val gameStageDelta = GameStageDelta()
                 gameStageDelta.id = gameStageDeltasId

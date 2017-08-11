@@ -1,11 +1,13 @@
 package extensions
 
-import db.DBHelper
 import model.champion.Champion
 import model.champion.ChampionImage
+import model.match.Mastery
 import model.match.ParticipantIdentity
 import model.match.Player
+import model.match.Rune
 import model.matchlist.MatchSummary
+import util.ColumnNames
 import java.sql.ResultSet
 
 /**
@@ -13,7 +15,7 @@ import java.sql.ResultSet
  *
  * Extensions for the result set class
  */
-
+val columnNames = ColumnNames()
 val MATCH_SUMMARY = "matchsummary2"
 val PLATFORM_ID = "PlatformId"
 val GAME_ID = "GameId"
@@ -45,6 +47,7 @@ val Y_COLUMN = "Y"
 val W_COLUMN = "W"
 val H_COLUMN = "H"
 val PARTICIPANT_ID = "ParticipantId"
+
 
 fun ResultSet.produceMatchSummary() : MatchSummary {
     val result = this
@@ -102,4 +105,16 @@ fun ResultSet.produceParticipantIdentity() : ParticipantIdentity {
     val participantId = getInt(PARTICIPANT_ID)
     val gameId = getLong(GAME_ID)
     return ParticipantIdentity(participantId, gameId, player)
+}
+
+fun ResultSet.produceMastery(): Mastery {
+    val masteryId = getInt(columnNames.MASTERY_ID)
+    val rank = getInt(columnNames.RANK)
+    return Mastery(masteryId, rank)
+}
+
+fun ResultSet.produceRune(): Rune {
+    val runeId = getInt(columnNames.RUNE_ID)
+    val rank = getInt(columnNames.RANK)
+    return Rune(runeId, rank)
 }

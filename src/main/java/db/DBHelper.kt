@@ -31,6 +31,9 @@ class DBHelper {
     val ID_COLUMN = "id"
     val GAME_ID_COLUMN = "gameId"
     val PARTICIPANT_ID_COLUMN = "ParticipantId"
+    var MASTERY_ID_COLUMN = "MasteryId"
+    val RANK_COLUMN = "Rank"
+    val PARTICIPANT_ROW_ID_COLUMN = "ParticipantRowId"
 
     private var host: String? = null
     private var username: String? = null
@@ -126,7 +129,7 @@ class DBHelper {
      * @throws IllegalStateException
      */
     @Throws(SQLException::class, IllegalStateException::class)
-    fun ExecuteSqlQuery(query: String): ResultSet {
+    fun executeSqlQuery(query: String): ResultSet {
         if (connection == null || !currentlyConnected) {
             throw IllegalStateException("No Current database connection. Use DbConnect() to connect to a database")
         }

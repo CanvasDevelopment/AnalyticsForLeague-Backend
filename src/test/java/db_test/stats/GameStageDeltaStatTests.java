@@ -1,6 +1,6 @@
 package db_test.stats;
 
-import util.TableNames;
+import util.ColumnNames;
 import db.DBHelper;
 import db.stats.GameStageDeltaDAOImpl;
 import model.stats.GameStageDelta;
@@ -8,6 +8,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import util.TableNames;
 
 /**
  * @author Josiah Kendall

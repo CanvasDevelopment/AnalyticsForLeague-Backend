@@ -85,7 +85,7 @@ public class SummonerDAOImpl implements SummonerDAO {
         log.info("Attempting to find summoner with Id : " + summonerId);
         String queryString = String.format("SELECT * FROM %s WHERE %s = %s",SUMMONER_TABLE, ID, summonerId);
         try {
-            ResultSet resultSet = dbHelper.ExecuteSqlQuery(queryString);
+            ResultSet resultSet = dbHelper.executeSqlQuery(queryString);
             if (resultSet.next()) {
                 Summoner summoner = new Summoner();
                 summoner.setId(summonerId);

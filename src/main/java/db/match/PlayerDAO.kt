@@ -36,7 +36,7 @@ class PlayerDAO(val dbHelper: DBHelper) {
 
     fun getPlayer(rowId : Int) : Player {
         val sqlQuery = "SELECT * FROM $PLAYER_TABLE_NAME WHERE ${dbHelper.ID_COLUMN} = $rowId"
-        val result : ResultSet = dbHelper.ExecuteSqlQuery(sqlQuery)
+        val result : ResultSet = dbHelper.executeSqlQuery(sqlQuery)
         return result.producePlayer()
     }
 }
