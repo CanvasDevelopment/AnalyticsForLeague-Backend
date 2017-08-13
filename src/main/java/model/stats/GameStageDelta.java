@@ -25,6 +25,7 @@ public class GameStageDelta {
     @Expose
     private Double thirtyToEnd;
 
+
     public void setId(long id) {
         this.id = id;
     }

@@ -2,12 +2,13 @@ package extensions
 
 import model.champion.Champion
 import model.champion.ChampionImage
-import model.match.Mastery
-import model.match.ParticipantIdentity
-import model.match.Player
-import model.match.Rune
+import model.match.*
 import model.matchlist.MatchSummary
+import model.stats.GameStageDelta
 import util.ColumnNames
+import util.columnnames.GameStageColumns
+import util.columnnames.ParticipantColumns
+import util.columnnames.StatsColumns
 import java.sql.ResultSet
 
 /**
@@ -16,6 +17,10 @@ import java.sql.ResultSet
  * Extensions for the result set class
  */
 val columnNames = ColumnNames()
+val statColumns = StatsColumns()
+val gameStageColumns = GameStageColumns()
+val particpantColumns = ParticipantColumns()
+
 val MATCH_SUMMARY = "matchsummary2"
 val PLATFORM_ID = "PlatformId"
 val GAME_ID = "GameId"
@@ -117,4 +122,129 @@ fun ResultSet.produceRune(): Rune {
     val runeId = getInt(columnNames.RUNE_ID)
     val rank = getInt(columnNames.RANK)
     return Rune(runeId, rank)
+}
+
+fun ResultSet.produceStats() : Stats {
+    return Stats(getInt(statColumns.PARTICIPANT_ID),
+            getBoolean(statColumns.WIN),
+            getInt(statColumns.ITEM0),
+            getInt(statColumns.ITEM1),
+            getInt(statColumns.ITEM2),
+            getInt(statColumns.ITEM3),
+            getInt(statColumns.ITEM4),
+            getInt(statColumns.ITEM5),
+            getInt(statColumns.ITEM6),
+            getInt(statColumns.KILLS),
+            getInt(statColumns.DEATHS),
+            getInt(statColumns.ASSISTS),
+            getInt(statColumns.LARGEST_KILLING_SPREE),
+            getInt(statColumns.LARGEST_MULTI_KILL),
+            getInt(statColumns.KILLING_SPREES),
+            getInt(statColumns.LONGEST_TIME_SPENT_LIVING),
+            getInt(statColumns.DOUBLE_KILLS),
+            getInt(statColumns.TRIPLE_KILLS),
+            getInt(statColumns.QUADRA_KILLS),
+            getInt(statColumns.PENTA_KILLS),
+            getInt(statColumns.UNREAL_KILLS),
+            getInt(statColumns.TOTAL_DAMAGE_DEALT),
+            getInt(statColumns.MAGIC_DAMAGE_DEALT),
+            getInt(statColumns.PHYSICAL_DAMAGE_DEALT),
+            getInt(statColumns.TRUE_DAMAGE_DEALT),
+            getInt(statColumns.LARGEST_CRITCAL_STRIKE),
+            getInt(statColumns.TOTAL_DAMAGE_DEALT_TO_CHAMPIONS),
+            getInt(statColumns.TOTAL_MAGIC_DAMAGE_DEALT_TO_CHAMPIONS),
+            getInt(statColumns.PHYSICAL_DAMAGE_DEALT_TO_CHAMPIONS),
+            getInt(statColumns.TRUE_DAMAGE_DEALT_TO_CHAMPIONS),
+            getInt(statColumns.TOTAL_HEAL),
+            getInt(statColumns.TOTAL_UNITS_HEALED),
+            getInt(statColumns.DAMAGE_SELF_MITIGATED),
+            getInt(statColumns.DAMAGE_DEALT_TO_OBJECTIVES),
+            getInt(statColumns.DAMAGE_DEALT_TO_TURRETS),
+            getInt(statColumns.VISION_SCORE),
+            getInt(statColumns.TIME_CCING_OTHERS),
+            getInt(statColumns.TOTAL_DAMAGE_TAKEN),
+            getInt(statColumns.MAGIC_DAMAGE_TAKEN),
+            getInt(statColumns.PHYSICAL_DAMAGE_TAKEN),
+            getInt(statColumns.TRUE_DAMAGE_TAKEN),
+            getInt(statColumns.GOLD_EARNED),
+            getInt(statColumns.GOLD_SPENT),
+            getInt(statColumns.TURRENT_KILLS),
+            getInt(statColumns.INHIBITOR_KILLS),
+            getInt(statColumns.TOTAL_MINIONS_KILLED),
+            getInt(statColumns.NEUTRAL_MINIONS_KILLED),
+            getInt(statColumns.NEUTRAL_MINIONS_KILLED_TEAM_JUNGLE),
+            getInt(statColumns.NEUTRAL_MINIONS_KILLED_ENEMY_JUNGLE),
+            getInt(statColumns.TOTAL_TIME_CROWD_CONTROL_DEALT),
+            getInt(statColumns.CHAMP_LEVEL),
+            getInt(statColumns.VISION_WARDS_BOUGHT_IN_GAME),
+            getInt(statColumns.SIGHT_WARDS_BOUGHT_IN_GAME),
+            getInt(statColumns.WARDS_PLACED),
+            getInt(statColumns.WARDS_KILLED),
+            getBoolean(statColumns.FIRST_BLOOD_KILLS),
+            getBoolean(statColumns.FIRST_BLOOD_ASSIST),
+            getBoolean(statColumns.FIRST_TOWER_KILL),
+            getBoolean(statColumns.FIRST_TOWER_ASSIST),
+            getBoolean(statColumns.FIRST_INHIBITOR_KILL),
+            getBoolean(statColumns.FIRST_INHIBITOR_ASSIST),
+            getInt(statColumns.COMBAT_PLAYER_SCORE),
+            getInt(statColumns.OBJECTIVE_PLAYER_SCORE),
+            getInt(statColumns.TOTAL_PLAYER_SCORE),
+            getInt(statColumns.TOTAL_SCORE_RANK))
+}
+
+fun ResultSet.produceGameStageStat() : GameStageDelta {
+    val unit =  GameStageDelta()
+    unit.zeroToTen = getDouble(gameStageColumns.ZERO_TO_TEN)
+    unit.tenToTwenty = getDouble(gameStageColumns.TEN_TO_TWENTY)
+    unit.twentyToThirty = getDouble(gameStageColumns.TWENTY_TO_THIRTY)
+    unit.thirtyToEnd = getDouble(gameStageColumns.THIRTY_TO_END)
+
+    return unit
+}
+
+fun ResultSet.produceTimeline(creepsPerMin : GameStageDelta,
+                              xpPerMin : GameStageDelta,
+                              goldPerMin : GameStageDelta,
+                              damageTakenPerMin : GameStageDelta,
+                              csDiffPerMin :GameStageDelta,
+                              xpDiffPerMin :GameStageDelta,
+                              damageTakenDiffPerMin : GameStageDelta) : Timeline {
+
+    val participantId = getInt(PARTICIPANT_ID)
+    val role = getString(ROLE)
+    val lane = getString(LANE)
+    return Timeline(participantId,
+            creepsPerMin,
+            xpPerMin,
+            goldPerMin,
+            csDiffPerMin,
+            xpDiffPerMin,
+            damageTakenPerMin,
+            damageTakenDiffPerMin,
+            role,
+            lane)
+
+}
+
+fun ResultSet.produceParticipant(timeline: Timeline,
+                                 stats: Stats,
+                                 masteries : ArrayList<Mastery>,
+                                 runes : ArrayList<Rune>) : Participant {
+
+    val particpantId = getInt(particpantColumns.PARTICIPANT_ID)
+    val teamId = getInt(particpantColumns.TEAM_ID)
+    val championId = getInt(particpantColumns.CHAMPION_ID)
+    val spell1Id = getInt(particpantColumns.SPELL_1_ID)
+    val spell2Id = getInt(particpantColumns.SPELL_2_ID)
+    val hsat = getString(particpantColumns.HIGHEST_SEASON_ACHIEVED_TIER)
+
+    return Participant(particpantId,
+            teamId,
+            championId,
+            spell1Id,
+            spell2Id,
+            masteries, runes,
+            hsat,
+            stats,
+            timeline)
 }

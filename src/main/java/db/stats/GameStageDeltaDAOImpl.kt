@@ -1,6 +1,8 @@
 package db.stats
 
 import db.DBHelper
+import extensions.produceChampion
+import extensions.produceGameStageStat
 import model.stats.GameStageDelta
 
 import java.sql.SQLException
@@ -12,15 +14,17 @@ import java.util.logging.Logger
  */
 class GameStageDeltaDAOImpl(private val dbHelper: DBHelper) : GameStageDeltasDAO {
 
-    override fun saveDeltas(gameStageDelta: GameStageDelta, tableName: String): Int {
+    override fun saveDeltas(gameStageDelta: GameStageDelta, tableName: String, timelineId: Long): Int {
         try {
             val queryString = String.format(
                     "Insert into %s ("
+                            + "timelineId,"
                             + "ZeroToTen,"
                             + "TenToTwenty,"
                             + "TwentyToThirty,"
-                            + "ThirtyToEnd) values (%s, %s, %s, %s)",
+                            + "ThirtyToEnd) values (%s, %s, %s, %s, %s)",
                     tableName,
+                    timelineId,
                     gameStageDelta.zeroToTen,
                     gameStageDelta.tenToTwenty,
                     gameStageDelta.twentyToThirty,
@@ -42,9 +46,17 @@ class GameStageDeltaDAOImpl(private val dbHelper: DBHelper) : GameStageDeltasDAO
 
     }
 
+    fun getGameStageDeltasForTimeline(timelineId: Long, tableName: String) : GameStageDelta {
+        val sql = "SELECT * FROM $tableName " +
+                "WHERE timelineId = $timelineId"
+        val result = dbHelper.executeSqlQuery(sql)
+        result.next()
+        return result.produceGameStageStat()
+    }
+
     override fun getGameStageDeltas(gameStageDeltasId: Long, tableName: String): GameStageDelta? {
         try {
-            // #sorrynotsorry
+
             val query = "SELECT * from $tableName WHERE Id = $gameStageDeltasId"
             val resultSet = dbHelper.executeSqlQuery(query)
             if (resultSet.next()) {

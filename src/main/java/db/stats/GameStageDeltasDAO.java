@@ -13,7 +13,7 @@ import model.stats.GameStageDelta;
  *  - 'thirtyToEnd' (Over Time)
  */
 public interface GameStageDeltasDAO {
-    int saveDeltas(GameStageDelta gameStageDelta, String tableName);
+    int saveDeltas(GameStageDelta gameStageDelta, String tableName, Long timelineId);
     void deleteDeltas(long gameStageDeltasId, String tableName);
     GameStageDelta getGameStageDeltas(long gameStageDeltas, String tableName);
 }

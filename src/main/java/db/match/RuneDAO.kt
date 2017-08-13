@@ -4,7 +4,6 @@ import db.DBHelper
 import extensions.produceRune
 import model.match.Rune
 import util.ColumnNames
-import java.sql.ResultSet
 
 /**
  * @author Josiah Kendall
@@ -36,9 +35,13 @@ class RuneDAO(val dbHelper: DBHelper) {
         return result.produceRune()
     }
 
-    fun getAllRunesForAParticipantId(participantId : Long) : ArrayList<Rune> {
+    /**
+     * Get all runes for a participant instance by the id of the participant table. This gets all the runes associated with
+     * a specific participant entry in the database.
+     */
+    fun getAllRunesForAParticipantRowId(participantRowId: Long) : ArrayList<Rune> {
         val sql = "SELECT * FROM $RUNE_TABLE " +
-                "WHERE ${columnNames.PARTICIPANT_ROW_ID} = $participantId"
+                "WHERE ${columnNames.PARTICIPANT_ROW_ID} = $participantRowId"
         val result = dbHelper.executeSqlQuery(sql)
         val runes = ArrayList<Rune>()
         while (result.next()) {

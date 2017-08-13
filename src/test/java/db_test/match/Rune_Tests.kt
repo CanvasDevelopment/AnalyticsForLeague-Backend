@@ -1,7 +1,6 @@
 package db_test.match
 
 import db.DBHelper
-import db.match.MasteryDAO
 import db.match.RuneDAO
 import model.match.Rune
 import org.junit.After
@@ -52,7 +51,7 @@ class Rune_Tests {
         runeDAO.saveRune(rune4, -1)
         runeDAO.saveRune(rune5, -1)
 
-        val runes = runeDAO.getAllRunesForAParticipantId(-1)
+        val runes = runeDAO.getAllRunesForAParticipantRowId(-1)
         Assert.assertTrue(runes.size == 5)
 
         Assert.assertTrue(runes.get(0).runeId == rune1.runeId)
