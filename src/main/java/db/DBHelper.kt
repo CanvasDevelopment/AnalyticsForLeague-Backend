@@ -149,7 +149,7 @@ class DBHelper {
      * @throws IllegalStateException
      */
     @Throws(SQLException::class, IllegalStateException::class)
-    fun executeSQLScript(query: String): Int {
+    fun executeSQLScript(query: String): Long { // TODO change this return type to LONG
         if (connection == null || !currentlyConnected) {
             throw IllegalStateException("No Current database connection. Use DbConnect() to connect to a database")
         }
@@ -157,9 +157,10 @@ class DBHelper {
         val statement = connection!!.prepareStatement(query)
         var result = statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS)
         val generatedKeys = statement.generatedKeys
+        var id : Long = 0
         if (generatedKeys.next()) {
-            result = generatedKeys.getLong(1).toInt()
+            id = generatedKeys.getLong(1)
         }
-        return result
+        return id
     }
 }

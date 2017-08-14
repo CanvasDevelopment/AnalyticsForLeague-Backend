@@ -6,6 +6,7 @@ import model.match.*
 import model.matchlist.MatchSummary
 import model.stats.GameStageDelta
 import util.ColumnNames
+import util.columnnames.BanColumns
 import util.columnnames.GameStageColumns
 import util.columnnames.ParticipantColumns
 import util.columnnames.StatsColumns
@@ -20,6 +21,7 @@ val columnNames = ColumnNames()
 val statColumns = StatsColumns()
 val gameStageColumns = GameStageColumns()
 val particpantColumns = ParticipantColumns()
+val banColumns = BanColumns()
 
 val MATCH_SUMMARY = "matchsummary2"
 val PLATFORM_ID = "PlatformId"
@@ -247,4 +249,8 @@ fun ResultSet.produceParticipant(timeline: Timeline,
             hsat,
             stats,
             timeline)
+}
+
+fun ResultSet.produceBan() : Ban {
+    return Ban(getInt(banColumns.CHAMPION_ID), getInt(banColumns.PICK_TURN))
 }

@@ -14,7 +14,7 @@ public interface SummonerDAO {
     public static final String PROFILE_ICON_ID = "ProfileIconId";
     public static final String REVISION_DATE = "RevisionDate";
 
-    int saveSummoner(Summoner summoner);
+    long saveSummoner(Summoner summoner);
     void deleteSummoner(long summonerId);
     Summoner getSummoner(long summonerId);
 }

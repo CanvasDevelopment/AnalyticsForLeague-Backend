@@ -4,7 +4,6 @@ import db.DBHelper
 import extensions.produceMastery
 import model.match.Mastery
 import util.ColumnNames
-import java.sql.ResultSet
 
 /**
  * @author Josiah Kendall
@@ -14,7 +13,7 @@ class MasteryDAO(val dbHelper : DBHelper) {
     val columnNames = ColumnNames()
     val DEFAULT_PARTICIPANT_ID = -1
 
-    fun saveMastery(mastery: Mastery, participantRowId : Long) : Int {
+    fun saveMastery(mastery: Mastery, participantRowId : Long) : Long {
         val insertString = "insert into $MASTERY_TABLE (" +
                 "${dbHelper.MASTERY_ID_COLUMN}, " +
                 "${dbHelper.PARTICIPANT_ROW_ID_COLUMN}, " +
@@ -25,7 +24,7 @@ class MasteryDAO(val dbHelper : DBHelper) {
         return dbHelper.executeSQLScript(insertString)
     }
 
-    fun getMastery(id : Int) : Mastery{
+    fun getMastery(id : Long) : Mastery{
         val querySql = "Select * from $MASTERY_TABLE where " +
                 "${dbHelper.ID_COLUMN} = $id"
         val result = dbHelper.executeSqlQuery(querySql)

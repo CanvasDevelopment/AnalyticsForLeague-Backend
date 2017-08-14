@@ -14,7 +14,7 @@ import java.util.*
 /**
  * @author Josiah Kendall
  */
-class ParticipantIdentity_Tests {
+class ParticipantIdentityTests {
 
     lateinit var dbHelper :DBHelper
     lateinit var piDAO : ParticipantIdentityDAO

@@ -13,7 +13,7 @@ class RuneDAO(val dbHelper: DBHelper) {
     val RUNE_TABLE = "rune"
     val DEFAULT_PARTICIPANT_ID = -1
 
-    fun saveRune(rune: Rune, participantRowId : Long) : Int {
+    fun saveRune(rune: Rune, participantRowId : Long) : Long {
         //insert into rune (ParticipantRowId, RuneId, Rank) VALUES (1, 2, 3)
 
         val sql = "Insert into $RUNE_TABLE (" +
@@ -27,7 +27,7 @@ class RuneDAO(val dbHelper: DBHelper) {
         return dbHelper.executeSQLScript(sql)
     }
 
-    fun getRuneById(id : Int) : Rune {
+    fun getRuneById(id : Long) : Rune {
         val sql = "SELECT * FROM $RUNE_TABLE " +
                 "WHERE ${columnNames.ID} = $id"
         val result = dbHelper.executeSqlQuery(sql)

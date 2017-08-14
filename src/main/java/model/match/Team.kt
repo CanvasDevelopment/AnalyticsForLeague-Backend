@@ -18,4 +18,4 @@ data class Team(val teamId : Int,
                 val vileMawKills : Int,
                 val riftHeraldKills : Int,
                 val dominionVictoryScore : Int,
-                val bans : ArrayList<Bans>)
+                val bans : ArrayList<Ban>)

@@ -11,7 +11,7 @@ import org.junit.Test
 /**
  * @author Josiah Kendall
  */
-class Rune_Tests {
+class RuneTests {
 
     lateinit var dbHelper : DBHelper
     lateinit var runeDAO : RuneDAO

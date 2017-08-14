@@ -40,7 +40,7 @@ public class Summoner_Tests {
         summoner.setProfileIconId(3);
         summoner.setName("JOSIAH");
         summoner.setRevisionDate(12345676);
-        int result = summonerDAO.saveSummoner(summoner);
+        long result = summonerDAO.saveSummoner(summoner);
         Summoner summoner2 = summonerDAO.getSummoner(summoner.getId());
         Assert.assertTrue(summoner2.getName().equals(summoner.getName()));
         Assert.assertTrue(summoner2.getAccountId() == summoner.getAccountId());
@@ -58,7 +58,7 @@ public class Summoner_Tests {
         summoner.setProfileIconId(3);
         summoner.setName("JOSIAH");
         summoner.setRevisionDate(12345676);
-        int result = summonerDAO.saveSummoner(summoner);
+        long result = summonerDAO.saveSummoner(summoner);
         Summoner summoner2 = summonerDAO.getSummoner(summoner.getId());
         Assert.assertTrue(summoner2!= null);
         summonerDAO.deleteSummoner(summoner.getId());

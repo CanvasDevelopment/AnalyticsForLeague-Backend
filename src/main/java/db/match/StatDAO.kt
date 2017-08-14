@@ -11,7 +11,7 @@ import util.columnnames.StatsColumns
 class StatDAO(val dbHelper: DBHelper) {
     val statsColumns = StatsColumns()
     val STATS_TABLE = "stats"
-    fun saveStats(stats: Stats, participantRowId: Long) : Int {
+    fun saveStats(stats: Stats, participantRowId: Long) : Long {
         val sql = "insert into $STATS_TABLE(${statsColumns.PARTICIPANT_ROW_ID},\n" +
                 "${statsColumns.PARTICIPANT_ID},\n" +
                 "${statsColumns.WIN},\n" +

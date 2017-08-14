@@ -11,7 +11,7 @@ import org.junit.Test
  * @author Josiah Kendall
  */
 
-class Champion_Tests {
+class ChampionTests {
 
     @Test
     fun ensure_WeCanSaveAndLoadAChampionWithChampionImageOnIt() {

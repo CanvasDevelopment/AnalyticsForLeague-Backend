@@ -10,7 +10,7 @@ import org.junit.Test
 /**
  * @author Josiah Kendall
  */
-class Stats_Tests {
+class StatsTests {
     lateinit var dbHelper :DBHelper
     lateinit var statDAO : StatDAO
 

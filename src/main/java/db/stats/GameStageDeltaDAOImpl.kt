@@ -1,7 +1,6 @@
 package db.stats
 
 import db.DBHelper
-import extensions.produceChampion
 import extensions.produceGameStageStat
 import model.stats.GameStageDelta
 
@@ -14,7 +13,7 @@ import java.util.logging.Logger
  */
 class GameStageDeltaDAOImpl(private val dbHelper: DBHelper) : GameStageDeltasDAO {
 
-    override fun saveDeltas(gameStageDelta: GameStageDelta, tableName: String, timelineId: Long): Int {
+    override fun saveDeltas(gameStageDelta: GameStageDelta, tableName: String, timelineId: Long): Long {
         try {
             val queryString = String.format(
                     "Insert into %s ("

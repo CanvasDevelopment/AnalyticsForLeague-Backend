@@ -9,7 +9,7 @@ import model.stats.CreepsPerMin
  */
 interface CreepsPerMinDAO {
 
-    fun saveCreepsPerMin(creepsPerMin: CreepsPerMin): Int
+    fun saveCreepsPerMin(creepsPerMin: CreepsPerMin): Long
     fun deleteCreepsPerMin(creepsPerMinId: Long)
     fun getCreepsPerMin(creepsPerMinId: Long): CreepsPerMin
 

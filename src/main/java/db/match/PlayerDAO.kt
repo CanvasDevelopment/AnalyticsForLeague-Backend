@@ -12,7 +12,7 @@ class PlayerDAO(val dbHelper: DBHelper) {
 
     val PLAYER_TABLE_NAME : String = "player"
 
-    fun savePlayer(player: Player, participantIdentityRowId : Int) : Int {
+    fun savePlayer(player: Player, participantIdentityRowId : Long) : Long {
         val insertSQL = "insert into $PLAYER_TABLE_NAME (" +
                 "${dbHelper.PARTICIPANT_IDENTITY_ROW_COLUMN}," +
                 "${dbHelper.PLATFORM_ID_COLUMN}, " +
@@ -34,7 +34,7 @@ class PlayerDAO(val dbHelper: DBHelper) {
         return dbHelper.executeSQLScript(insertSQL)
     }
 
-    fun getPlayer(rowId : Int) : Player {
+    fun getPlayer(rowId : Long) : Player {
         val sqlQuery = "SELECT * FROM $PLAYER_TABLE_NAME WHERE ${dbHelper.ID_COLUMN} = $rowId"
         val result : ResultSet = dbHelper.executeSqlQuery(sqlQuery)
         return result.producePlayer()

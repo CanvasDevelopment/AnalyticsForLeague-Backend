@@ -68,7 +68,7 @@ class TimelineDAO(val dbHelper : DBHelper, val gameStageDeltasDAO: GameStageDelt
 
     }
 
-    private fun Int.logId(tableName : String) {
+    private fun Long.logId(tableName : String) {
         val message = "Saved item to table $tableName with id result : $this"
         Logger.getLogger(TimelineDAO::class.java.name).log(Level.SEVERE, message, "")
     }

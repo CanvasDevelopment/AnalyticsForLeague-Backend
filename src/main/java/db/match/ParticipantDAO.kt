@@ -52,7 +52,7 @@ class ParticipantDAO(val dbHelper : DBHelper,
 
         return particpantRowId
     }
-//
+
 //    fun getParticipantByGameIdAndParticipantId(participantId : Int, gameId: Long) : Participant {
 //
 //    }

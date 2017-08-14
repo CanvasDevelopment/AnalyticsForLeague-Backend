@@ -35,7 +35,7 @@ public class CreepsPerMin_Tests {
         creepsPerMin.setTwentyToThirty(5.67);
         creepsPerMin.setThirtyToEnd(7.3333332);
 
-        int id = creepsPerMinDAO.saveCreepsPerMin(creepsPerMin);
+        long id = creepsPerMinDAO.saveCreepsPerMin(creepsPerMin);
         CreepsPerMin creepsPerMin1 = creepsPerMinDAO.getCreepsPerMin(id);
         Assert.assertTrue(creepsPerMin.getZeroToTen() == creepsPerMin1.getZeroToTen());
         Assert.assertTrue(creepsPerMin.getTenToTwenty() == creepsPerMin1.getTenToTwenty());

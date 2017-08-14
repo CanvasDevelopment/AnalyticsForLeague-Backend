@@ -14,7 +14,7 @@ import java.util.*
 /**
  * @author Josiah Kendall
  */
-class Timeline_Tests {
+class TimelineTests {
 
     lateinit var dbHelper : DBHelper
     lateinit var timelineDAO : TimelineDAO

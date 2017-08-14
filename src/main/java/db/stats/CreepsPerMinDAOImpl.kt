@@ -12,7 +12,7 @@ import java.util.logging.Logger
  */
 class CreepsPerMinDAOImpl(private val dbHelper: DBHelper) : CreepsPerMinDAO {
 
-    override fun saveCreepsPerMin(creepsPerMin: CreepsPerMin): Int {
+    override fun saveCreepsPerMin(creepsPerMin: CreepsPerMin): Long {
 
         try {
             val queryString = String.format(

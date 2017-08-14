@@ -11,7 +11,7 @@ import org.junit.Test
 /**
  * @author Josiah Kendall
  */
-class Mastery_Tests {
+class MasteryTests {
     lateinit var dbHelper :DBHelper
     lateinit var masteryDAO : MasteryDAO
 

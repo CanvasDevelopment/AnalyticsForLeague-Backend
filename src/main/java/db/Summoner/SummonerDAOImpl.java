@@ -29,7 +29,7 @@ public class SummonerDAOImpl implements SummonerDAO {
      * @return -1 if save was unsuccessful, else return the result.
      */
     @Override
-    public int saveSummoner(Summoner summoner) {
+    public long saveSummoner(Summoner summoner) {
         log.info("Saving summoner : " + summoner.toString());
         String queryString = String.format(
                 "Insert into %s ("
@@ -56,7 +56,7 @@ public class SummonerDAOImpl implements SummonerDAO {
         );
 
         try {
-            int result = dbHelper.executeSQLScript(queryString);
+            long result = dbHelper.executeSQLScript(queryString);
             log.info("Successfully saved with Id : " + result);
             return result;
         } catch (SQLException ex) {

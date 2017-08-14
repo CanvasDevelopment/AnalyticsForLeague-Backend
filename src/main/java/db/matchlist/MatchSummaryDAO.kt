@@ -26,7 +26,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) {
      * Save a match summary.
      * @return return the id of the save, or -1 if the save failed.
      */
-    fun saveMatchSummary(matchSummary: MatchSummary) : Int {
+    fun saveMatchSummary(matchSummary: MatchSummary) : Long {
         val queryString =
                 "INSERT INTO $MATCH_SUMMARY (" +
                         "$PLATFORM_ID, " +
@@ -51,12 +51,11 @@ class MatchSummaryDAO(val dbHelper: DBHelper) {
         return dbHelper.executeSQLScript(queryString)
     }
 
-    fun getMatchSummary(id : Int) : MatchSummary {
+    fun getMatchSummary(id : Long) : MatchSummary {
         val queryString = String.format("SELECT * FROM %s WHERE Id = %s", MATCH_SUMMARY, id)
         val result : ResultSet = dbHelper.executeSqlQuery(queryString)
         if (result.next()) {
             val ms = MatchSummary()
-            ms.id = id
             ms.platformId = result.getString(PLATFORM_ID)
             ms.gameId = result.getLong(GAME_ID)
             ms.champion = result.getInt(CHAMPION)

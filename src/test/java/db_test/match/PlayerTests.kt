@@ -11,7 +11,7 @@ import org.junit.Test
 /**
  * @author Josiah Kendall
  */
-class Player_Tests() {
+class PlayerTests {
 
     val dbHelper : DBHelper = DBHelper()
 

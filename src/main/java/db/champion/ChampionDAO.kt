@@ -21,7 +21,7 @@ class ChampionDAO(val dbHelper: DBHelper) {
     val W_COLUMN = "W"
     val H_COLUMN = "H"
 
-    fun saveChampion(champion : Champion) : Int {
+    fun saveChampion(champion : Champion) : Long {
         val championImageId = saveChampionImage(champion.image)
         val insertString = "INSERT into $CHAMPION_TABLE values (" +
                 "${champion.id}, " +
@@ -36,7 +36,7 @@ class ChampionDAO(val dbHelper: DBHelper) {
         return dbHelper.executeSQLScript(insertString)
     }
 
-    internal fun saveChampionImage(champImage : ChampionImage) : Int {
+    internal fun saveChampionImage(champImage : ChampionImage) : Long {
         val insertString = "INSERT INTO $CHAMPION_IMAGE_TABLE (" +
                 "$FULL_COLUMN, " +
                 "$SPRITE_COLUMN, " +
@@ -63,19 +63,19 @@ class ChampionDAO(val dbHelper: DBHelper) {
         return dbHelper.executeSQLScript(insertString)
     }
 
-    fun getChampion(champId : Int) : Champion? {
+    fun getChampion(champId : Long) : Champion? {
         val queryString = "Select * from $CHAMPION_TABLE WHERE $CHAMP_ID_COLUMN = $champId"
         val result = dbHelper.executeSqlQuery(queryString)
 
         if (result.next()) {
-            val champImageId = result.getInt(CHAMP_IMAGE_ID_COLUMN)
+            val champImageId = result.getLong(CHAMP_IMAGE_ID_COLUMN)
             val championImage = getChampionImage(champImageId)
             return result.produceChampion(championImage)
         }
         return null
     }
 
-    internal fun getChampionImage(champImageId: Int) : ChampionImage {
+    internal fun getChampionImage(champImageId: Long) : ChampionImage {
         val queryString = "SELECT * from $CHAMPION_IMAGE_TABLE WHERE $CHAMP_ID_COLUMN = $champImageId"
         val result = dbHelper.executeSqlQuery(queryString)
         result.next()

@@ -12,7 +12,7 @@ class ParticipantIdentityDAO(val dbHelper: DBHelper, val playerDAO: PlayerDAO) {
 
     val PARTICIPANT_IDENTITY_TABLE = "participantidentity"
 
-    fun saveParticipantIdentity(participantIdentity: ParticipantIdentity) : Int {
+    fun saveParticipantIdentity(participantIdentity: ParticipantIdentity) : Long {
         val insertSQL = "Insert into $PARTICIPANT_IDENTITY_TABLE (" +
                 "${dbHelper.PARTICIPANT_ID_COLUMN}," +
                 "${dbHelper.GAME_ID_COLUMN}) values (" +
