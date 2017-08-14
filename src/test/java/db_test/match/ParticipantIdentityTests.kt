@@ -20,6 +20,7 @@ class ParticipantIdentityTests {
     lateinit var piDAO : ParticipantIdentityDAO
     lateinit var playerDAO : PlayerDAO
 
+    val gameId : Long = -1
     @Before fun setUp() {
         dbHelper = DBHelper()
         dbHelper.connect()
@@ -29,6 +30,7 @@ class ParticipantIdentityTests {
     }
 
     @After fun finishUp() {
+        dbHelper.executeSQLScript("Delete from participantIdentity where gameId = -1")
         dbHelper.disconnect()
     }
 
@@ -58,10 +60,10 @@ class ParticipantIdentityTests {
     @Test
     fun EnsureWeCanSaveAndLoadParticipantEntityAndPlayer() {
         val player1 = produceRandomPlayer()
-        val pi = ParticipantIdentity(1, 55555, player1)
-        val id = piDAO.saveParticipantIdentity(pi)
+        val pi = ParticipantIdentity(1, gameId, player1)
+        val id = piDAO.saveParticipantIdentity(pi, gameId)
 
-        val pi2 = piDAO.getParticipantIdentity(55555, player1.summonerId)
+        val pi2 = piDAO.getParticipantIdentity(gameId, player1.summonerId)
         Assert.assertTrue(pi.player.summonerName == pi2.player.summonerName)
         Assert.assertTrue(pi.player.summonerId == pi2.player.summonerId)
         Assert.assertTrue(pi.player.platformId == pi2.player.platformId)
@@ -75,13 +77,13 @@ class ParticipantIdentityTests {
         val player2 = produceRandomPlayer()
         val player3 = produceRandomPlayer()
 
-        val pi1 = ParticipantIdentity(1, 55555, player1)
-        val pi2 = ParticipantIdentity(2, 55555, player2)
-        val pi3 = ParticipantIdentity(3, 55555, player3)
+        val pi1 = ParticipantIdentity(1, gameId, player1)
+        val pi2 = ParticipantIdentity(2, gameId, player2)
+        val pi3 = ParticipantIdentity(3, gameId, player3)
 
-        piDAO.saveParticipantIdentity(pi1)
-        piDAO.saveParticipantIdentity(pi2)
-        piDAO.saveParticipantIdentity(pi3)
+        piDAO.saveParticipantIdentity(pi1, gameId)
+        piDAO.saveParticipantIdentity(pi2, gameId)
+        piDAO.saveParticipantIdentity(pi3, gameId)
 
         val result = piDAO.getParticipantIdentity(pi2.gameId, pi2.player.summonerId)
 

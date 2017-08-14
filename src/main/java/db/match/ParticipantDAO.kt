@@ -1,6 +1,7 @@
 package db.match
 
 import db.DBHelper
+import extensions.ID
 import extensions.produceParticipant
 import model.match.Mastery
 import model.match.Participant
@@ -20,7 +21,7 @@ class ParticipantDAO(val dbHelper : DBHelper,
     val participantColumns = ParticipantColumns()
 
     /**
-     * Save a participant, and all the child items of it.
+     * Save a [Participant], and all the child items of it.
      *
      */
     fun saveParticipant(participant : Participant, gameId : Long) : Long {
@@ -37,10 +38,10 @@ class ParticipantDAO(val dbHelper : DBHelper,
                 "${participant.championId}," +
                 "${participant.spell1Id}," +
                 "${participant.spell2Id}," +
-                "${participant.highestAchievedSeasonTier}," +
+                "'${participant.highestAchievedSeasonTier}'," +
                 "$gameId)"
 
-        val particpantRowId = dbHelper.executeSQLScript(sql).toLong()
+        val particpantRowId = dbHelper.executeSQLScript(sql)
         // save timeline
         timelineDAO.saveTimeline(participant.timeline, particpantRowId)
         // save runes
@@ -53,9 +54,29 @@ class ParticipantDAO(val dbHelper : DBHelper,
         return particpantRowId
     }
 
-//    fun getParticipantByGameIdAndParticipantId(participantId : Int, gameId: Long) : Participant {
-//
-//    }
+    /**
+     * Get all [Participant] instances that are saved for a [Match]
+     * @param gameId The id of the match we want the participants for.
+     */
+    fun getAllParticipantsForMatch(gameId: Long) :ArrayList<Participant> {
+        val sql = "SELECT * FROM $PARTICIPANT_TABLE " +
+                "WHERE ${participantColumns.GAME_ID} = $gameId"
+        val result = dbHelper.executeSqlQuery(sql)
+
+        // Our array of results that we are looking for.
+        val participants = ArrayList<Participant>()
+        while (result.next()) {
+            val participantRowId = result.getLong(ID)
+            val timeline = timelineDAO.getTimelineByParticipantRowId(participantRowId)
+            val stats = statDAO.getStatForParticipant(participantRowId)
+            val runes = runeDAO.getAllRunesForAParticipantRowId(participantRowId)
+            val masteries = masteryDAO.getAllMasteriesForParticipantInstance(participantRowId)
+
+            val participant = result.produceParticipant(timeline, stats, masteries, runes)
+            participants.add(participant)
+        }
+        return participants
+    }
 
     fun getParticipantByRowId(participantRowId: Long) : Participant {
         val timeline = timelineDAO.getTimelineByParticipantRowId(participantRowId)
@@ -65,7 +86,7 @@ class ParticipantDAO(val dbHelper : DBHelper,
 
         val sql = "select * from $PARTICIPANT_TABLE where Id = $participantRowId"
         val result = dbHelper.executeSqlQuery(sql)
-
+        result.next()
         return result.produceParticipant(timeline,stats,masteries,runes)
     }
 

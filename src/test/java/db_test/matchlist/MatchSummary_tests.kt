@@ -3,7 +3,9 @@ package db_test.matchlist
 import db.DBHelper
 import db.matchlist.MatchSummaryDAO
 import model.matchlist.MatchSummary
+import org.junit.After
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 
 /**
@@ -11,20 +13,34 @@ import org.junit.Test
  */
 class MatchSummary_tests {
 
+    lateinit var dbHelper : DBHelper
+    lateinit var matchSummaryDAO : MatchSummaryDAO
+    val gameId : Long = -1
+    val MATCH_SUMMARY = "matchsummary2"
+    val summonerId : Long = -1
+    @Before
+    fun setUp() {
+        dbHelper = DBHelper()
+        dbHelper.connect()
+        matchSummaryDAO = MatchSummaryDAO(dbHelper)
+    }
+
+    @After
+    fun cleanUp() {
+        dbHelper.executeSQLScript("DELETE FROM $MATCH_SUMMARY where gameId = -1")
+        dbHelper.executeSQLScript("DELETE FROM $MATCH_SUMMARY where summonerId = -1")
+    }
 
     @Test
     fun EnsureThatWeCanSaveAMatchSummaryThenFetchItById() {
 
-        val dbHelper: DBHelper = DBHelper()
-        val matchSummaryDAO: MatchSummaryDAO = MatchSummaryDAO(dbHelper)
-        dbHelper.connect()
         val matchSummary = MatchSummary()
         matchSummary.lane = "TOP"
         matchSummary.timestamp = 1234567
         matchSummary.season = 9
         matchSummary.queue = 7
         matchSummary.champion = 5
-        matchSummary.gameId = 1234567
+        matchSummary.gameId = gameId
         matchSummary.platformId = "OCE1"
         matchSummary.role = "SOLO"
         matchSummary.summonerId = 5
@@ -40,21 +56,17 @@ class MatchSummary_tests {
         Assert.assertTrue(ms2.gameId == matchSummary.gameId)
         Assert.assertTrue(ms2.platformId == matchSummary.platformId)
         Assert.assertTrue(ms2.summonerId == matchSummary.summonerId)
-        dbHelper.disconnect()
     }
 
     @Test
     fun EnsureThatWeCanSaveAndFetchAMatchSummaryByGameId() {
-        val dbHelper: DBHelper = DBHelper()
-        val matchSummaryDAO: MatchSummaryDAO = MatchSummaryDAO(dbHelper)
-        dbHelper.connect()
         val matchSummary = MatchSummary()
         matchSummary.lane = "TOP"
         matchSummary.timestamp = 1234567
         matchSummary.season = 9
         matchSummary.queue = 7
         matchSummary.champion = 5
-        matchSummary.gameId = 123456789 // if test fails try changing this :)
+        matchSummary.gameId = gameId
         matchSummary.platformId = "OCE1"
         matchSummary.role = "SOLO"
         matchSummary.summonerId = 4
@@ -71,22 +83,17 @@ class MatchSummary_tests {
         Assert.assertTrue(ms2.platformId == matchSummary.platformId)
         Assert.assertTrue(ms2.summonerId == matchSummary.summonerId)
 
-        dbHelper.disconnect()
     }
 
     @Test
     fun ensure_WeCanGetAllMatchSummariesBySummonerId() {
-        val summonerId :Long = 12345
-        val dbHelper: DBHelper = DBHelper()
-        val matchSummaryDAO: MatchSummaryDAO = MatchSummaryDAO(dbHelper)
-        dbHelper.connect()
         val matchSummary = MatchSummary()
         matchSummary.lane = "TOP"
         matchSummary.timestamp = 1234567
         matchSummary.season = 9
         matchSummary.queue = 7
         matchSummary.champion = 5
-        matchSummary.gameId = 123456789 // if test fails try changing this :)
+        matchSummary.gameId = gameId // if test fails try changing this :)
         matchSummary.platformId = "OCE1"
         matchSummary.role = "SOLO"
         matchSummary.summonerId = summonerId
@@ -98,7 +105,7 @@ class MatchSummary_tests {
         matchSummary2.season = 9
         matchSummary2.queue = 7
         matchSummary2.champion = 5
-        matchSummary2.gameId = 123456749 // if test fails try changing this :)
+        matchSummary2.gameId = gameId // if test fails try changing this :)
         matchSummary2.platformId = "OCE1"
         matchSummary2.role = "SOLO"
         matchSummary2.summonerId = summonerId
@@ -107,6 +114,5 @@ class MatchSummary_tests {
 
         val matchSummaries = matchSummaryDAO.getAllMatchesBySummonerId(summonerId.toInt())
         Assert.assertTrue(matchSummaries.size == 2)
-        dbHelper.disconnect()
     }
 }
