@@ -6,10 +6,7 @@ import model.match.*
 import model.matchlist.MatchSummary
 import model.stats.GameStageDelta
 import util.ColumnNames
-import util.columnnames.BanColumns
-import util.columnnames.GameStageColumns
-import util.columnnames.ParticipantColumns
-import util.columnnames.StatsColumns
+import util.columnnames.*
 import java.sql.ResultSet
 
 /**
@@ -22,6 +19,7 @@ val statColumns = StatsColumns()
 val gameStageColumns = GameStageColumns()
 val particpantColumns = ParticipantColumns()
 val banColumns = BanColumns()
+val teamColumns = TeamColumns()
 
 val MATCH_SUMMARY = "matchsummary2"
 val PLATFORM_ID = "PlatformId"
@@ -253,4 +251,23 @@ fun ResultSet.produceParticipant(timeline: Timeline,
 
 fun ResultSet.produceBan() : Ban {
     return Ban(getInt(banColumns.CHAMPION_ID), getInt(banColumns.PICK_TURN))
+}
+
+fun ResultSet.produceTeam(bans : ArrayList<Ban>) : Team {
+    return Team(getInt(teamColumns.TEAM_ID),
+            getString(teamColumns.WIN),
+            getBoolean(teamColumns.FIRST_BLOOD),
+            getBoolean(teamColumns.FIRST_TOWER),
+            getBoolean(teamColumns.FIRST_INHIBITOR),
+            getBoolean(teamColumns.FIRST_BARON),
+            getBoolean(teamColumns.FIRST_DRAGON),
+            getBoolean(teamColumns.FIRST_RIFT_HERALD),
+            getInt(teamColumns.TOWER_KILLS),
+            getInt(teamColumns.INHIBITOR_KILLS),
+            getInt(teamColumns.BARON_KILLS),
+            getInt(teamColumns.DRAGON_KILLS),
+            getInt(teamColumns.VILE_MAW_KILLS),
+            getInt(teamColumns.RIFT_HERALD_KILLS),
+            getInt(teamColumns.DOMINION_VICOTORY_SCORE),
+            bans)
 }

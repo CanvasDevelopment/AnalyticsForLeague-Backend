@@ -3,9 +3,11 @@ package db_test.match
 import db.DBHelper
 import db.match.BanDAO
 import model.match.Ban
+import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import java.util.*
 
 /**
  * @author Josiah Kendall
@@ -21,6 +23,11 @@ class BanTests {
         banDAO = BanDAO(dbHelper)
     }
 
+    @After
+    fun doCleanUp() {
+        dbHelper.executeSQLScript("Delete from ban where teamId = -1") // called team id not team row id.. todo change this
+    }
+
     @Test
     fun ensureThatWeCanSaveAndFetchBan() {
         val ban = Ban(34, 2)
@@ -32,9 +39,25 @@ class BanTests {
 
     @Test
     fun ensureThatWeCanFetchBanByTeamId() {
-        val ban = Ban(34, 2)
-        val banRecovered = banDAO.getBanByTeamRowId(-1)
-        Assert.assertEquals(ban.pickTurn, banRecovered.pickTurn)
-        Assert.assertEquals(ban.championId, banRecovered.championId)
+        val random = Random()
+        val ban1 = Ban(random.nextInt(), random.nextInt())
+        val ban2 = Ban(random.nextInt(), random.nextInt())
+        val ban3 = Ban(random.nextInt(), random.nextInt())
+        val ban4 = Ban(random.nextInt(), random.nextInt())
+        val ban5 = Ban(random.nextInt(), random.nextInt())
+        banDAO.saveBan(ban1, -1)
+        banDAO.saveBan(ban2,-1)
+        banDAO.saveBan(ban3,-1)
+        banDAO.saveBan(ban4,-1)
+        banDAO.saveBan(ban5,-1)
+        val bansRecovered = banDAO.getAllBansByTeamRowId(-1)
+        Assert.assertTrue(bansRecovered.size == 5)
+        var index = 0
+        for ((championId, pickTurn) in bansRecovered) {
+            Assert.assertEquals(pickTurn, bansRecovered[index].pickTurn)
+            Assert.assertEquals(championId, bansRecovered[index].championId)
+            index += 1
+        }
+
     }
 }

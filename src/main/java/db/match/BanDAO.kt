@@ -31,11 +31,15 @@ class BanDAO(val dbHelper : DBHelper) {
         return result.produceBan()
     }
 
-    fun getBanByTeamRowId(teamRowId: Long) : Ban {
+    fun getAllBansByTeamRowId(teamRowId: Long) : ArrayList<Ban> {
         val sql = "SELECT * from $BAN_TABLE " +
                 "WHERE ${banColumns.TEAM_ID} = $teamRowId"
         val result = dbHelper.executeSqlQuery(sql)
-        result.next()
-        return result.produceBan()
+
+        val bans = ArrayList<Ban>()
+        while(result.next()) {
+            bans.add(result.produceBan())
+        }
+        return bans
     }
 }
