@@ -149,7 +149,12 @@
 
         <!-- Compile/runtime dependencies -->
 
-
+        <dependency>
+            <groupId>com.squareup.retrofit</groupId>
+            <artifactId>retrofit</artifactId>
+            <version>1.9.0</version>
+            <type>jar</type>
+        </dependency>
         <dependency>
             <groupId>com.google.dagger</groupId>
             <artifactId>dagger</artifactId>

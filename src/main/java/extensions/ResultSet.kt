@@ -20,6 +20,7 @@ val gameStageColumns = GameStageColumns()
 val particpantColumns = ParticipantColumns()
 val banColumns = BanColumns()
 val teamColumns = TeamColumns()
+val matchColumns = MatchColumns()
 
 val MATCH_SUMMARY = "matchsummary2"
 val PLATFORM_ID = "PlatformId"
@@ -93,7 +94,6 @@ fun ResultSet.produceChampionImage() : ChampionImage {
 }
 
 fun ResultSet.producePlayer() : Player {
-    this.next() // Should this be in here?
     val platformId : String = getString(PLATFORM_ID)
     val accountId : Long = getLong(ACCOUNT_ID)
     val summonerName : String = getString(SUMMONER_NAME)
@@ -270,4 +270,22 @@ fun ResultSet.produceTeam(bans : ArrayList<Ban>) : Team {
             getInt(teamColumns.RIFT_HERALD_KILLS),
             getInt(teamColumns.DOMINION_VICOTORY_SCORE),
             bans)
+}
+
+fun ResultSet.produceMatch(teams : ArrayList<Team>,
+                           participants : ArrayList<Participant>,
+                           participantIdentities : ArrayList<ParticipantIdentity>) : Match{
+    return Match(getLong(matchColumns.GAME_ID),
+            getString(matchColumns.PLATFORM_ID),
+            getLong(matchColumns.GAME_CREATION),
+            getLong(matchColumns.GAME_DURATION),
+            getInt(matchColumns.QUEUE_ID),
+            getInt(matchColumns.MAP_ID),
+            getInt(matchColumns.SEASON_ID),
+            getString(matchColumns.GAME_VERSION),
+            getString(matchColumns.GAME_MODE),
+            getString(matchColumns.GAME_TYPE),
+            teams,
+            participants,
+            participantIdentities)
 }

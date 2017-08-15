@@ -1,6 +1,7 @@
 package db.match
 
 import db.DBHelper
+import extensions.produceMatch
 import model.match.Match
 import util.columnnames.MatchColumns
 
@@ -32,15 +33,15 @@ class MatchDAO(val dbHelper : DBHelper,
                 "${matchColumns.GAME_MODE}, " +
                 "${matchColumns.GAME_TYPE}) VALUES (" +
                 "${match.gameId}," +
-                "${match.platformId}," +
+                "'${match.platformId}'," +
                 "${match.gameCreation}," +
                 "${match.gameDuration}," +
                 "${match.queueId}," +
                 "${match.mapId}," +
                 "${match.seasonId}," +
-                "${match.gameVersion}," +
-                "${match.gameMode}," +
-                "${match.gameType})"
+                "'${match.gameVersion}'," +
+                "'${match.gameMode}'," +
+                "'${match.gameType}')"
 
         dbHelper.executeSQLScript(sql)
 
@@ -60,6 +61,10 @@ class MatchDAO(val dbHelper : DBHelper,
         }
     }
 
+    /**
+     * Load a [Match] by the matches [MatchColumns.GAME_ID] provided by riot
+     * @param gameId The matchId
+     */
     fun getMatch(gameId: Long) : Match {
         val sql = "Select * from $MATCH_TABLE " +
                 "WHERE ${matchColumns.GAME_ID} = $gameId"
@@ -67,6 +72,8 @@ class MatchDAO(val dbHelper : DBHelper,
 
         val teams = teamDAO.getAllTeamsForGameId(gameId)
         val participants = participantDAO.getAllParticipantsForMatch(gameId)
-        val participantIdentities = participantIdentityDAO.
+        val participantIdentities = participantIdentityDAO.getAllParticipantIdentitiesForAMatch(gameId)
+        result.next()
+        return result.produceMatch(teams, participants, participantIdentities)
     }
 }

@@ -29,10 +29,11 @@ class ParticipantIdentityDAO(val dbHelper: DBHelper, val playerDAO: PlayerDAO) {
                 "join player on participantidentity.Id = player.ParticipantIdentityRowId\n" +
                 "where participantidentity.gameId = $gameId and player.summonerId = $summonerId"
         val result : ResultSet = dbHelper.executeSqlQuery(selectSQL)
-
+        result.next()
         return result.produceParticipantIdentity()
     }
 
+    // This gets? todo fix me
     fun getAllParticipantIdentitiesForAMatch(gameId: Long) : ArrayList<ParticipantIdentity> {
         val selectSQL = "select * from $PARTICIPANT_IDENTITY_TABLE\n" +
                 "join player on participantidentity.Id = player.ParticipantIdentityRowId\n" +
@@ -44,6 +45,18 @@ class ParticipantIdentityDAO(val dbHelper: DBHelper, val playerDAO: PlayerDAO) {
         }
         return participantIdentities
     }
+
+//    // This gets the players for
+//    fun getAllParticipantIdentitiesForAMatch(gameId: Long) : ArrayList<ParticipantIdentity> {
+//        val selectSQL = "select * from $PARTICIPANT_IDENTITY_TABLE\n" +
+//                "where participantidentity.gameId = $gameId"
+//        val result : ResultSet = dbHelper.executeSqlQuery(selectSQL)
+//        val participantIdentities = ArrayList<ParticipantIdentity>()
+//        while (result.next()) {
+//            participantIdentities.add(result.produceParticipantIdentity())
+//        }
+//        return participantIdentities
+//    }
 
 }
 
