@@ -31,7 +31,7 @@ class DBHelper {
     val ID_COLUMN = "id"
     val GAME_ID_COLUMN = "gameId"
     val PARTICIPANT_ID_COLUMN = "ParticipantId"
-    var MASTERY_ID_COLUMN = "MasteryId"
+    val MASTERY_ID_COLUMN = "MasteryId"
     val RANK_COLUMN = "Rank"
     val PARTICIPANT_ROW_ID_COLUMN = "ParticipantRowId"
 

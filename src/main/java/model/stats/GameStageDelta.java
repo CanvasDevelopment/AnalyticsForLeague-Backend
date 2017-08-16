@@ -12,18 +12,14 @@ import com.google.appengine.repackaged.com.google.gson.annotations.SerializedNam
 public class GameStageDelta {
     private long id;
 
-    @SerializedName("zeroToTen")
-    @Expose
-    private Double zeroToTen;
-    @SerializedName("tenToTwenty")
-    @Expose
-    private Double tenToTwenty;
-    @SerializedName("twentyToThirty")
-    @Expose
-    private Double twentyToThirty;
-    @SerializedName("thirtyToEnd")
-    @Expose
-    private Double thirtyToEnd;
+    @com.google.gson.annotations.SerializedName("0-10")
+    public double zeroToTen;
+    @com.google.gson.annotations.SerializedName("10-20")
+    public double tenToTwenty;
+    @com.google.gson.annotations.SerializedName("20-30")
+    public double twentyToThirty;
+
+    public double thirtyToEnd;
 
 
     public void setId(long id) {
@@ -47,7 +43,7 @@ public class GameStageDelta {
      * @param zeroToTen
      * The zeroToTen
      */
-    public void setZeroToTen(Double zeroToTen) {
+    public void setZeroToTen(double zeroToTen) {
         this.zeroToTen = zeroToTen;
     }
 
@@ -65,7 +61,7 @@ public class GameStageDelta {
      * @param tenToTwenty
      * The tenToTwenty
      */
-    public void setTenToTwenty(Double tenToTwenty) {
+    public void setTenToTwenty(double tenToTwenty) {
         this.tenToTwenty = tenToTwenty;
     }
 
@@ -83,7 +79,7 @@ public class GameStageDelta {
      * @param twentyToThirty
      * The twentyToThirty
      */
-    public void setTwentyToThirty(Double twentyToThirty) {
+    public void setTwentyToThirty(double twentyToThirty) {
         this.twentyToThirty = twentyToThirty;
     }
 
@@ -101,7 +97,7 @@ public class GameStageDelta {
      * @param thirtyToEnd
      * The thirtyToEnd
      */
-    public void setThirtyToEnd(Double thirtyToEnd) {
+    public void setThirtyToEnd(double thirtyToEnd) {
         this.thirtyToEnd = thirtyToEnd;
     }
 }

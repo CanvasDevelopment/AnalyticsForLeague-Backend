@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class MatchList {
 
-    private ArrayList<MatchSummary> matchSummaries;
+    private ArrayList<MatchSummary> matches;
     private int startIndex;
     private int endIndex;
     private int totalGames;
@@ -20,8 +20,8 @@ public class MatchList {
         this.endIndex = endIndex;
     }
 
-    public void setMatchSummaries(ArrayList<MatchSummary> matchSummaries) {
-        this.matchSummaries = matchSummaries;
+    public void setMatches(ArrayList<MatchSummary> matches) {
+        this.matches = matches;
     }
 
     public void setStartIndex(int startIndex) {
@@ -32,8 +32,8 @@ public class MatchList {
         this.totalGames = totalGames;
     }
 
-    public ArrayList<MatchSummary> getMatchSummaries() {
-        return matchSummaries;
+    public ArrayList<MatchSummary> getMatches() {
+        return matches;
     }
 
     public int getEndIndex() {

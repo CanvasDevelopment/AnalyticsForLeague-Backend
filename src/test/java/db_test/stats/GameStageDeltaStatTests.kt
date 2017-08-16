@@ -1,6 +1,5 @@
 package db_test.stats
 
-import util.ColumnNames
 import db.DBHelper
 import db.stats.GameStageDeltaDAOImpl
 import model.stats.GameStageDelta
@@ -8,7 +7,6 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import util.TableNames
 import util.Tables
 
 /**
@@ -96,7 +94,7 @@ class GameStageDeltaStatTests {
     fun TestThatWeCanSaveAndFetchXpDiffPerMin() {
         val creepsPerMin = GameStageDelta()
         creepsPerMin.setTenToTwenty(12.3)
-        creepsPerMin.setZeroToTen(6.45)
+        creepsPerMin.setZeroToTen(12.3)
         creepsPerMin.setTwentyToThirty(5.67)
         creepsPerMin.setThirtyToEnd(7.3333332)
         val id = gameStageDeltaDAO!!.saveDeltas(creepsPerMin, tables.XP_DIFF_PER_MIN, -1)

@@ -21,13 +21,12 @@ class GameStageDeltaDAOImpl(private val dbHelper: DBHelper) : GameStageDeltasDAO
                             + "ZeroToTen,"
                             + "TenToTwenty,"
                             + "TwentyToThirty,"
-                            + "ThirtyToEnd) values (%s, %s, %s, %s, %s)",
+                            + "ThirtyToEnd) values (%s, %s, %s, %s)",
                     tableName,
                     timelineId,
                     gameStageDelta.zeroToTen,
                     gameStageDelta.tenToTwenty,
-                    gameStageDelta.twentyToThirty,
-                    gameStageDelta.thirtyToEnd
+                    gameStageDelta.twentyToThirty
             )
             return dbHelper.executeSQLScript(queryString)
         } catch (ex: SQLException) {
