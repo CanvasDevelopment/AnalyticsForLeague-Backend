@@ -13,20 +13,24 @@ import java.util.logging.Logger
  */
 class GameStageDeltaDAOImpl(private val dbHelper: DBHelper) : GameStageDeltasDAO {
 
-    override fun saveDeltas(gameStageDelta: GameStageDelta, tableName: String, timelineId: Long): Long {
+    override fun saveDeltas(gameStageDelta: GameStageDelta?, tableName: String, timelineId: Long): Long {
         try {
+            if (gameStageDelta == null) {
+                return -1
+            }
             val queryString = String.format(
                     "Insert into %s ("
                             + "timelineId,"
                             + "ZeroToTen,"
                             + "TenToTwenty,"
                             + "TwentyToThirty,"
-                            + "ThirtyToEnd) values (%s, %s, %s, %s)",
+                            + "ThirtyToEnd) values (%s, %s, %s, %s, %s)",
                     tableName,
                     timelineId,
                     gameStageDelta.zeroToTen,
                     gameStageDelta.tenToTwenty,
-                    gameStageDelta.twentyToThirty
+                    gameStageDelta.twentyToThirty,
+                    gameStageDelta.thirtyToEnd
             )
             return dbHelper.executeSQLScript(queryString)
         } catch (ex: SQLException) {

@@ -90,12 +90,15 @@ class ParticipantDAO(val dbHelper : DBHelper,
         return result.produceParticipant(timeline,stats,masteries,runes)
     }
 
-    private fun saveRunes(runes : ArrayList<Rune>, participantRowId : Long) {
-        val runesIterator = runes.iterator()
-        while (runesIterator.hasNext()) {
-            val rune = runesIterator.next()
-            runeDAO.saveRune(rune, participantRowId)
+    private fun saveRunes(runes : ArrayList<Rune>?, participantRowId : Long) {
+        if (runes != null) {
+            val runesIterator = runes.iterator()
+            while (runesIterator.hasNext()) {
+                val rune = runesIterator.next()
+                runeDAO.saveRune(rune, participantRowId)
+            }
         }
+
     }
 
     private fun saveMasteries(masteries : ArrayList<Mastery>, participantRowId: Long) {
