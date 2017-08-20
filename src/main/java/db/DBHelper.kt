@@ -155,7 +155,7 @@ class DBHelper {
         }
 
         val statement = connection!!.prepareStatement(query)
-        var result = statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS)
+        statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS)
         val generatedKeys = statement.generatedKeys
         var id : Long = 0
         if (generatedKeys.next()) {

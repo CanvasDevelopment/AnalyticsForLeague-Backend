@@ -97,12 +97,14 @@ fun ResultSet.producePlayer() : Player {
     val platformId : String = getString(PLATFORM_ID)
     val accountId : Long = getLong(ACCOUNT_ID)
     val summonerName : String = getString(SUMMONER_NAME)
-    val summonerId : Long = getLong(SUMMONER_ID)
     val currentPlatformId : String = getString(CURRENT_PLATFORM_ID)
     val matchHistoryUri : String = getString(MATCH_HISTORY_URI)
     val profileIcon : Int = getInt(PROFILE_ICON)
 
-    return Player(platformId, accountId, summonerName, summonerId, currentPlatformId, matchHistoryUri, profileIcon)
+    // The reason we return -1 here is that we never need to fetch a player instance with the summoner Id, as that
+    // summonerId will always be on the parent (ParticipantIdentity), as it is through the participantIdentity that we find
+    // this object. However, we cannot remove the summonerId as we need to have it on the data object when it is fetched from Riot.
+    return Player(platformId, accountId, summonerName, -1, currentPlatformId, matchHistoryUri, profileIcon)
 }
 
 fun ResultSet.produceParticipantIdentity() : ParticipantIdentity {

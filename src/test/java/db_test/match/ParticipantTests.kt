@@ -3,7 +3,6 @@ package db_test.match
 import db.DBHelper
 import db.match.*
 import db.stats.GameStageDeltaDAOImpl
-import db.stats.GameStageDeltasDAO
 import model.match.*
 import model.stats.GameStageDelta
 import org.junit.After
@@ -200,7 +199,7 @@ class ParticipantTests {
                 stat,
                 timeline)
 
-        val savedId = participantDAO.saveParticipant(participant, -1)
+        val savedId = participantDAO.saveParticipant(participant, -1, -1)
         val participantRecovered = participantDAO.getParticipantByRowId(savedId)
         Assert.assertTrue(participant.highestAchievedSeasonTier == participantRecovered.highestAchievedSeasonTier)
         Assert.assertTrue(participant.championId == participantRecovered.championId)

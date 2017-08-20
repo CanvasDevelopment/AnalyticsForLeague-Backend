@@ -18,7 +18,6 @@ class PlayerDAO(val dbHelper: DBHelper) {
                 "${dbHelper.PLATFORM_ID_COLUMN}, " +
                 "${dbHelper.ACCOUNT_ID_COLUMN}, " +
                 "${dbHelper.SUMMONER_NAME_COLUMN}, " +
-                "${dbHelper.SUMMONER_ID_COLUMN}, " +
                 "${dbHelper.CURRENT_PLATFORM_ID_COLUMN}, " +
                 "${dbHelper.MATCH_HISTORY_URI_COLUMN}, " +
                 "${dbHelper.PROFILE_ICON_COLUMN}) VALUES(" +
@@ -26,7 +25,6 @@ class PlayerDAO(val dbHelper: DBHelper) {
                 "'${player.platformId}', " +
                 "${player.accountId}, " +
                 "'${player.summonerName}', " +
-                "${player.summonerId}, " +
                 "'${player.currentPlatformId}', " +
                 "'${player.matchHistoryUri}', " +
                 "${player.profileIcon})"

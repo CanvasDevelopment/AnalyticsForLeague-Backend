@@ -49,7 +49,6 @@ class PlayerTests {
         Assert.assertTrue(player2.matchHistoryUri == "sdf")
         Assert.assertTrue(player2.summonerName == player.summonerName)
         Assert.assertTrue(player2.profileIcon == player.profileIcon)
-        Assert.assertTrue(player2.summonerId == player.summonerId)
         Assert.assertTrue(player2.accountId == player.accountId)
 
     }

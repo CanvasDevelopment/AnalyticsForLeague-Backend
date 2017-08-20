@@ -24,22 +24,28 @@ class ParticipantDAO(val dbHelper : DBHelper,
      * Save a [Participant], and all the child items of it.
      *
      */
-    fun saveParticipant(participant : Participant, gameId : Long) : Long {
+    fun saveParticipant(participant: Participant, gameId: Long, summonerId: Long) : Long {
         val sql = "insert into $PARTICIPANT_TABLE(" +
                 "${participantColumns.PARTICIPANT_ID}, " +
                 "${participantColumns.TEAM_ID}, " +
                 "${participantColumns.CHAMPION_ID}, " +
                 "${participantColumns.SPELL_1_ID}, " +
                 "${participantColumns.SPELL_2_ID}, " +
+                "${participantColumns.SUMMONER_ID}, " +
                 "${participantColumns.HIGHEST_SEASON_ACHIEVED_TIER}, " +
-                "${participantColumns.GAME_ID}) VALUES (" +
+                "${participantColumns.GAME_ID}," +
+                "${participantColumns.ROLE}," +
+                "${participantColumns.LANE}) VALUES (" +
                 "${participant.participantId}," +
                 "${participant.teamId}," +
                 "${participant.championId}," +
                 "${participant.spell1Id}," +
                 "${participant.spell2Id}," +
+                "$summonerId," +
                 "'${participant.highestAchievedSeasonTier}'," +
-                "$gameId)"
+                "$gameId," +
+                "'${participant.timeline.role}'," +
+                "'${participant.timeline.lane}')"
 
         val particpantRowId = dbHelper.executeSQLScript(sql)
         // save timeline
@@ -101,11 +107,14 @@ class ParticipantDAO(val dbHelper : DBHelper,
 
     }
 
-    private fun saveMasteries(masteries : ArrayList<Mastery>, participantRowId: Long) {
-        val masteriesIterator = masteries.iterator()
-        while (masteriesIterator.hasNext()) {
-            val mastery = masteriesIterator.next()
-            masteryDAO.saveMastery(mastery, participantRowId)
+    private fun saveMasteries(masteries : ArrayList<Mastery>?, participantRowId: Long) {
+        if (masteries != null) {
+            val masteriesIterator = masteries.iterator()
+            while (masteriesIterator.hasNext()) {
+                val mastery = masteriesIterator.next()
+                masteryDAO.saveMastery(mastery, participantRowId)
+            }
         }
+
     }
 }

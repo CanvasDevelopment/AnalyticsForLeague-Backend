@@ -151,6 +151,11 @@
         </dependency>
 
         <!-- Compile/runtime dependencies -->
+        <dependency>
+            <groupId>com.github.salomonbrys.kodein</groupId>
+            <artifactId>kodein</artifactId>
+            <version>4.1.0</version>
+        </dependency>
 
         <dependency>
             <groupId>com.squareup.retrofit</groupId>

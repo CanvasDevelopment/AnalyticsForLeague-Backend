@@ -51,13 +51,35 @@ class MatchDAO(val dbHelper : DBHelper,
         }
 
         // save participants and children
+        var participantIndex = 0
+        var summonerId : Long
         for (participant in match.participants) {
-            participantDAO.saveParticipant(participant, match.gameId)
+            summonerId = match.participantIdentities[participantIndex].player.summonerId
+            participantDAO.saveParticipant(participant, match.gameId, summonerId)
+            participantIndex +=1
         }
 
+        var teamId = -1
+        var role = ""
+        var lane = ""
         // save participantIdentities and children
         for (participantIdentity in match.participantIdentities) {
-            participantIdentityDAO.saveParticipantIdentity(participantIdentity, match.gameId)
+            // todo tidy this shitty code
+            val summonerId = participantIdentity.player.summonerId
+
+            // grab our variables that we store in this table to make for more efficient queries.
+            teamId = match.participants[participantIdentity.participantId-1].teamId
+            role = match.participants[participantIdentity.participantId-1].timeline.role
+            lane = match.participants[participantIdentity.participantId-1].timeline.lane
+
+            // Save participant
+            participantIdentityDAO.saveParticipantIdentity(
+                    participantIdentity,
+                    match.gameId,
+                    summonerId,
+                    teamId,
+                    role,
+                    lane)
         }
     }
 
