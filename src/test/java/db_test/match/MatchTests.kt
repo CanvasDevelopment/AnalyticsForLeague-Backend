@@ -1,10 +1,12 @@
 package db_test.match
 
 
+import com.github.salomonbrys.kodein.instance
 import db.DBHelper
 import db.match.*
 
 import db.stats.GameStageDeltaDAOImpl
+import di.KodeinManager
 import model.match.*
 import model.stats.GameStageDelta
 import org.junit.After
@@ -24,42 +26,19 @@ class MatchTests {
 
     // participantIdentity DAO
     lateinit var piDAO : ParticipantIdentityDAO
-    lateinit var playerDAO : PlayerDAO
 
-    // Participant DAO
-    lateinit var timelineDAO: TimelineDAO
-    lateinit var runeDAO: RuneDAO
-    lateinit var masteryDAO: MasteryDAO
-    lateinit var statDAO: StatDAO
-    lateinit var gameStageDelta : GameStageDeltaDAOImpl
     lateinit var participantDAO : ParticipantDAO
 
-    // Team DAO
-    lateinit var banDAO : BanDAO
     lateinit var teamDAO : TeamDAO
 
     @Before
     fun setUp() {
-        dbHelper = DBHelper()
+
+
+        val km = KodeinManager()
+        matchDAO = km.kodein.instance()
+        dbHelper = km.kodein.instance()
         dbHelper.connect()
-
-        playerDAO = PlayerDAO(dbHelper)
-        piDAO = ParticipantIdentityDAO(dbHelper, playerDAO)
-
-        gameStageDelta = GameStageDeltaDAOImpl(dbHelper)
-        timelineDAO = TimelineDAO(dbHelper, gameStageDelta)
-        runeDAO = RuneDAO(dbHelper)
-        masteryDAO = MasteryDAO(dbHelper)
-        statDAO = StatDAO(dbHelper)
-        participantDAO = ParticipantDAO(dbHelper,timelineDAO,runeDAO,masteryDAO,statDAO)
-
-        banDAO = BanDAO(dbHelper)
-        teamDAO = TeamDAO(dbHelper, banDAO)
-
-        matchDAO = MatchDAO(dbHelper,
-                teamDAO,
-                participantDAO,
-                piDAO)
     }
 
     @After

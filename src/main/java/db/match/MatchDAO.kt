@@ -4,6 +4,8 @@ import db.DBHelper
 import extensions.produceMatch
 import model.match.Match
 import util.columnnames.MatchColumns
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * @author Josiah Kendall
@@ -21,6 +23,7 @@ class MatchDAO(val dbHelper : DBHelper,
      * [Match].
      */
     fun saveMatch(match : Match) {
+        dbHelper.connect()
         val sql = "insert into $MATCH_TABLE(" +
                 "${matchColumns.GAME_ID}, " +
                 "${matchColumns.PLATFORM_ID}, " +
@@ -44,7 +47,6 @@ class MatchDAO(val dbHelper : DBHelper,
                 "'${match.gameType}')"
 
         dbHelper.executeSQLScript(sql)
-
         //save teams and children
         for (team in match.teams) {
             teamDAO.saveTeamForMatch(team, match.gameId)
@@ -54,9 +56,14 @@ class MatchDAO(val dbHelper : DBHelper,
         var participantIndex = 0
         var summonerId : Long
         for (participant in match.participants) {
-            summonerId = match.participantIdentities[participantIndex].player.summonerId
-            participantDAO.saveParticipant(participant, match.gameId, summonerId)
-            participantIndex +=1
+            val participantIdentity = match.participantIdentities[participant.participantId-1]
+
+            val player = participantIdentity.player
+            if (player != null) {
+                summonerId = player.summonerId
+                participantDAO.saveParticipant(participant, match.gameId, summonerId)
+            }
+
         }
 
         var teamId = -1
@@ -65,7 +72,7 @@ class MatchDAO(val dbHelper : DBHelper,
         // save participantIdentities and children
         for (participantIdentity in match.participantIdentities) {
             // todo tidy this shitty code
-            val summonerId = participantIdentity.player.summonerId
+            val piSummonerId = participantIdentity.player?.summonerId
 
             // grab our variables that we store in this table to make for more efficient queries.
             teamId = match.participants[participantIdentity.participantId-1].teamId
@@ -73,13 +80,15 @@ class MatchDAO(val dbHelper : DBHelper,
             lane = match.participants[participantIdentity.participantId-1].timeline.lane
 
             // Save participant
-            participantIdentityDAO.saveParticipantIdentity(
-                    participantIdentity,
-                    match.gameId,
-                    summonerId,
-                    teamId,
-                    role,
-                    lane)
+            if (piSummonerId != null) {
+                participantIdentityDAO.saveParticipantIdentity(
+                        participantIdentity,
+                        match.gameId,
+                        piSummonerId,
+                        teamId,
+                        role,
+                        lane)
+            }
         }
     }
 

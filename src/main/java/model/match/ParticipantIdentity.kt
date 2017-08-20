@@ -5,4 +5,4 @@ package model.match
  */
 data class ParticipantIdentity(val participantId : Int,
                                val gameId : Long,
-                               val player : Player)
+                               val player : Player?)

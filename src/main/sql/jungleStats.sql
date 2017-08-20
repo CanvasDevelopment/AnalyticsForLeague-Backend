@@ -94,7 +94,7 @@ FROM participantidentity
 WHERE participantidentity.SummonerId = 1542360
       AND participantidentity.lane = 'JUNGLE'
       AND participantidentity.role = 'NONE'
-      AND participant.lane = 'MIDDLE'
+      AND participant.lane = 'TOP'
       AND participant.role = 'SOLO';
 
 # ally mid lane gold when im playing jungle
@@ -111,7 +111,7 @@ FROM participantidentity
 WHERE participantidentity.SummonerId = 1542360
       AND participantidentity.lane = 'JUNGLE'
       AND participantidentity.role = 'NONE'
-      AND participant.lane = 'MIDDLE'
+      AND participant.lane = 'TOP'
       AND participant.role = 'SOLO';
 
 # Ally adc when im playing support

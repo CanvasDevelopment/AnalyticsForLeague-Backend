@@ -1,7 +1,9 @@
 package db_test.champion
 
+import com.github.salomonbrys.kodein.instance
 import db.DBHelper
 import db.champion.ChampionDAO
+import di.KodeinManager
 import junit.framework.Assert.assertTrue
 import model.champion.Champion
 import model.champion.ChampionImage
@@ -15,13 +17,12 @@ class ChampionTests {
 
     @Test
     fun ensure_WeCanSaveAndLoadAChampionWithChampionImageOnIt() {
+        val kodeinManager = KodeinManager()
 
-        val dbHelper = DBHelper()
-        dbHelper.connect()
         val championImage = ChampionImage("test", "test", "test", 1, 1, 1, 1)
         val champion = Champion(23,"jax","jax", "Grandmaster", championImage)
 
-        val championDAO = ChampionDAO(dbHelper)
+        val championDAO = ChampionDAO(kodeinManager.kodein)
         championDAO.saveChampion(champion)
 
         val c2 = championDAO.getChampion(23)

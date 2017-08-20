@@ -1,5 +1,8 @@
 package db.champion
 
+import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.KodeinAware
+import com.github.salomonbrys.kodein.instance
 import db.DBHelper
 import extensions.*
 import model.champion.Champion
@@ -8,20 +11,23 @@ import model.champion.ChampionImage
 /**
  * @author Josiah Kendall
  */
-class ChampionDAO(val dbHelper: DBHelper) {
+class ChampionDAO(override val kodein : Kodein) : KodeinAware {
 
-    val CHAMPION_TABLE = "champion"
-    val CHAMPION_IMAGE_TABLE = "championimage"
-    val CHAMP_ID_COLUMN = "Id"
-    val FULL_COLUMN = "Full"
-    val SPRITE_COLUMN = "Sprite"
-    val IMAGE_GROUP_COLUMN = "ImageGroup"
-    val X_COLUMN = "X"
-    val Y_COLUMN = "Y"
-    val W_COLUMN = "W"
-    val H_COLUMN = "H"
+    val dbHelper : DBHelper = instance()
+
+    private val CHAMPION_TABLE = "champion"
+    private val CHAMPION_IMAGE_TABLE = "championimage"
+    private val CHAMP_ID_COLUMN = "Id"
+    private val FULL_COLUMN = "Full"
+    private val SPRITE_COLUMN = "Sprite"
+    private val IMAGE_GROUP_COLUMN = "ImageGroup"
+    private val X_COLUMN = "X"
+    private val Y_COLUMN = "Y"
+    private val W_COLUMN = "W"
+    private val H_COLUMN = "H"
 
     fun saveChampion(champion : Champion) : Long {
+        dbHelper.connect()
         val championImageId = saveChampionImage(champion.image)
         val insertString = "INSERT into $CHAMPION_TABLE values (" +
                 "${champion.id}, " +
@@ -33,10 +39,12 @@ class ChampionDAO(val dbHelper: DBHelper) {
                 "$CHAMP_KEY_COLUMN = '${champion.key}'," +
                 "$CHAMP_NAME_COLUMN = '${champion.name}'," +
                 "$CHAMP_TITLE_COLUMN = '${champion.title}'"
-        return dbHelper.executeSQLScript(insertString)
+        val result = dbHelper.executeSQLScript(insertString)
+        return result
     }
 
     internal fun saveChampionImage(champImage : ChampionImage) : Long {
+
         val insertString = "INSERT INTO $CHAMPION_IMAGE_TABLE (" +
                 "$FULL_COLUMN, " +
                 "$SPRITE_COLUMN, " +
@@ -59,18 +67,19 @@ class ChampionDAO(val dbHelper: DBHelper) {
                 "$Y_COLUMN = ${champImage.y}," +
                 "$H_COLUMN = ${champImage.h}," +
                 "$W_COLUMN = ${champImage.w}"
-
         return dbHelper.executeSQLScript(insertString)
     }
 
     fun getChampion(champId : Long) : Champion? {
         val queryString = "Select * from $CHAMPION_TABLE WHERE $CHAMP_ID_COLUMN = $champId"
+        dbHelper.connect()
         val result = dbHelper.executeSqlQuery(queryString)
 
         if (result.next()) {
             val champImageId = result.getLong(CHAMP_IMAGE_ID_COLUMN)
             val championImage = getChampionImage(champImageId)
-            return result.produceChampion(championImage)
+            val champion = result.produceChampion(championImage)
+            return champion
         }
         return null
     }

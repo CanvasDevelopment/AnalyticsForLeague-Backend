@@ -1,7 +1,9 @@
 package db_test.match
 
+import com.github.salomonbrys.kodein.instance
 import db.DBHelper
 import db.match.BanDAO
+import di.KodeinManager
 import model.match.Ban
 import org.junit.After
 import org.junit.Assert
@@ -18,14 +20,16 @@ class BanTests {
 
     @Before
     fun doSetUp() {
-        dbHelper = DBHelper()
-        dbHelper.connect()
-        banDAO = BanDAO(dbHelper)
+        val km = KodeinManager()
+        dbHelper = km.kodein.instance()
+        banDAO = BanDAO(km.kodein.instance())
     }
 
     @After
     fun doCleanUp() {
+        dbHelper.connect()
         dbHelper.executeSQLScript("Delete from ban where teamId = -1") // called team id not team row id.. todo change this
+        dbHelper.disconnect()
     }
 
     @Test

@@ -23,6 +23,7 @@ class TeamDAO(val dbHelper : DBHelper, val banDAO: BanDAO) {
      * @param gameId The id of the match that we are saving
      */
     fun saveTeamForMatch(team : Team, gameId :Long) : Long {
+        dbHelper.connect()
         val sql = "INSERT INTO $TEAM_TABLE(${teamColumns.TEAM_ID}, \n" +
                 "                 ${teamColumns.WIN}, \n" +
                 "                 ${teamColumns.FIRST_BLOOD}, \n" +
@@ -57,6 +58,7 @@ class TeamDAO(val dbHelper : DBHelper, val banDAO: BanDAO) {
                 "$gameId)"
 
         val teamId = dbHelper.executeSQLScript(sql)
+
         for(ban in team.bans) {
             banDAO.saveBan(ban, teamId)
         }
@@ -69,6 +71,7 @@ class TeamDAO(val dbHelper : DBHelper, val banDAO: BanDAO) {
      * @param teamId The id of the team in this specific match. Can be either 100 or 200.
      */
     fun getTeamByGameIdAndTeamId(gameId : Long, teamId : Int) : Team {
+        dbHelper.connect()
         val sql = "SELECT * FROM $TEAM_TABLE " +
                 "WHERE ${teamColumns.GAME_ID} = $gameId " +
                 "AND ${teamColumns.TEAM_ID} = $teamId"
@@ -77,7 +80,9 @@ class TeamDAO(val dbHelper : DBHelper, val banDAO: BanDAO) {
         result.next()
         val teamRowId = result.getLong(ID)
         val bans = banDAO.getAllBansByTeamRowId(teamRowId)
-        return result.produceTeam(bans)
+        dbHelper.connect()  // todo this connect disconnect shit is pretty yuck and bug inducing, would love to find a fix to this
+        val teamResult = result.produceTeam(bans)
+        return teamResult
     }
 
     /**
@@ -85,6 +90,7 @@ class TeamDAO(val dbHelper : DBHelper, val banDAO: BanDAO) {
      * @param gameId The id of the match
      */
     fun getAllTeamsForGameId(gameId : Long) : ArrayList<Team> {
+        dbHelper.connect()
         val sql = "SELECT * FROM $TEAM_TABLE " +
                 "WHERE ${teamColumns.GAME_ID} = $gameId"
         val result = dbHelper.executeSqlQuery(sql)
@@ -93,9 +99,9 @@ class TeamDAO(val dbHelper : DBHelper, val banDAO: BanDAO) {
         while(result.next()) {
             val teamRowId = result.getLong(ID)
             val bans = banDAO.getAllBansByTeamRowId(teamRowId)
+            dbHelper.connect()
             teams.add(result.produceTeam(bans))
         }
-
         return teams
     }
 }

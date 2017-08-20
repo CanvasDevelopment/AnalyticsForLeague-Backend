@@ -12,7 +12,8 @@ class PlayerDAO(val dbHelper: DBHelper) {
 
     val PLAYER_TABLE_NAME : String = "player"
 
-    fun savePlayer(player: Player, participantIdentityRowId : Long) : Long {
+    fun savePlayer(player: Player?, participantIdentityRowId: Long) : Long {
+        // todo find a better situation for this player?.shit
         val insertSQL = "insert into $PLAYER_TABLE_NAME (" +
                 "${dbHelper.PARTICIPANT_IDENTITY_ROW_COLUMN}," +
                 "${dbHelper.PLATFORM_ID_COLUMN}, " +
@@ -22,12 +23,12 @@ class PlayerDAO(val dbHelper: DBHelper) {
                 "${dbHelper.MATCH_HISTORY_URI_COLUMN}, " +
                 "${dbHelper.PROFILE_ICON_COLUMN}) VALUES(" +
                 "$participantIdentityRowId, " +
-                "'${player.platformId}', " +
-                "${player.accountId}, " +
-                "'${player.summonerName}', " +
-                "'${player.currentPlatformId}', " +
-                "'${player.matchHistoryUri}', " +
-                "${player.profileIcon})"
+                "'${player?.platformId}', " +
+                "${player?.accountId}, " +
+                "'${player?.summonerName}', " +
+                "'${player?.currentPlatformId}', " +
+                "'${player?.matchHistoryUri}', " +
+                "${player?.profileIcon})"
 
         return dbHelper.executeSQLScript(insertSQL)
     }

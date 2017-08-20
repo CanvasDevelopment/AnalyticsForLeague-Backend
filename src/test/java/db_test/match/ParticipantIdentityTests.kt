@@ -62,11 +62,11 @@ class ParticipantIdentityTests {
     fun EnsureWeCanSaveAndLoadParticipantEntityAndPlayer() {
         val player1 = produceRandomPlayer()
         val pi = ParticipantIdentity(1, gameId, player1)
-        val id = piDAO.saveParticipantIdentity(pi, gameId, pi.player.summonerId, -1,"SOLO", "TOP")
+        val id = piDAO.saveParticipantIdentity(pi, gameId, pi.player!!.summonerId, -1,"SOLO", "TOP")
 
         val pi2 = piDAO.getParticipantIdentity(gameId, player1.summonerId)
-        Assert.assertTrue(pi.player.summonerName == pi2.player.summonerName)
-        Assert.assertTrue(pi.player.platformId == pi2.player.platformId)
+        Assert.assertTrue(pi.player?.summonerName == pi2.player!!.summonerName)
+        Assert.assertTrue(pi.player?.platformId == pi2.player!!.platformId)
         Assert.assertTrue(pi.gameId == pi2.gameId)
         Assert.assertTrue(pi.participantId == pi2.participantId)
     }
@@ -81,13 +81,13 @@ class ParticipantIdentityTests {
         val pi2 = ParticipantIdentity(2, gameId, player2)
         val pi3 = ParticipantIdentity(3, gameId, player3)
 
-        piDAO.saveParticipantIdentity(pi1, gameId, pi1.player.summonerId,-1,"SOLO", "TOP")
-        piDAO.saveParticipantIdentity(pi2, gameId, pi2.player.summonerId,-1,"SOLO", "TOP")
-        piDAO.saveParticipantIdentity(pi3, gameId, pi3.player.summonerId,-1,"SOLO", "TOP")
+        piDAO.saveParticipantIdentity(pi1, gameId, pi1.player!!.summonerId,-1,"SOLO", "TOP")
+        piDAO.saveParticipantIdentity(pi2, gameId, pi2.player!!.summonerId,-1,"SOLO", "TOP")
+        piDAO.saveParticipantIdentity(pi3, gameId, pi3.player!!.summonerId,-1,"SOLO", "TOP")
 
-        val result = piDAO.getParticipantIdentity(pi2.gameId, pi2.player.summonerId)
+        val result = piDAO.getParticipantIdentity(pi2.gameId, pi2.player!!.summonerId)
 
-        Assert.assertTrue(result.player.summonerName == pi2.player.summonerName)
+        Assert.assertTrue(result.player!!.summonerName == pi2.player!!.summonerName)
         Assert.assertTrue(result.participantId == pi2.participantId)
     }
 

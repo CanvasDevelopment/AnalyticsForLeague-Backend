@@ -62,6 +62,9 @@ class DBHelper {
      * connect to a database instance.
      */
     fun connect(): Boolean {
+        if (currentlyConnected) {
+            return true
+        }
         try {
             // Check if we are currently running in app engine, and set the appropriate parameters.
             if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
@@ -131,7 +134,8 @@ class DBHelper {
     @Throws(SQLException::class, IllegalStateException::class)
     fun executeSqlQuery(query: String): ResultSet {
         if (connection == null || !currentlyConnected) {
-            throw IllegalStateException("No Current database connection. Use DbConnect() to connect to a database")
+            connect()
+//            throw IllegalStateException("No Current database connection. Use DbConnect() to connect to a database")
         }
         val statement = connection!!.createStatement()
         val resultSet = statement.executeQuery(query)
