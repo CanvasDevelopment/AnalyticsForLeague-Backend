@@ -6,6 +6,7 @@ import db.DBHelper
 import db.match.MatchDAO
 import db.refined_stats.RefinedStatsDAO
 import di.KodeinManager
+import model.positions.*
 import network.riotapi.MatchService
 import org.junit.Assert
 import org.junit.Before
@@ -24,9 +25,16 @@ import java.io.InputStreamReader
  */
 class RefinedStatsTests {
 
-    lateinit var dbHelper : DBHelper
-    lateinit var refinedStatsDAO : RefinedStatsDAO
-    lateinit var matchDAO : MatchDAO
+    lateinit var dbHelper: DBHelper
+    lateinit var refinedStatsDAO: RefinedStatsDAO
+    lateinit var matchDAO: MatchDAO
+
+    val tables = Tables()
+    val jungle = Jungle()
+    val top = Top()
+    val mid = Middle()
+    val adc = Marksman()
+    val sup = Support()
     val km = KodeinManager()
 
     @Before
@@ -34,6 +42,7 @@ class RefinedStatsTests {
         dbHelper = km.kodein.instance()
         dbHelper.connect()
         matchDAO = km.kodein.instance()
+        refinedStatsDAO = km.kodein.instance()
         // wipe our database.
         val tables = Tables()
         dbHelper.executeSQLScript("DELETE FROM matchtable")
@@ -54,29 +63,24 @@ class RefinedStatsTests {
         dbHelper.executeSQLScript("DELETE FROM stats")
         dbHelper.executeSQLScript("DELETE FROM timeline")
 
-        var mockClient = MockClient({-> getListData()})
-        val adapterBuilder : RestAdapter.Builder = RestAdapter.Builder()
+        var mockClient = MockClient({ -> getListData() })
+        val adapterBuilder: RestAdapter.Builder = RestAdapter.Builder()
                 .setEndpoint("https://oc1.api.riotgames.com")
                 .setConverter(GsonConverter(GsonBuilder().create()))
                 .setClient(mockClient)
         var serviceAdapter = adapterBuilder.build()!!
         val matchService = serviceAdapter.create<MatchService>(MatchService::class.java)
-        val result = matchService.getMatchListForAccount("",1)
+        val result = matchService.getMatchListForAccount("", 1)
         for (match in result.matches) {
-
             mockClient = MockClient { getMatchData(match.gameId) }
             adapterBuilder.setClient(mockClient)
             serviceAdapter = adapterBuilder.build()
-            val matchService2 =  serviceAdapter.create<MatchService>(MatchService::class.java)
+            val matchService2 = serviceAdapter.create<MatchService>(MatchService::class.java)
             val match2 = matchService2.getMatchByMatchId("ds", -1)
-            if (match2.gameMode != "CLASSIC") {
-                matchDAO.saveMatch(match2) // todo implement some sort of version of this into the code
-            }
-        }
-    }
 
-    @Test
-    fun testThatWeCanFetchCreepsPerMinAverageForEachGameStageForTheHero() {
+            matchDAO.saveMatch(match2) // todo implement some sort of version of this into the code
+
+        }
     }
 
     private fun getMatchData(gameId: Long): String {
@@ -84,7 +88,7 @@ class RefinedStatsTests {
         val buf = BufferedReader(InputStreamReader(inputs))
         var line = buf.readLine()
         val sb = StringBuilder()
-        while(line != null){
+        while (line != null) {
             sb.append(line).append("\n")
             line = buf.readLine()
         }
@@ -98,12 +102,84 @@ class RefinedStatsTests {
         val buf = BufferedReader(InputStreamReader(inputs))
         var line = buf.readLine()
         val sb = StringBuilder()
-        while(line != null){
+        while (line != null) {
             sb.append(line).append("\n")
             line = buf.readLine()
         }
         val fileAsString = sb.toString()
 
         return fileAsString
+    }
+
+    @Test
+    fun ensureThatWeCanGetCreepsPerMinEarlyMidAndLateGameCorrectlyForJungle() {
+        // trigger 'fetch refined stats'
+        val gameStageRefinedStats = refinedStatsDAO.fetchGameStageStatAverageForHero(tables.CREEPS_PER_MIN,
+                1542360,
+                jungle.role,
+                jungle.lane)
+        Assert.assertEquals(gameStageRefinedStats.earlyGame, 2.1538461515536675f, 0.005f)
+        Assert.assertEquals(gameStageRefinedStats.midGame, 16.38461553133451f, 0.005f)
+        Assert.assertEquals(gameStageRefinedStats.lateGame, 32.69230824250442f, 0.005f)
+    }
+
+    @Test
+    fun ensureThatWeCanGetCreepsPerMinEarlyMidAndLateGameCorrectlyForTop() {
+        // trigger 'fetch refined stats'
+        val gameStageRefinedStats = refinedStatsDAO.fetchGameStageStatAverageForHero(tables.CREEPS_PER_MIN,
+                1542360,
+                top.role,
+                top.lane)
+        Assert.assertEquals(gameStageRefinedStats.earlyGame, 2.1538461515536675f, 0.005f)
+        Assert.assertEquals(gameStageRefinedStats.midGame, 16.38461553133451f, 0.005f)
+        Assert.assertEquals(gameStageRefinedStats.lateGame, 32.69230824250442f, 0.005f)
+    }
+
+    @Test
+    fun ensureThatWeCanGetCreepsPerMinEarlyMidAndLateGameCorrectlyForMid() {
+        // trigger 'fetch refined stats'
+        val gameStageRefinedStats = refinedStatsDAO.fetchGameStageStatAverageForHero(tables.CREEPS_PER_MIN,
+                1542360,
+                jungle.role,
+                jungle.lane)
+        Assert.assertEquals(gameStageRefinedStats.earlyGame, 2.1538461515536675f, 0.005f)
+        Assert.assertEquals(gameStageRefinedStats.midGame, 16.38461553133451f, 0.005f)
+        Assert.assertEquals(gameStageRefinedStats.lateGame, 32.69230824250442f, 0.005f)
+    }
+
+    @Test
+    fun ensureThatWeCanGetCreepsPerMinEarlyMidAndLateGameCorrectlyForSupport() {
+        // trigger 'fetch refined stats'
+        val gameStageRefinedStats = refinedStatsDAO.fetchGameStageStatAverageForHero(tables.CREEPS_PER_MIN,
+                1542360,
+                jungle.role,
+                jungle.lane)
+        Assert.assertEquals(gameStageRefinedStats.earlyGame, 2.1538461515536675f, 0.005f)
+        Assert.assertEquals(gameStageRefinedStats.midGame, 16.38461553133451f, 0.005f)
+        Assert.assertEquals(gameStageRefinedStats.lateGame, 32.69230824250442f, 0.005f)
+    }
+
+    @Test
+    fun ensureThatWeCanGetCreepsPerMinEarlyMidAndLateGameCorrectlyForADC() {
+        // trigger 'fetch refined stats'
+        val gameStageRefinedStats = refinedStatsDAO.fetchGameStageStatAverageForHero(tables.CREEPS_PER_MIN,
+                1542360,
+                jungle.role,
+                jungle.lane)
+        Assert.assertEquals(gameStageRefinedStats.earlyGame, 2.1538461515536675f, 0.005f)
+        Assert.assertEquals(gameStageRefinedStats.midGame, 16.38461553133451f, 0.005f)
+        Assert.assertEquals(gameStageRefinedStats.lateGame, 32.69230824250442f, 0.005f)
+    }
+
+    @Test
+    fun ensureThatWeCanGetCreepsDiffPerMinEarlyMidAndLateGameCorrectlyForJungle() {
+        // trigger 'fetch refined stats'
+        val gameStageRefinedStats = refinedStatsDAO.fetchGameStageStatAverageForHero(tables.CS_DIFF_PER_MIN,
+                1542360,
+                jungle.role,
+                jungle.lane)
+        Assert.assertEquals(gameStageRefinedStats.earlyGame, -2.91666670391957f, 0.005f)
+        Assert.assertEquals(gameStageRefinedStats.midGame, 5.166666656732559f, 0.005f)
+        Assert.assertEquals(gameStageRefinedStats.lateGame, 10.999999940395355f, 0.005f)
     }
 }

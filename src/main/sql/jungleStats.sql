@@ -1,22 +1,23 @@
 # Select the avg for each game stage for the delta stats using the summonerId
 
 #Select avg number of wards placed
-select avg(wardsPlaced) FROM (SELECT stats.wardsPlaced
-FROM participantidentity
-  JOIN participant ON participantidentity.gameId = participant.GameId
-                      AND participant.ParticipantId = participantidentity.ParticipantId
-  JOIN stats on stats.ParticipantRowId = participant.Id
-WHERE participantidentity.lane = 'JUNGLE' and participantidentity.SummonerId = 1542360
-ORDER BY participant.gameId ASC
-LIMIT 20) as Placed;
+SELECT avg(wardsPlaced)
+FROM (SELECT stats.wardsPlaced
+      FROM participantidentity
+        JOIN participant ON participantidentity.gameId = participant.GameId
+                            AND participant.ParticipantId = participantidentity.ParticipantId
+        JOIN stats ON stats.ParticipantRowId = participant.Id
+      WHERE participantidentity.lane = 'JUNGLE' AND participantidentity.SummonerId = 1542360
+      ORDER BY participant.gameId ASC
+      LIMIT 20) AS Placed;
 
 #max wards placed
 SELECT max(stats.wardsPlaced)
 FROM participantidentity
   JOIN participant ON participantidentity.gameId = participant.GameId
                       AND participant.ParticipantId = participantidentity.ParticipantId
-  JOIN stats on stats.ParticipantRowId = participant.Id
-WHERE participantidentity.lane = 'JUNGLE' and participantidentity.SummonerId = 1542360
+  JOIN stats ON stats.ParticipantRowId = participant.Id
+WHERE participantidentity.lane = 'JUNGLE' AND participantidentity.SummonerId = 1542360
 ORDER BY participant.gameId ASC
 LIMIT 20;
 
@@ -60,9 +61,23 @@ FROM participantidentity
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
   LEFT JOIN creepspermin ON creepspermin.timelineId = timeline.Id
 WHERE participantidentity.SummonerId = 1542360
-      AND participantidentity.lane = 'Bottom'
-      AND participantidentity.role = 'DUO_CARRY';
+      AND participantidentity.lane = 'Top'
+      AND participantidentity.role = 'Solo';
 
+# Our game stage stats in a specific role
+SELECT
+  avg(zeroToTen) * 10      AS EarlyGame,
+  avg(tenToTwenty) * 10    AS MidGame,
+  avg(twentyToThirty) * 10 AS LateGame
+FROM participantidentity
+  JOIN participant ON
+                     participantidentity.gameId = participant.GameId AND
+                     participant.ParticipantId = participantidentity.ParticipantId
+  LEFT JOIN timeline ON timeline.participantRowId = participant.Id
+  LEFT JOIN csdiffpermin ON csdiffpermin.timelineId = timeline.Id
+WHERE participantidentity.SummonerId = 1542360
+      AND participantidentity.lane = 'TOP'
+      AND participantidentity.role = 'Solo';
 # enemy adc game stats when im playing support
 SELECT
   avg(zeroToTen) * 10      AS EarlyGame,
@@ -141,10 +156,10 @@ FROM participantidentity
                      participantidentity.gameId = participant.GameId AND
                      participant.ParticipantId = participantidentity.ParticipantId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
-  LEFT JOIN creepspermin ON creepspermin.timelineId = timeline.Id
+  LEFT JOIN csdiffpermin ON csdiffpermin.timelineId = timeline.Id
 WHERE participantidentity.SummonerId = 1542360
-      AND participantidentity.lane = 'Bottom'
-      AND participantidentity.role = 'DUO_CARRY';
+      AND participantidentity.lane = 'TOP'
+      AND participantidentity.role = 'Solo';
 
 
 SELECT participantidentity.gameId

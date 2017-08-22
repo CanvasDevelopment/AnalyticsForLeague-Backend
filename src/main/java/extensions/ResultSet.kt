@@ -4,6 +4,7 @@ import model.champion.Champion
 import model.champion.ChampionImage
 import model.match.*
 import model.matchlist.MatchSummary
+import model.refined_stats.GameStageAverages
 import model.stats.GameStageDelta
 import util.ColumnNames
 import util.columnnames.*
@@ -21,7 +22,7 @@ val particpantColumns = ParticipantColumns()
 val banColumns = BanColumns()
 val teamColumns = TeamColumns()
 val matchColumns = MatchColumns()
-
+val gameStageRefinedColumns = GameStageAveragesColumns()
 val MATCH_SUMMARY = "matchsummary2"
 val PLATFORM_ID = "PlatformId"
 val GAME_ID = "GameId"
@@ -55,7 +56,7 @@ val H_COLUMN = "H"
 val PARTICIPANT_ID = "ParticipantId"
 
 
-fun ResultSet.produceMatchSummary() : MatchSummary {
+fun ResultSet.produceMatchSummary(): MatchSummary {
     val result = this
     val ms = MatchSummary()
     ms.id = result.getInt(ID)
@@ -71,7 +72,7 @@ fun ResultSet.produceMatchSummary() : MatchSummary {
     return ms
 }
 
-fun ResultSet.produceChampion(image : ChampionImage) : Champion {
+fun ResultSet.produceChampion(image: ChampionImage): Champion {
     val id = getInt(ID)
     val key = getString(CHAMP_KEY_COLUMN)
     val name = getString(CHAMP_NAME_COLUMN)
@@ -80,7 +81,7 @@ fun ResultSet.produceChampion(image : ChampionImage) : Champion {
     return Champion(id, key, name, title, image)
 }
 
-fun ResultSet.produceChampionImage() : ChampionImage {
+fun ResultSet.produceChampionImage(): ChampionImage {
 
     val full = getString(FULL_COLUMN)
     val sprite = getString(SPRITE_COLUMN)
@@ -93,13 +94,13 @@ fun ResultSet.produceChampionImage() : ChampionImage {
     return ChampionImage(full, sprite, imageGroup, x, y, w, h)
 }
 
-fun ResultSet.producePlayer() : Player {
-    val platformId : String = getString(PLATFORM_ID)
-    val accountId : Long = getLong(ACCOUNT_ID)
-    val summonerName : String = getString(SUMMONER_NAME)
-    val currentPlatformId : String = getString(CURRENT_PLATFORM_ID)
-    val matchHistoryUri : String = getString(MATCH_HISTORY_URI)
-    val profileIcon : Int = getInt(PROFILE_ICON)
+fun ResultSet.producePlayer(): Player {
+    val platformId: String = getString(PLATFORM_ID)
+    val accountId: Long = getLong(ACCOUNT_ID)
+    val summonerName: String = getString(SUMMONER_NAME)
+    val currentPlatformId: String = getString(CURRENT_PLATFORM_ID)
+    val matchHistoryUri: String = getString(MATCH_HISTORY_URI)
+    val profileIcon: Int = getInt(PROFILE_ICON)
 
     // The reason we return -1 here is that we never need to fetch a player instance with the summoner Id, as that
     // summonerId will always be on the parent (ParticipantIdentity), as it is through the participantIdentity that we find
@@ -107,7 +108,7 @@ fun ResultSet.producePlayer() : Player {
     return Player(platformId, accountId, summonerName, -1, currentPlatformId, matchHistoryUri, profileIcon)
 }
 
-fun ResultSet.produceParticipantIdentity() : ParticipantIdentity {
+fun ResultSet.produceParticipantIdentity(): ParticipantIdentity {
     val player = producePlayer()
     val participantId = getInt(PARTICIPANT_ID)
     val gameId = getLong(GAME_ID)
@@ -126,7 +127,7 @@ fun ResultSet.produceRune(): Rune {
     return Rune(runeId, rank)
 }
 
-fun ResultSet.produceStats() : Stats {
+fun ResultSet.produceStats(): Stats {
     return Stats(getInt(statColumns.PARTICIPANT_ID),
             getBoolean(statColumns.WIN),
             getInt(statColumns.ITEM0),
@@ -194,8 +195,8 @@ fun ResultSet.produceStats() : Stats {
             getInt(statColumns.TOTAL_SCORE_RANK))
 }
 
-fun ResultSet.produceGameStageStat() : GameStageDelta {
-    val unit =  GameStageDelta()
+fun ResultSet.produceGameStageStat(): GameStageDelta {
+    val unit = GameStageDelta()
     unit.zeroToTen = getDouble(gameStageColumns.ZERO_TO_TEN)
     unit.tenToTwenty = getDouble(gameStageColumns.TEN_TO_TWENTY)
     unit.twentyToThirty = getDouble(gameStageColumns.TWENTY_TO_THIRTY)
@@ -204,13 +205,13 @@ fun ResultSet.produceGameStageStat() : GameStageDelta {
     return unit
 }
 
-fun ResultSet.produceTimeline(creepsPerMin : GameStageDelta,
-                              xpPerMin : GameStageDelta,
-                              goldPerMin : GameStageDelta,
-                              damageTakenPerMin : GameStageDelta,
-                              csDiffPerMin :GameStageDelta,
-                              xpDiffPerMin :GameStageDelta,
-                              damageTakenDiffPerMin : GameStageDelta) : Timeline {
+fun ResultSet.produceTimeline(creepsPerMin: GameStageDelta,
+                              xpPerMin: GameStageDelta,
+                              goldPerMin: GameStageDelta,
+                              damageTakenPerMin: GameStageDelta,
+                              csDiffPerMin: GameStageDelta,
+                              xpDiffPerMin: GameStageDelta,
+                              damageTakenDiffPerMin: GameStageDelta): Timeline {
 
     val participantId = getInt(PARTICIPANT_ID)
     val role = getString(ROLE)
@@ -230,8 +231,8 @@ fun ResultSet.produceTimeline(creepsPerMin : GameStageDelta,
 
 fun ResultSet.produceParticipant(timeline: Timeline,
                                  stats: Stats,
-                                 masteries : ArrayList<Mastery>,
-                                 runes : ArrayList<Rune>) : Participant {
+                                 masteries: ArrayList<Mastery>,
+                                 runes: ArrayList<Rune>): Participant {
 
     val particpantId = getInt(particpantColumns.PARTICIPANT_ID)
     val teamId = getInt(particpantColumns.TEAM_ID)
@@ -251,11 +252,11 @@ fun ResultSet.produceParticipant(timeline: Timeline,
             timeline)
 }
 
-fun ResultSet.produceBan() : Ban {
+fun ResultSet.produceBan(): Ban {
     return Ban(getInt(banColumns.CHAMPION_ID), getInt(banColumns.PICK_TURN))
 }
 
-fun ResultSet.produceTeam(bans : ArrayList<Ban>) : Team {
+fun ResultSet.produceTeam(bans: ArrayList<Ban>): Team {
     return Team(getInt(teamColumns.TEAM_ID),
             getString(teamColumns.WIN),
             getBoolean(teamColumns.FIRST_BLOOD),
@@ -274,9 +275,9 @@ fun ResultSet.produceTeam(bans : ArrayList<Ban>) : Team {
             bans)
 }
 
-fun ResultSet.produceMatch(teams : ArrayList<Team>,
-                           participants : ArrayList<Participant>,
-                           participantIdentities : ArrayList<ParticipantIdentity>) : Match{
+fun ResultSet.produceMatch(teams: ArrayList<Team>,
+                           participants: ArrayList<Participant>,
+                           participantIdentities: ArrayList<ParticipantIdentity>): Match {
     return Match(getLong(matchColumns.GAME_ID),
             getString(matchColumns.PLATFORM_ID),
             getLong(matchColumns.GAME_CREATION),
@@ -290,4 +291,11 @@ fun ResultSet.produceMatch(teams : ArrayList<Team>,
             teams,
             participants,
             participantIdentities)
+}
+
+fun ResultSet.produceGameStageAverages(): GameStageAverages {
+    return GameStageAverages(
+            getFloat(gameStageRefinedColumns.EARLY_GAME),
+            getFloat(gameStageRefinedColumns.MID_GAME),
+            getFloat(gameStageRefinedColumns.LATE_GAME))
 }
