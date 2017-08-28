@@ -65,7 +65,6 @@ class ApplicationTests {
         networkInterface = NetworkInterface("oc1")
 
         matchSummaryDAO = MatchSummaryDAO(dbHelper)
-
     }
 
     @After

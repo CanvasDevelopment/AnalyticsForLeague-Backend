@@ -6,6 +6,7 @@ import model.match.*
 import model.matchlist.MatchSummary
 import model.refined_stats.GameStageAverages
 import model.refined_stats.GameStages
+import model.refined_stats.RefinedStatSummary
 import model.stats.GameStageDelta
 import util.ColumnNames
 import util.columnnames.*
@@ -300,11 +301,23 @@ fun ResultSet.produceGameStageAverages(): GameStageAverages {
             getFloat(gameStageRefinedColumns.LATE_GAME))
 }
 
-fun ResultSet.produceGameStagesLists(summonerId : Long) : GameStages {
-    val gameDeltas = ArrayList<GameStageDelta>()
-    while(next()) {
-        gameDeltas.add(produceGameStageStat())
-    }
-
-    return GameStages(gameDeltas, summonerId)
+fun ResultSet.produceSummaryStat() : RefinedStatSummary{
+    return RefinedStatSummary(getLong(particpantColumns.SUMMONER_ID),
+            getInt(particpantColumns.CHAMPION_ID),
+            getLong(particpantColumns.GAME_ID),
+            getInt(teamColumns.TEAM_ID),
+            getString(teamColumns.WIN) == "Win",
+            getInt(teamColumns.TOWER_KILLS),
+            getInt(teamColumns.DRAGON_KILLS),
+            getInt(teamColumns.RIFT_HERALD_KILLS),
+            getInt(teamColumns.BARON_KILLS))
 }
+
+//fun ResultSet.produceGameStagesLists(summonerId : Long) : GameStages {
+//    val gameDeltas = ArrayList<GameStageDelta>()
+//    while(next()) {
+//        gameDeltas.add(produceGameStageStat())
+//    }
+//
+//    return GameStages(gameDeltas, )
+//}
