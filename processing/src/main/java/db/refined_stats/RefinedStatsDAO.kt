@@ -1,28 +1,28 @@
 package db.refined_stats
 
 import db.DBHelper
-import extensions.produceGameStageAverages
+import extensions.produceGameStageRefinedStat
 import extensions.produceSummaryStat
-import model.refined_stats.GameStageAverages
+import model.refined_stats.GameStageStat
 import model.refined_stats.GameStages
 import model.refined_stats.RefinedStatSummary
-import util.columnnames.GameStageAveragesColumns
 import util.Tables
 import model.positions.Jungle
 
 
 /**
  * @author Josiah Kendall
+ *
+ * A DAO to fetch statistics from the raw tables that we save from the initial download from riot. This allows us an
+ * easy way to pull out stats that we want about our hero and our villian. These stats will then be saved to our refined
+ * table for easier access.
  */
-class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
+class RefinedStatsDAO(val dbHelper: DBHelper) {
 
-
-
-    val tables = Tables()
-    val gameStageColumns = GameStageAveragesColumns()
+    private val tables = Tables()
 
     /**
-     * Fetch the averages for the early, mid and late game for a summoner at a specific stat, in a given position.
+     * Fetch a list for the early, mid and late game results for a summoner at a specific stat, in a given position.
      *
      * @param deltaName     The stat table name that we want to fetch the data from. Use [Tables] to get the table name
      *                      you are after.
@@ -33,40 +33,86 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
      *                      to get the correct role / lane strings
      *
      */
-    fun fetchGameStageStatAverageForHero(
+    fun fetchGameStageStatListForHero(
             deltaName: String,
             summonerId: Long,
             role: String,
-            lane: String): GameStageAverages {
+            lane: String): ArrayList<GameStageStat> {
 
         val sql = "SELECT\n" +
-                "  avg(zeroToTen) * 10      AS ${gameStageColumns.EARLY_GAME},\n" +
-                "  avg(tenToTwenty) * 10    AS ${gameStageColumns.MID_GAME},\n" +
-                "  avg(twentyToThirty) * 10 AS ${gameStageColumns.LATE_GAME}\n" +
+                "  participantidentity.gameId,\n" +
+                "  zeroToTen * 10      AS EarlyGame,\n" +
+                "  tenToTwenty * 10    AS MidGame,\n" +
+                "  twentyToThirty * 10 AS LateGame\n" +
                 "FROM participantidentity\n" +
                 "  JOIN participant ON\n" +
                 "                     participantidentity.gameId = participant.GameId AND\n" +
                 "                     participant.ParticipantId = participantidentity.ParticipantId\n" +
                 "  LEFT JOIN timeline ON timeline.participantRowId = participant.Id\n" +
                 "  LEFT JOIN $deltaName ON $deltaName.timelineId = timeline.Id\n" +
+                "  LEFT JOIN matchtable on participant.GameId = matchtable.GameId\n" +
                 "WHERE participantidentity.SummonerId = $summonerId\n" +
                 "      AND participantidentity.lane = '$lane'\n" +
-                "      AND participantidentity.role = '$role'"
+                "      AND participantidentity.role = '$role'\n" +
+                "      AND GameDuration > 300"
 
         val result = dbHelper.executeSqlQuery(sql)
-        if (result.next()) {
-            return result.produceGameStageAverages()
+
+        val results = ArrayList<GameStageStat>()
+        while (result.next()) {
+            results.add(result.produceGameStageRefinedStat())
         }
-        return GameStageAverages(-1f, -1f, -1f)
+        return results
+    }
+
+    /**
+     * Fetch the game stage for our villian, for a certain game stage stat.
+     * @param deltaName The name of the table to get the game stages from. Use [Tables] to get a table
+     * @param summonerId The summoner id of our HERO. You must use the hero Id here, not the villan Id.
+     * @param role The role of the hero and the villan
+     * @param lane The lane of the hero and the villan
+     */
+    fun fetchGameStageStatListForVillian(deltaName: String,
+                                         summonerId: Long,
+                                         role: String,
+                                         lane: String) : ArrayList<GameStageStat> {
+        val sql = "SELECT\n" +
+                "  participantidentity.gameId,\n" +
+                "  zeroToTen * 10 as EarlyGame,\n" +
+                "  tenToTwenty * 10 as MidGame,\n" +
+                "  twentyToThirty * 10 as LateGame\n" +
+                "FROM participantidentity\n" +
+                "  JOIN participant ON\n" +
+                "                     participantidentity.gameId = participant.GameId AND\n" +
+                "                     participant.lane = participantidentity.lane AND\n" +
+                "                     participant.role = participantidentity.role AND\n" +
+                "                     participantidentity.teamId != participant.TeamId\n" +
+                "  LEFT JOIN timeline ON timeline.participantRowId = participant.Id\n" +
+                "  LEFT JOIN $deltaName ON $deltaName.timelineId = timeline.Id\n" +
+                "    LEFT JOIN matchtable on participant.GameId = matchtable.GameId\n" +
+                "WHERE participantidentity.SummonerId = $summonerId\n" +
+                "      AND participantidentity.lane = '$lane'\n" +
+                "      AND participantidentity.role = '$role'\n" +
+                "      AND GameDuration > 300"
+
+        val result = dbHelper.executeSqlQuery(sql)
+
+        val results = ArrayList<GameStageStat>()
+        while (result.next()) {
+            results.add(result.produceGameStageRefinedStat())
+        }
+        return results
     }
 
 
     /**
      * Fetch a list of [RefinedStatSummary] for a specific role.
-     * @param summonerId The id of the hero
-     * @param role String
+     *
+     * @param summonerId    The riot given SummonerId of the hero
+     * @param role          The role that we want to filter to.
+     * @param lane          The Lane that we want to filter to.
      */
-    override fun fetchGameSummaryStatsForHero(summonerId: Long, role: String, lane: String): ArrayList<RefinedStatSummary> {
+    fun fetchGameSummaryStatsForHero(summonerId: Long, role: String, lane: String): ArrayList<RefinedStatSummary> {
         val sql = "SELECT\n" +
                 "  ${tables.PARTICIPANT}.SummonerId,\n" +
                 "  ${tables.PARTICIPANT}.GameId,\n" +
@@ -97,7 +143,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
         return statList
     }
 
-    override fun fetchGameSummaryStatsForVillan(summonerId: Long, role: String, lane: String): ArrayList<RefinedStatSummary> {
+    fun fetchGameSummaryStatsForVillan(summonerId: Long, role: String, lane: String): ArrayList<RefinedStatSummary> {
        val sql = "SELECT\n" +
                "  participantidentity.SummonerId,\n" +
                "  participant.GameId,\n" +
@@ -128,33 +174,4 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
 
         return statList
     }
-
-    override fun fetchHeroGameStageStats(summonerId: Long, role: String, lane: String, tableName: String): GameStages {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-//    fun fetchHeroGameStagesLists(gameStageTable: String,
-//                                             summonerId: Long,
-//                                             role: String,
-//                                             lane: String) : GameStages {
-//        val sql = "SELECT\n" +
-//                "  $gameStageTable.zeroToTen * 10           AS EarlyGame,\n" +
-//                "  $gameStageTable.tenToTwenty * 10         AS MidGame,\n" +
-//                "  $$gameStageTable.twentyToThirty * 10      AS LateGame,\n" +
-//
-//                "FROM ${tables.PARTICIPANT_IDENTITY}\n" +
-//                "  JOIN ${tables.PARTICIPANT} ON\n" +
-//                "                     ${tables.PARTICIPANT_IDENTITY}.gameId = ${tables.PARTICIPANT}.GameId AND\n" +
-//                "                     ${tables.PARTICIPANT}.lane = ${tables.PARTICIPANT_IDENTITY}.lane AND\n" +
-//                "                     ${tables.PARTICIPANT}.role = ${tables.PARTICIPANT_IDENTITY}.role AND\n" +
-//                "                     ${tables.PARTICIPANT_IDENTITY}.teamId = ${tables.PARTICIPANT}.TeamId\n" +
-//                "  LEFT JOIN ${tables.TIMELINE} ON ${tables.TIMELINE}.participantRowId = ${tables.PARTICIPANT}.Id\n" +
-//                "  LEFT JOIN $gameStageTable ON $gameStageTable.timelineId = ${tables.TIMELINE}.Id\n" +
-//                "WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = $summonerId\n" +
-//                "      AND ${tables.PARTICIPANT_IDENTITY}.lane = '$lane'\n" +
-//                "      AND ${tables.PARTICIPANT_IDENTITY}.role = '$role'"
-//
-//        val result = dbHelper.executeSqlQuery(sql)
-//        return result.produceGameStagesLists(summonerId)
-//    }
 }

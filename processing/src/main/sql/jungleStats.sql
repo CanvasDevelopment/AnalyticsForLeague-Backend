@@ -50,24 +50,10 @@ ORDER BY participant.gameId ASC;
 
 # Enemy game stage stats when we are in a specific role, with a bit extra
 SELECT
-  creepspermin.zeroToTen * 10                 AS creepsperminEarlyGame,
-  creepspermin.tenToTwenty * 10               AS creepsperminMidGame,
-  creepspermin.twentyToThirty * 10            AS creepsperminLateGame,
-  goldPerMin.zeroToTen * 10                 AS goldPerMinEarlyGame,
-  goldPerMin.tenToTwenty * 10               AS goldPerMinMidGame,
-  goldPerMin.twentyToThirty * 10            AS goldPerMinLateGame,
-  xppermin.zeroToTen * 10                 AS xpperminEarlyGame,
-  xppermin.tenToTwenty * 10               AS xpperminMidGame,
-  xppermin.twentyToThirty * 10            AS xpperminLateGame,
-  damagetakenpermin.zeroToTen * 10                 AS damagetakenperminEarlyGame,
-  damagetakenpermin.tenToTwenty * 10               AS damagetakenperminMidGame,
-  damagetakenpermin.twentyToThirty * 10            AS damagetakenperminLateGame,
-  participant.GameId             AS GameId,
-  participant.TeamId             AS TeamId,
-  participant.ChampionId         AS EnemyChamp,
-  participantidentity.championId AS HeroChamp,
-  participant.lane               AS Lane,
-  participant.role               AS Role
+  participantidentity.gameId,
+  zeroToTen * 10 as EarlyGame,
+  tenToTwenty * 10 as MidGame,
+  twentyToThirty * 10 as LateGame
 FROM participantidentity
   JOIN participant ON
                      participantidentity.gameId = participant.GameId AND
@@ -75,28 +61,31 @@ FROM participantidentity
                      participant.role = participantidentity.role AND
                      participantidentity.teamId != participant.TeamId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
-  LEFT JOIN creepspermin ON creepspermin.timelineId = timeline.Id
-  LEFT JOIN xppermin ON xppermin.timelineId = timeline.Id
   LEFT JOIN goldpermin ON goldpermin.timelineId = timeline.Id
-  LEFT JOIN damagetakenpermin ON damagetakenpermin.timelineId = timeline.Id
+    LEFT JOIN matchtable on participant.GameId = matchtable.GameId
 WHERE participantidentity.SummonerId = 1542360
       AND participantidentity.lane = 'Top'
-      AND participantidentity.role = 'Solo';
+      AND participantidentity.role = 'Solo'
+      AND GameDuration > 300;
 
 # Our game stage stats in a specific role
 SELECT
-  avg(zeroToTen) * 10      AS EarlyGame,
-  avg(tenToTwenty) * 10    AS MidGame,
-  avg(twentyToThirty) * 10 AS LateGame
+  participantidentity.gameId,
+  zeroToTen * 10      AS EarlyGame,
+  tenToTwenty * 10    AS MidGame,
+  twentyToThirty * 10 AS LateGame
 FROM participantidentity
   JOIN participant ON
                      participantidentity.gameId = participant.GameId AND
                      participant.ParticipantId = participantidentity.ParticipantId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
-  LEFT JOIN csdiffpermin ON csdiffpermin.timelineId = timeline.Id
+  LEFT JOIN damagetakenpermin ON damagetakenpermin.timelineId = timeline.Id
+  LEFT JOIN matchtable on participant.GameId = matchtable.GameId
 WHERE participantidentity.SummonerId = 1542360
       AND participantidentity.lane = 'TOP'
-      AND participantidentity.role = 'Solo';
+      AND participantidentity.role = 'Solo'
+      AND GameDuration > 300;
+
 # enemy adc game stats when im playing support
 SELECT
   avg(zeroToTen) * 10      AS EarlyGame,
