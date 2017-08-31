@@ -25,13 +25,18 @@ LIMIT 20;
 SELECT
   stats.kills,
   stats.deaths,
-  stats.assists
+  stats.assists,
+  stats.wardsPlaced,
+  stats.wardsKilled
 FROM participantidentity
   JOIN participant ON participantidentity.gameId = participant.GameId
                       AND participant.ParticipantId = participantidentity.ParticipantId
   JOIN stats ON stats.ParticipantRowId = participant.Id
-WHERE participantidentity.lane = 'MIDDLE' AND participantidentity.SummonerId = 1542360
-ORDER BY participant.gameId ASC;
+  LEFT JOIN matchtable ON participant.GameId = matchtable.GameId
+WHERE participantidentity.lane = 'TOP'
+      AND participantidentity.role = 'Solo'
+      AND participantidentity.SummonerId = 1542360
+      AND GameDuration > 300;
 
 # opponent kda.
 SELECT
@@ -45,15 +50,18 @@ FROM participantidentity
                      participant.role = participantidentity.role AND
                      participantidentity.teamId != participant.TeamId
   JOIN stats ON stats.ParticipantRowId = participant.Id
+  LEFT JOIN matchtable ON participant.GameId = matchtable.GameId
+
 WHERE participantidentity.lane = 'JUNGLE' AND participantidentity.SummonerId = 1542360
+
 ORDER BY participant.gameId ASC;
 
 # Enemy game stage stats when we are in a specific role, with a bit extra
 SELECT
   participantidentity.gameId,
-  zeroToTen * 10 as EarlyGame,
-  tenToTwenty * 10 as MidGame,
-  twentyToThirty * 10 as LateGame
+  zeroToTen * 10      AS EarlyGame,
+  tenToTwenty * 10    AS MidGame,
+  twentyToThirty * 10 AS LateGame
 FROM participantidentity
   JOIN participant ON
                      participantidentity.gameId = participant.GameId AND
@@ -62,7 +70,7 @@ FROM participantidentity
                      participantidentity.teamId != participant.TeamId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
   LEFT JOIN goldpermin ON goldpermin.timelineId = timeline.Id
-    LEFT JOIN matchtable on participant.GameId = matchtable.GameId
+  LEFT JOIN matchtable ON participant.GameId = matchtable.GameId
 WHERE participantidentity.SummonerId = 1542360
       AND participantidentity.lane = 'Top'
       AND participantidentity.role = 'Solo'
@@ -80,7 +88,7 @@ FROM participantidentity
                      participant.ParticipantId = participantidentity.ParticipantId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
   LEFT JOIN damagetakenpermin ON damagetakenpermin.timelineId = timeline.Id
-  LEFT JOIN matchtable on participant.GameId = matchtable.GameId
+  LEFT JOIN matchtable ON participant.GameId = matchtable.GameId
 WHERE participantidentity.SummonerId = 1542360
       AND participantidentity.lane = 'TOP'
       AND participantidentity.role = 'Solo'

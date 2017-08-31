@@ -4,6 +4,7 @@ import model.champion.Champion
 import model.champion.ChampionImage
 import model.match.*
 import model.matchlist.MatchSummary
+import model.refined_stats.FullGameStat
 import model.refined_stats.GameStageStat
 import model.refined_stats.RefinedStatSummary
 import model.stats.GameStageDelta
@@ -311,6 +312,16 @@ fun ResultSet.produceSummaryStat() : RefinedStatSummary{
             getInt(teamColumns.DRAGON_KILLS),
             getInt(teamColumns.RIFT_HERALD_KILLS),
             getInt(teamColumns.BARON_KILLS))
+}
+
+fun ResultSet.produceFullGameStat() : FullGameStat {
+    return FullGameStat(
+            getInt(statColumns.KILLS),
+            getInt(statColumns.DEATHS),
+            getInt(statColumns.ASSISTS),
+            getInt(statColumns.WARDS_PLACED),
+            getInt(statColumns.WARDS_KILLED)
+    )
 }
 
 //fun ResultSet.produceGameStagesLists(summonerId : Long) : GameStages {

@@ -1,6 +1,7 @@
 package db.refined_stats
 
 import db.DBHelper
+import extensions.produceFullGameStat
 import extensions.produceGameStageRefinedStat
 import extensions.produceSummaryStat
 import model.refined_stats.GameStageStat
@@ -8,6 +9,7 @@ import model.refined_stats.GameStages
 import model.refined_stats.RefinedStatSummary
 import util.Tables
 import model.positions.Jungle
+import model.refined_stats.FullGameStat
 
 
 /**
@@ -174,4 +176,38 @@ class RefinedStatsDAO(val dbHelper: DBHelper) {
 
         return statList
     }
+
+    /**
+     * Fetch an array of [FullGameStat] for a summoner in a specific role and lane.
+     * @param heroSummonerId The hero summonerId
+     * @param heroRole The hero role
+     * @param heroLane The hero lane
+     */
+    fun fetchPlayerStatisticsForHero(heroSummonerId: Long,
+                                     heroRole: String,
+                                     heroLane: String) : ArrayList<FullGameStat> {
+        val sql = "SELECT\n" +
+                "  stats.kills,\n" +
+                "  stats.deaths,\n" +
+                "  stats.assists,\n" +
+                "  stats.wardsPlaced,\n" +
+                "  stats.wardsKilled\n" +
+                "FROM participantidentity\n" +
+                "  JOIN participant ON participantidentity.gameId = participant.GameId\n" +
+                "                      AND participant.ParticipantId = participantidentity.ParticipantId\n" +
+                "  JOIN stats ON stats.ParticipantRowId = participant.Id\n" +
+                "  LEFT JOIN matchtable ON participant.GameId = matchtable.GameId\n" +
+                "WHERE participantidentity.lane = '$heroLane'\n" +
+                "      AND participantidentity.role = '$heroRole'\n" +
+                "      AND participantidentity.SummonerId = $heroSummonerId\n" +
+                "      AND GameDuration > 300"
+        val result = dbHelper.executeSqlQuery(sql)
+        val statList = ArrayList<FullGameStat>()
+        while (result.next()) {
+            statList.add(result.produceFullGameStat())
+        }
+        return statList
+    }
+
+
 }

@@ -321,7 +321,11 @@ class RefinedStatsTests {
     }
 
     @Test
-    fun ensureThatWeFetchTheCorrectAmountOfRows_ForTopSolo_With_AnyChamp() {
+    fun ensureThatWeCanGetStatsTableStatsForHero() {
+        val stats = refinedStatsDAO.fetchPlayerStatisticsForHero(1542360,
+                "SOLO",
+                "TOP")
 
+        Assert.assertEquals(stats.size, 2)
     }
 }
