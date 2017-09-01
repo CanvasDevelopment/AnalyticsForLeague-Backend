@@ -21,8 +21,9 @@ WHERE participantidentity.lane = 'JUNGLE' AND participantidentity.SummonerId = 1
 ORDER BY participant.gameId ASC
 LIMIT 20;
 
-# My kda
+# stats stats
 SELECT
+  participantidentity.gameId,
   stats.kills,
   stats.deaths,
   stats.assists,
@@ -33,8 +34,28 @@ FROM participantidentity
                       AND participant.ParticipantId = participantidentity.ParticipantId
   JOIN stats ON stats.ParticipantRowId = participant.Id
   LEFT JOIN matchtable ON participant.GameId = matchtable.GameId
-WHERE participantidentity.lane = 'TOP'
-      AND participantidentity.role = 'Solo'
+WHERE participantidentity.lane = 'JUNGLE'
+      AND participantidentity.role = 'NONE'
+      AND participantidentity.SummonerId = 1542360
+      AND GameDuration > 300;
+# Opponenets stats
+SELECT
+  participantidentity.gameId,
+  stats.kills,
+  stats.deaths,
+  stats.assists,
+  stats.wardsPlaced,
+  stats.wardsKilled
+FROM participantidentity
+  JOIN participant ON
+                     participantidentity.gameId = participant.GameId AND
+                     participant.lane = participantidentity.lane AND
+                     participant.role = participantidentity.role AND
+                     participantidentity.teamId != participant.TeamId
+  JOIN stats ON stats.ParticipantRowId = participant.Id
+  LEFT JOIN matchtable ON participant.GameId = matchtable.GameId
+WHERE participantidentity.lane = 'JUNGLE'
+      AND participantidentity.role = 'NONE'
       AND participantidentity.SummonerId = 1542360
       AND GameDuration > 300;
 

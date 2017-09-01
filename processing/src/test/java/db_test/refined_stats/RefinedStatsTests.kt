@@ -6,7 +6,6 @@ import db.DBHelper
 import db.match.MatchDAO
 import db.refined_stats.RefinedStatsDAO
 import di.KodeinManager
-import model.positions.*
 import network.riotapi.MatchService
 import org.junit.Assert
 import org.junit.BeforeClass
@@ -28,10 +27,7 @@ class RefinedStatsTests {
         lateinit var dbHelper: DBHelper
         lateinit var refinedStatsDAO: RefinedStatsDAO
         lateinit var matchDAO: MatchDAO
-        val km = KodeinManager()
-        init {
-
-        }
+        private val km = KodeinManager()
 
         @BeforeClass
         @JvmStatic
@@ -91,9 +87,8 @@ class RefinedStatsTests {
                 sb.append(line).append("\n")
                 line = buf.readLine()
             }
-            val fileAsString = sb.toString()
 
-            return fileAsString
+            return sb.toString()
         }
 
         @JvmStatic
@@ -106,79 +101,11 @@ class RefinedStatsTests {
                 sb.append(line).append("\n")
                 line = buf.readLine()
             }
-            val fileAsString = sb.toString()
 
-            return fileAsString
+            return sb.toString()
         }
     }
-
-
-    val tables = Tables()
-    val jungle = Jungle()
-    val top = Top()
-    val mid = Middle()
-    val adc = Marksman()
-    val sup = Support()
-
-//    @Test
-//    fun ensureThatWeCanGetCreepsPerMinEarlyMidAndLateGameCorrectlyForJungle() {
-//        // trigger 'fetch refined stats'
-//        val gameStageRefinedStats = refinedStatsDAO.fetchGameStageStatListForHero(tables.CREEPS_PER_MIN,
-//                1542360,
-//                jungle.role,
-//                jungle.lane)
-//        Assert.assertEquals(gameStageRefinedStats.earlyGame, 2.1538461515536675f, 0.005f)
-//        Assert.assertEquals(gameStageRefinedStats.midGame, 16.38461553133451f, 0.005f)
-//        Assert.assertEquals(gameStageRefinedStats.lateGame, 32.69230824250442f, 0.005f)
-//    }
-//
-//    @Test
-//    fun ensureThatWeCanGetCreepsPerMinEarlyMidAndLateGameCorrectlyForMid() {
-//        // trigger 'fetch refined stats'
-//        val gameStageRefinedStats = refinedStatsDAO.fetchGameStageStatListForHero(tables.CREEPS_PER_MIN,
-//                1542360,
-//                jungle.role,
-//                jungle.lane)
-//        Assert.assertEquals(gameStageRefinedStats.earlyGame, 2.1538461515536675f, 0.005f)
-//        Assert.assertEquals(gameStageRefinedStats.midGame, 16.38461553133451f, 0.005f)
-//        Assert.assertEquals(gameStageRefinedStats.lateGame, 32.69230824250442f, 0.005f)
-//    }
-//
-//    @Test
-//    fun ensureThatWeCanGetCreepsPerMinEarlyMidAndLateGameCorrectlyForSupport() {
-//        // trigger 'fetch refined stats'
-//        val gameStageRefinedStats = refinedStatsDAO.fetchGameStageStatListForHero(tables.CREEPS_PER_MIN,
-//                1542360,
-//                jungle.role,
-//                jungle.lane)
-//        Assert.assertEquals(gameStageRefinedStats.earlyGame, 2.1538461515536675f, 0.005f)
-//        Assert.assertEquals(gameStageRefinedStats.midGame, 16.38461553133451f, 0.005f)
-//        Assert.assertEquals(gameStageRefinedStats.lateGame, 32.69230824250442f, 0.005f)
-//    }
-//
-//    @Test
-//    fun ensureThatWeCanGetCreepsPerMinEarlyMidAndLateGameCorrectlyForADC() {
-//        // trigger 'fetch refined stats'
-//        val gameStageRefinedStats = refinedStatsDAO.fetchGameStageStatListForHero(tables.CREEPS_PER_MIN,
-//                1542360,
-//                jungle.role,
-//                jungle.lane)
-//        Assert.assertEquals(gameStageRefinedStats.earlyGame, 2.1538461515536675f, 0.005f)
-//        Assert.assertEquals(gameStageRefinedStats.midGame, 16.38461553133451f, 0.005f)
-//        Assert.assertEquals(gameStageRefinedStats.lateGame, 32.69230824250442f, 0.005f)
-//    }
-//
-//    @Test
-//    fun ensureThatWeCanGetCreepsDiffPerMinEarlyMidAndLateGameCorrectlyForJungle() {
-//        // trigger 'fetch refined stats'
-//        val gameStageRefinedStats = refinedStatsDAO.fetchGameStageStatListForHero(tables.CS_DIFF_PER_MIN,
-//                1542360,
-//                jungle.role,
-//                jungle.lane)
-//        Assert.assertEquals(gameStageRefinedStats.earlyGame, -2.91666670391957f, 0.005f)
-//        Assert.assertEquals(gameStageRefinedStats.midGame, 5.166666656732559f, 0.005f)
-//        Assert.assertEquals(gameStageRefinedStats.lateGame, 10.999999940395355f, 0.005f)
-//    }
+    private val tables = Tables()
 
     @Test
     fun ensureThatWeFetchSummaryStatsCorrectlyForHero() {
@@ -321,11 +248,68 @@ class RefinedStatsTests {
     }
 
     @Test
-    fun ensureThatWeCanGetStatsTableStatsForHero() {
+    fun ensureThatWeCanGetStatsTableStatsForHeroInRoleTOP() {
         val stats = refinedStatsDAO.fetchPlayerStatisticsForHero(1542360,
                 "SOLO",
                 "TOP")
 
         Assert.assertEquals(stats.size, 2)
+        Assert.assertEquals(stats[0].gameId, 161346846)
+        Assert.assertEquals(stats[0].kills, 0)
+        Assert.assertEquals(stats[0].deaths, 5)
+        Assert.assertEquals(stats[0].assists, 2)
+        Assert.assertEquals(stats[0].wardsPlaced, 11)
+        Assert.assertEquals(stats[0].wardsKilled, 1)
+        Assert.assertEquals(stats[1].gameId, 161345363)
+        Assert.assertEquals(stats[1].kills, 2)
+        Assert.assertEquals(stats[1].deaths, 5)
+        Assert.assertEquals(stats[1].assists, 7)
+        Assert.assertEquals(stats[1].wardsPlaced, 12)
+        Assert.assertEquals(stats[1].wardsKilled, 0)
+    }
+
+    @Test
+    fun ensureThatWeCanGetStatsTableStatsForHeroInRoleJUNGLE() {
+        val stats = refinedStatsDAO.fetchPlayerStatisticsForHero(1542360,
+                "NONE",
+                "JUNGLE")
+
+        Assert.assertEquals(stats.size, 13)
+        Assert.assertEquals(stats[0].gameId, 161736353)
+        Assert.assertEquals(stats[0].kills, 13)
+        Assert.assertEquals(stats[0].deaths, 5)
+        Assert.assertEquals(stats[0].assists, 10)
+        Assert.assertEquals(stats[0].wardsPlaced, 14)
+        Assert.assertEquals(stats[0].wardsKilled, 1)
+    }
+
+    @Test
+    fun ensureThatWeCanGetStatsTableStatsForEnemyWhenWePlayingTopAndTheyPlayingTop() {
+        val stats = refinedStatsDAO.fetchPlayerStatisticsForVillian(1542360,
+                "SOLO",
+                "TOP")
+
+        Assert.assertEquals(stats.size, 2)
+        Assert.assertEquals(stats[0].gameId, 161346846)
+        Assert.assertEquals(stats[0].kills, 6)
+        Assert.assertEquals(stats[0].deaths, 2)
+        Assert.assertEquals(stats[0].assists, 1)
+        Assert.assertEquals(stats[0].wardsPlaced, 10)
+        Assert.assertEquals(stats[0].wardsKilled, 2)
+    }
+
+    @Test
+    fun ensureThatWeCanGetStatsTableStatsForEnemyWhenWePlayingJungleAndTheyPlayingJungle() {
+        val stats = refinedStatsDAO.fetchPlayerStatisticsForVillian(1542360,
+                "NONE",
+                "JUNGLE")
+
+        Assert.assertEquals(stats.size, 13)
+        Assert.assertEquals(stats[0].gameId, 161736353)
+        Assert.assertEquals(stats[0].kills, 4)
+        Assert.assertEquals(stats[0].deaths, 14)
+        Assert.assertEquals(stats[0].assists, 4)
+        Assert.assertEquals(stats[0].wardsPlaced, 12)
+        Assert.assertEquals(stats[0].wardsKilled, 1)
     }
 }

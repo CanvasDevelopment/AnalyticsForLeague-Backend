@@ -187,6 +187,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) {
                                      heroRole: String,
                                      heroLane: String) : ArrayList<FullGameStat> {
         val sql = "SELECT\n" +
+                "  participantidentity.gameId,\n" +
                 "  stats.kills,\n" +
                 "  stats.deaths,\n" +
                 "  stats.assists,\n" +
@@ -195,6 +196,34 @@ class RefinedStatsDAO(val dbHelper: DBHelper) {
                 "FROM participantidentity\n" +
                 "  JOIN participant ON participantidentity.gameId = participant.GameId\n" +
                 "                      AND participant.ParticipantId = participantidentity.ParticipantId\n" +
+                "  JOIN stats ON stats.ParticipantRowId = participant.Id\n" +
+                "  LEFT JOIN matchtable ON participant.GameId = matchtable.GameId\n" +
+                "WHERE participantidentity.lane = '$heroLane'\n" +
+                "      AND participantidentity.role = '$heroRole'\n" +
+                "      AND participantidentity.SummonerId = $heroSummonerId\n" +
+                "      AND GameDuration > 300"
+        val result = dbHelper.executeSqlQuery(sql)
+        val statList = ArrayList<FullGameStat>()
+        while (result.next()) {
+            statList.add(result.produceFullGameStat())
+        }
+        return statList
+    }
+
+    fun fetchPlayerStatisticsForVillian(heroSummonerId: Int, heroRole: String, heroLane: String): ArrayList<FullGameStat> {
+        val sql = "SELECT\n" +
+                "  participantidentity.gameId,\n" +
+                "  stats.kills,\n" +
+                "  stats.deaths,\n" +
+                "  stats.assists,\n" +
+                "  stats.wardsPlaced,\n" +
+                "  stats.wardsKilled\n" +
+                "FROM participantidentity\n" +
+                "  JOIN participant ON\n" +
+                "                     participantidentity.gameId = participant.GameId AND\n" +
+                "                     participant.lane = participantidentity.lane AND\n" +
+                "                     participant.role = participantidentity.role AND\n" +
+                "                     participantidentity.teamId != participant.TeamId\n" +
                 "  JOIN stats ON stats.ParticipantRowId = participant.Id\n" +
                 "  LEFT JOIN matchtable ON participant.GameId = matchtable.GameId\n" +
                 "WHERE participantidentity.lane = '$heroLane'\n" +

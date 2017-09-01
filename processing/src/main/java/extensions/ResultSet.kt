@@ -316,6 +316,7 @@ fun ResultSet.produceSummaryStat() : RefinedStatSummary{
 
 fun ResultSet.produceFullGameStat() : FullGameStat {
     return FullGameStat(
+            getLong(matchColumns.GAME_ID),
             getInt(statColumns.KILLS),
             getInt(statColumns.DEATHS),
             getInt(statColumns.ASSISTS),
