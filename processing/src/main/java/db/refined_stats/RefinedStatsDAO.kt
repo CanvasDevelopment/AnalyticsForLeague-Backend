@@ -210,6 +210,12 @@ class RefinedStatsDAO(val dbHelper: DBHelper) {
         return statList
     }
 
+    /**
+     * Fetch a list of player statistics for the enemy laner / opponent of the hero. Each item in the array represents one match.
+     * @param heroSummonerId The hero summonerId
+     * @param heroLane The lane of the hero
+     * @param heroRole The role of the hero.
+     */
     fun fetchPlayerStatisticsForVillian(heroSummonerId: Int, heroRole: String, heroLane: String): ArrayList<FullGameStat> {
         val sql = "SELECT\n" +
                 "  participantidentity.gameId,\n" +
@@ -237,6 +243,4 @@ class RefinedStatsDAO(val dbHelper: DBHelper) {
         }
         return statList
     }
-
-
 }
