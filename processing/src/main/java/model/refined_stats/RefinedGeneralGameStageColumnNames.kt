@@ -1,0 +1,15 @@
+package model.refined_stats
+
+/**
+ * @author Josiah Kendall
+ *
+ * A model to store column names for a game stage. Use this to set specific column names
+ *  e.g:
+ *  - "heroXpMidGame"
+ *  - "villanCreepsEarlyGame"
+ */
+class RefinedGeneralGameStageColumnNames {
+    lateinit var earlyGame : String
+    lateinit var midGame : String
+    lateinit var lateGame : String
+}
