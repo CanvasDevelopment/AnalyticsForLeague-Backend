@@ -82,7 +82,6 @@ class MatchSummary_tests {
         Assert.assertTrue(ms2.gameId == matchSummary.gameId)
         Assert.assertTrue(ms2.platformId == matchSummary.platformId)
         Assert.assertTrue(ms2.summonerId == matchSummary.summonerId)
-
     }
 
     @Test
@@ -114,5 +113,28 @@ class MatchSummary_tests {
 
         val matchSummaries = matchSummaryDAO.getAllMatchesBySummonerId(summonerId.toInt())
         Assert.assertTrue(matchSummaries.size == 2)
+    }
+
+    @Test
+    fun ensureThatWeReturnFalseIfMatchSummaryDoesNotExist() {
+        val exists = matchSummaryDAO.checkMatchSummaryExists(-12345678)
+        Assert.assertTrue(!exists)
+    }
+
+    @Test
+    fun ensureThatWeReturnTrueIfMatchSummaryDoesExist() {
+        val matchSummary = MatchSummary()
+        matchSummary.lane = "TOP"
+        matchSummary.timestamp = 1234567
+        matchSummary.season = 9
+        matchSummary.queue = 7
+        matchSummary.champion = 5
+        matchSummary.gameId = gameId
+        matchSummary.platformId = "OCE1"
+        matchSummary.role = "SOLO"
+        matchSummary.summonerId = summonerId
+        matchSummaryDAO.saveMatchSummary(matchSummary)
+        val exists = matchSummaryDAO.checkMatchSummaryExists(gameId)
+        Assert.assertTrue(exists)
     }
 }
