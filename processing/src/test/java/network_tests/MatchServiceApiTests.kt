@@ -1,7 +1,7 @@
 package network_tests
 
 import network.NetworkInterface
-import network.riotapi.MatchService
+import network.riotapi.MatchServiceApi
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -10,20 +10,20 @@ import util.RIOT_API_KEY
 /**
  * @author Josiah Kendall
  */
-class MatchServiceTests {
+class MatchServiceApiTests {
 
     lateinit var networkInterface : NetworkInterface
-    lateinit var matchService : MatchService
+    lateinit var matchServiceApi: MatchServiceApi
 
     @Before
     fun setUp() {
         networkInterface = NetworkInterface("oc1")
-        matchService = networkInterface.getMatchService()
+        matchServiceApi = networkInterface.getMatchService()
     }
 
     @Test
     fun testThatWeCanFetchMatchList() {
-        val matchList = matchService.getMatchListForAccount(RIOT_API_KEY, 200774483)
+        val matchList = matchServiceApi.getMatchListForAccount(RIOT_API_KEY, 200774483)
         Assert.assertTrue(matchList.startIndex == 0)
         Assert.assertTrue(matchList.endIndex == 732)
         Assert.assertTrue(matchList.matches[0].lane == "JUNGLE")
@@ -32,7 +32,7 @@ class MatchServiceTests {
 
     @Test
     fun testThatWeCanLoadMatchDetals() {
-        val match = matchService.getMatchByMatchId(RIOT_API_KEY, 161736353)
+        val match = matchServiceApi.getMatchByMatchId(RIOT_API_KEY, 161736353)
         Assert.assertEquals(match.platformId, "OC1")
         Assert.assertEquals(match.queueId, 440)
         Assert.assertEquals(match.seasonId, 9)

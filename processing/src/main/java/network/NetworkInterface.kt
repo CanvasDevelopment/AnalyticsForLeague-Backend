@@ -1,10 +1,8 @@
 package network
 
 import com.google.gson.GsonBuilder
-import network.riotapi.MatchService
+import network.riotapi.MatchServiceApi
 import retrofit.RestAdapter
-import retrofit.appengine.UrlFetchClient
-import retrofit.client.OkClient
 import retrofit.client.UrlConnectionClient
 import retrofit.converter.GsonConverter
 
@@ -21,8 +19,8 @@ class NetworkInterface(val regionServer: String) {
     val serviceAdapter = adapterBuilder.build()!!
 
 
-    fun getMatchService() : MatchService {
-        return serviceAdapter.create<MatchService>(MatchService::class.java)
+    fun getMatchService() : MatchServiceApi {
+        return serviceAdapter.create<MatchServiceApi>(MatchServiceApi::class.java)
     }
 
 }

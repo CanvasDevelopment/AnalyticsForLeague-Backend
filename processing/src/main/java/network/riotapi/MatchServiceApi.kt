@@ -12,7 +12,7 @@ import retrofit.http.Query
  *
  * This is the retrofit interface for the match-v3 api of riots servers
  */
-interface MatchService {
+interface MatchServiceApi {
 
     /**
      * Get a [MatchList] for a [Summoner]

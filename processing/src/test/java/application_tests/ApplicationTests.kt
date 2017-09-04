@@ -1,6 +1,6 @@
 package application_tests
 
-import application.domain.UserManagement
+import application.domain.MatchControl
 import db.DBHelper
 import db.match.*
 import db.matchlist.MatchSummaryDAO
@@ -9,7 +9,6 @@ import network.NetworkInterface
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import util.Tables
 
 
 /**
@@ -90,10 +89,10 @@ class ApplicationTests {
     }
     @Test
     fun testWeCanDownloadHeapsOfShit() {
-        val userManagement = UserManagement(matchDAO,
+        val userManagement = MatchControl(matchDAO,
                 matchSummaryDAO,
                 networkInterface)
 
-        userManagement.FetchAndSaveAllMatchesForAUser(200774483)
+        userManagement.UpdateMatchListForSummoner(200774483)
     }
 }

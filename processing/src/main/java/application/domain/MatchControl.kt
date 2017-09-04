@@ -12,19 +12,18 @@ import util.RIOT_API_KEY
 import java.util.logging.Level
 import java.util.logging.Logger
 
-
 /**
  * @author Josiah Kendall
  */
-class UserManagement(val matchDAO: MatchDAO,
-                     val matchSummaryDAO: MatchSummaryDAO,
-                     val networkInterface: NetworkInterface) {
+class MatchControl(val matchDAO: MatchDAO,
+                   val matchSummaryDAO: MatchSummaryDAO,
+                   val networkInterface: NetworkInterface) {
 
     /**
      * Fetch and save all [MatchSummary] and [Match] instances for a user.
      * @param accountId The id of the account that we want to fetch all the games for
      */
-    fun FetchAndSaveAllMatchesForAUser(accountId : Long) {
+    fun UpdateMatchListForSummoner(accountId : Long) {
         val matchService = networkInterface.getMatchService()
         // TODO find a way to not have to specify the api key every request
         val matchList = matchService.getMatchListForAccount(RIOT_API_KEY, accountId)

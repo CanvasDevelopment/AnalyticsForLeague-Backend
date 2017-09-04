@@ -1,16 +1,14 @@
 package network_tests
 
 import com.google.gson.GsonBuilder
-import network.riotapi.MatchService
+import network.riotapi.MatchServiceApi
 import org.junit.Assert
 import org.junit.Test
 import retrofit.RestAdapter
-import retrofit.client.UrlConnectionClient
 import retrofit.converter.GsonConverter
 import util.testing.MockClient
 import java.io.BufferedReader
 import java.io.FileInputStream
-import java.io.InputStream
 import java.io.InputStreamReader
 
 /**
@@ -26,7 +24,7 @@ class MockClientTests {
                 .setConverter(GsonConverter(GsonBuilder().create()))
                 .setClient(mockClient)
         val serviceAdapter = adapterBuilder.build()!!
-        val matchService = serviceAdapter.create<MatchService>(MatchService::class.java)
+        val matchService = serviceAdapter.create<MatchServiceApi>(MatchServiceApi::class.java)
         val result = matchService.getMatchByMatchId("",1)
         Assert.assertEquals(result.gameId,161340788 )
     }

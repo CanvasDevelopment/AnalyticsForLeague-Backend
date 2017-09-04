@@ -6,7 +6,7 @@ import db.DBHelper
 import db.match.MatchDAO
 import db.refined_stats.RefinedStatsDAO
 import di.KodeinManager
-import network.riotapi.MatchService
+import network.riotapi.MatchServiceApi
 import org.junit.Assert
 import org.junit.BeforeClass
 import org.junit.Test
@@ -62,13 +62,13 @@ class RefinedStatsTests {
                     .setConverter(GsonConverter(GsonBuilder().create()))
                     .setClient(mockClient)
             var serviceAdapter = adapterBuilder.build()!!
-            val matchService = serviceAdapter.create<MatchService>(MatchService::class.java)
+            val matchService = serviceAdapter.create<MatchServiceApi>(MatchServiceApi::class.java)
             val result = matchService.getMatchListForAccount("", 1)
             for (match in result.matches) {
                 mockClient = MockClient { getMatchData(match.gameId) }
                 adapterBuilder.setClient(mockClient)
                 serviceAdapter = adapterBuilder.build()
-                val matchService2 = serviceAdapter.create<MatchService>(MatchService::class.java)
+                val matchService2 = serviceAdapter.create<MatchServiceApi>(MatchServiceApi::class.java)
                 val match2 = matchService2.getMatchByMatchId("ds", -1)
 
                 matchDAO.saveMatch(match2) // todo implement some sort of version of this into the code
