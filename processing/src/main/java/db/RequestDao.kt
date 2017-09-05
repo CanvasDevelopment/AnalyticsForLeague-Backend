@@ -49,7 +49,9 @@ class RequestDao(val dbHelper: DBHelper,
     override fun requestsSinceLastClearedRates(): Int {
         val sql = "select count(*) as $NUMBER_OF_REQUESTS from $RIOT_API_REQUEST_TABLE"
         val result = dbHelper.executeSqlQuery(sql)
-        return result.getInt(NUMBER_OF_REQUESTS)
+        if (result.next())
+            return result.getInt(NUMBER_OF_REQUESTS)
+        return 0
     }
 
     /**
@@ -70,7 +72,7 @@ class RequestDao(val dbHelper: DBHelper,
     }
 
     private fun ResultSet.produceDifferenceBetweenEarliestTimeStampAndNow() : Long {
-        val stamp = getLong("timestamp")
+        val stamp = getLong("requestTime")
         val now = System.currentTimeMillis()
         return now - stamp
     }

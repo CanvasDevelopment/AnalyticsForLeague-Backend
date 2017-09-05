@@ -2,6 +2,7 @@ package network
 
 import com.google.gson.GsonBuilder
 import network.riotapi.MatchServiceApi
+import network.riotapi.SummonerService
 import retrofit.RestAdapter
 import retrofit.client.UrlConnectionClient
 import retrofit.converter.GsonConverter
@@ -21,6 +22,10 @@ class NetworkInterface(val regionServer: String) {
 
     fun getMatchService() : MatchServiceApi {
         return serviceAdapter.create<MatchServiceApi>(MatchServiceApi::class.java)
+    }
+
+    fun getSummonerService() : SummonerService {
+        return serviceAdapter.create<SummonerService>(SummonerService::class.java)
     }
 
 }

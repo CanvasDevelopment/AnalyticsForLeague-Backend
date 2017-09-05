@@ -87,12 +87,4 @@ class ApplicationTests {
 //        dbHelper.executeSQLScript("DELETE FROM stats")
 //        dbHelper.executeSQLScript("DELETE FROM timeline")
     }
-    @Test
-    fun testWeCanDownloadHeapsOfShit() {
-        val userManagement = MatchControl(matchDAO,
-                matchSummaryDAO,
-                networkInterface)
-
-        userManagement.UpdateMatchListForSummoner(200774483)
-    }
 }

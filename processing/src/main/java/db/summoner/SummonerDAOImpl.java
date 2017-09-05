@@ -80,6 +80,30 @@ public class SummonerDAOImpl implements SummonerDAO {
         }
     }
 
+    public Summoner getSummoner(String summonerName) {
+        log.info("Attempting to find summoner with name : " + summonerName);
+        String queryString = String.format("SELECT * FROM %s WHERE %s = %s",SUMMONER_TABLE, SUMMONER_NAME, summonerName);
+        try {
+            ResultSet resultSet = dbHelper.executeSqlQuery(queryString);
+            if (resultSet.next()) {
+                Summoner summoner = new Summoner();
+                summoner.setId(resultSet.getLong(ID));
+                summoner.setName(resultSet.getString("SummonerName"));
+                summoner.setProfileIconId(resultSet.getInt("ProfileIconId"));
+                summoner.setSummonerLevel(resultSet.getInt("SummonerLevel"));
+                summoner.setAccountId(resultSet.getLong("AccountId"));
+                summoner.setRevisionDate(resultSet.getLong("RevisionDate"));
+
+                log.info("Successfully loaded summoner : \n" + summoner.toString());
+                return summoner;
+            }
+        } catch (SQLException ex) {
+            log.severe(ex.getMessage());
+        }
+
+        return null;
+    }
+
     @Override
     public Summoner getSummoner(long summonerId) {
         log.info("Attempting to find summoner with Id : " + summonerId);

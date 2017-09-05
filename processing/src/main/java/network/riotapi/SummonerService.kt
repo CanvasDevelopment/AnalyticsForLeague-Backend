@@ -1,7 +1,7 @@
 package network.riotapi
 
-
 import model.Summoner
+import model.NetworkResult
 import retrofit.http.GET
 import retrofit.http.Path
 import retrofit.http.Query
@@ -22,8 +22,7 @@ interface SummonerService {
     @GET("/lol/summoner/v3/summoners/by-name/{summonerName}")
     fun fetchSummonerBySummonerName(
             @Query("api_key") apiKey: String,
-            @Path("summonerName") summonerName : String) : Summoner
-
+            @Path("summonerName") summonerName : String) : NetworkResult<Summoner>
 
 
 }

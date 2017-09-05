@@ -1,6 +1,7 @@
 package network_tests
 
 import db.RequestDAOContract
+import model.Summoner
 import model.match.Match
 import network.RequestHandler
 import network.riotapi.MatchServiceApi
@@ -8,6 +9,8 @@ import org.junit.Assert
 import org.junit.Test
 import org.mockito.Matchers
 import org.mockito.Mockito.*
+import util.RIOT_API_KEY
+import java.net.URL
 
 /**
  * @author Josiah Kendall
@@ -26,7 +29,7 @@ class RequestHandlerTests {
         `when`(requestDao.getRateLimitPerMinute()).thenReturn(12)
         `when`(requestDao.timeSinceLastClearedRates()).thenReturn(55)
         `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(12)
-        requestHandler.requestData { matchService.getMatchByMatchId("212", -1) }
+        requestHandler.requestDataWithRateLimiting { matchService.getMatchByMatchId("212", -1) }
         val totalTime = System.currentTimeMillis()
         Assert.assertTrue(totalTime > (startTime + timeLeftToWait))
     }
@@ -39,7 +42,7 @@ class RequestHandlerTests {
         `when`(requestDao.getRateLimitPerMinute()).thenReturn(12)
         `when`(requestDao.timeSinceLastClearedRates()).thenReturn(40)
         `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(11)
-        requestHandler.requestData { matchService.getMatchByMatchId("212", -1) }
+        requestHandler.requestDataWithRateLimiting { matchService.getMatchByMatchId("212", -1) }
         val totalTime = System.currentTimeMillis()
         Assert.assertTrue(totalTime < (startTime + timeLeftToWait))
     }
@@ -49,7 +52,7 @@ class RequestHandlerTests {
         `when`(requestDao.getRateLimitPerMinute()).thenReturn(24)
         `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(3)
         `when`(requestDao.timeSinceLastClearedRates()).thenReturn(40)
-        requestHandler.requestData { matchService.getMatchByMatchId("212", -1) }
+        requestHandler.requestDataWithRateLimiting { matchService.getMatchByMatchId("212", -1) }
         verify(requestDao, times(1)).recordRequest(Matchers.anyLong())
     }
 
@@ -61,7 +64,7 @@ class RequestHandlerTests {
         `when`(requestDao.getRateLimitPerMinute()).thenReturn(12)
         `when`(requestDao.timeSinceLastClearedRates()).thenReturn(55)
         `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(12)
-        requestHandler.requestData { matchService.getMatchByMatchId("212", -1) }
+        requestHandler.requestDataWithRateLimiting { matchService.getMatchByMatchId("212", -1) }
         val totalTime = System.currentTimeMillis()
         Assert.assertTrue(totalTime > (startTime + timeLeftToWait))
         verify(requestDao, times(1)).recordRequest(Matchers.anyLong())
@@ -74,7 +77,7 @@ class RequestHandlerTests {
         `when`(requestDao.getRateLimitPerMinute()).thenReturn(12)
         `when`(requestDao.timeSinceLastClearedRates()).thenReturn(60)
         `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(11)
-        requestHandler.requestData { matchService.getMatchByMatchId("212", -1) }
+        requestHandler.requestDataWithRateLimiting { matchService.getMatchByMatchId("212", -1) }
         verify(requestDao, times(1)).clearRateLimitRequests()
     }
 
@@ -97,8 +100,37 @@ class RequestHandlerTests {
                 ArrayList(),
                 ArrayList())
         `when`(matchService.getMatchByMatchId(Matchers.anyString(), Matchers.anyLong())).thenReturn(match)
-        val matchRecieved = requestHandler.requestData { matchService.getMatchByMatchId("212", -1) }
+        val matchRecieved = requestHandler.requestDataWithRateLimiting { matchService.getMatchByMatchId("212", -1) }
         Assert.assertTrue(match == matchRecieved)
+    }
+
+    // note that this test will need a working api key to succeed
+    @Test
+    fun `ensure that we can send a request and handle the response`() {
+        `when`(requestDao.getRateLimitPerMinute()).thenReturn(24)
+        `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(3)
+        `when`(requestDao.timeSinceLastClearedRates()).thenReturn(40)
+        val url = URL("https://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/kloin?api_key=$RIOT_API_KEY")
+        val networkResult = requestHandler.requestDataWithRateLimiting { requestHandler.sendHttpGetRequest(Summoner::class.java,url) }
+        Assert.assertEquals(networkResult.code, 200)
+        val summoner = networkResult.data
+        if (summoner == null) {
+            Assert.fail()
+        }
+        Assert.assertEquals(summoner?.accountId,200774483.toLong())
+        Assert.assertEquals(summoner?.name,"kloin")
+    }
+
+    @Test
+    fun `ensure that we can handle a 404`() {
+        `when`(requestDao.getRateLimitPerMinute()).thenReturn(24)
+        `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(3)
+        `when`(requestDao.timeSinceLastClearedRates()).thenReturn(40)
+        val url = URL("https://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/kloinfdsfdsfdsfds?api_key=$RIOT_API_KEY")
+        val networkResult = requestHandler.requestDataWithRateLimiting { requestHandler.sendHttpGetRequest(Summoner::class.java,url) }
+        Assert.assertEquals(networkResult.code, 404)
+        val summoner = networkResult.data
+        Assert.assertEquals(summoner, null)
     }
 
 }
