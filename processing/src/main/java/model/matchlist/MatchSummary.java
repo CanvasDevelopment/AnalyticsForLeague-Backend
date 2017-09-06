@@ -17,6 +17,31 @@ public class MatchSummary {
     private String lane;
     private long summonerId;
 
+    public MatchSummary() {
+        // for the sloppy
+    }
+
+    public MatchSummary(int id,
+                        String platformId,
+                        long gameId,
+                        int champion,
+                        int queue,
+                        int season,
+                        long timestamp,
+                        String role,
+                        String lane,
+                        long summonerId) {
+        this.champion = champion;
+        this.gameId = gameId;
+        this.queue = queue;
+        this.id = id;
+        this.platformId = platformId;
+        this.season = season;
+        this.timestamp = timestamp;
+        this.role = role;
+        this.lane = lane;
+        this.summonerId = summonerId;
+    }
 
     public int getId() {
         return id;

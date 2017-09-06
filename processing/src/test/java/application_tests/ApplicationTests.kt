@@ -1,6 +1,5 @@
 package application_tests
 
-import application.domain.MatchControl
 import db.DBHelper
 import db.match.*
 import db.matchlist.MatchSummaryDAO

@@ -1,7 +1,7 @@
 package db_test.summoner;
 
 import db.DBHelper;
-import db.summoner.SummonerDAOImpl;
+import db.summoner.SummonerDAOContractImpl;
 import model.Summoner;
 import org.junit.After;
 import org.junit.Assert;
@@ -16,12 +16,12 @@ import org.junit.Test;
 public class Summoner_Tests {
 
     DBHelper dbHelper;
-    SummonerDAOImpl summonerDAO;
+    SummonerDAOContractImpl summonerDAO;
     @Before
     public void setUp() {
         dbHelper = new DBHelper();
         dbHelper.connect();
-        summonerDAO = new SummonerDAOImpl(dbHelper);
+        summonerDAO = new SummonerDAOContractImpl(dbHelper);
     }
 
     @After
@@ -32,7 +32,7 @@ public class Summoner_Tests {
     @Test
     public void EnsureThatWeCanSaveASummonerThenFetchItById() {
 
-        SummonerDAOImpl summonerDAO = new SummonerDAOImpl(dbHelper);
+        SummonerDAOContractImpl summonerDAO = new SummonerDAOContractImpl(dbHelper);
         Summoner summoner = new Summoner();
         summoner.setId(1);
         summoner.setAccountId(1);

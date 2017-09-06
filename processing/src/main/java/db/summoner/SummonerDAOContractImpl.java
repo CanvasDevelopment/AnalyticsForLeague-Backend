@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 /**
  * @author Josiah Kendall
  */
-public class SummonerDAOImpl implements SummonerDAO {
-    private static final Logger log = Logger.getLogger(SummonerDAO.class.getName());
+public class SummonerDAOContractImpl implements SummonerDAOContract {
+    private static final Logger log = Logger.getLogger(SummonerDAOContract.class.getName());
 
     private DBHelper dbHelper;
 
@@ -19,7 +19,7 @@ public class SummonerDAOImpl implements SummonerDAO {
      *
      * @param dbHelper
      */
-    public SummonerDAOImpl(DBHelper dbHelper) {
+    public SummonerDAOContractImpl(DBHelper dbHelper) {
         this.dbHelper = dbHelper;
     }
 

@@ -27,7 +27,7 @@ class GameSummaryDAO(val dbHelper : DBHelper) {
      * @param summonerId        The hero summonerId. Currently unused, unsure if it will be in the future.
      * @param summaryStats      The array list of [RefinedStatSummary] objects to save.
      */
-    fun saveHeroSummaryStats(summonerId : Long, summaryStats : ArrayList<RefinedStatSummary>) {
+    fun saveHeroSummaryStats(summonerId : Long, summaryStats : ArrayList<RefinedStatSummary>)  {
         // for every item in the list, we want to create a new list item.
         for(summaryStat in summaryStats) {
             insertHeroSummaryStat(summaryStat)

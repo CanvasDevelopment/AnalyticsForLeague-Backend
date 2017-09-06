@@ -10,7 +10,7 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import util.columnnames.RefinedGameStagesColumnNames
+import util.columnnames.StaticColumnNames
 import java.sql.ResultSet
 import java.util.*
 import kotlin.collections.ArrayList
@@ -243,11 +243,11 @@ class GameSummaryDAOTests {
                 random.nextFloat(),
                 gameId)
 
-        val staticColumnNames = RefinedGameStagesColumnNames()
-        val statNames = RefinedGeneralGameStageColumnNames()
-        statNames.earlyGame = staticColumnNames.HERO_CREEPS_EARLY_GAME
-        statNames.midGame = staticColumnNames.HERO_CREEPS_MID_GAME
-        statNames.lateGame = staticColumnNames.HERO_CREEPS_LATE_GAME
+        val staticColumnNames = StaticColumnNames()
+        val statNames = RefinedGeneralGameStageColumnNames(
+                staticColumnNames.HERO_CREEPS_EARLY_GAME,
+                staticColumnNames.HERO_CREEPS_MID_GAME,
+                staticColumnNames.HERO_CREEPS_LATE_GAME)
 
         gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
@@ -304,11 +304,11 @@ class GameSummaryDAOTests {
                 random.nextFloat(),
                 gameId)
 
-        val staticColumnNames = RefinedGameStagesColumnNames()
-        val statNames = RefinedGeneralGameStageColumnNames()
-        statNames.earlyGame = staticColumnNames.HERO_DAMAGE_EARLY_GAME
-        statNames.midGame = staticColumnNames.HERO_DAMAGE_MID_GAME
-        statNames.lateGame = staticColumnNames.HERO_DAMAGE_LATE_GAME
+        val staticColumnNames = StaticColumnNames()
+        val statNames = RefinedGeneralGameStageColumnNames( staticColumnNames.HERO_DAMAGE_EARLY_GAME,
+                staticColumnNames.HERO_DAMAGE_MID_GAME,
+               staticColumnNames.HERO_DAMAGE_LATE_GAME)
+
 
         gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
@@ -364,11 +364,10 @@ class GameSummaryDAOTests {
                 random.nextFloat(),
                 gameId)
 
-        val staticColumnNames = RefinedGameStagesColumnNames()
-        val statNames = RefinedGeneralGameStageColumnNames()
-        statNames.earlyGame = staticColumnNames.HERO_GOLD_EARLY_GAME
-        statNames.midGame = staticColumnNames.HERO_GOLD_MID_GAME
-        statNames.lateGame = staticColumnNames.HERO_GOLD_LATE_GAME
+        val staticColumnNames = StaticColumnNames()
+        val statNames = RefinedGeneralGameStageColumnNames(staticColumnNames.HERO_GOLD_EARLY_GAME,
+               staticColumnNames.HERO_GOLD_MID_GAME,
+                staticColumnNames.HERO_GOLD_LATE_GAME)
 
         gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
@@ -424,11 +423,11 @@ class GameSummaryDAOTests {
                 random.nextFloat(),
                 gameId)
 
-        val staticColumnNames = RefinedGameStagesColumnNames()
-        val statNames = RefinedGeneralGameStageColumnNames()
-        statNames.earlyGame = staticColumnNames.HERO_XP_EARLY_GAME
-        statNames.midGame = staticColumnNames.HERO_XP_MID_GAME
-        statNames.lateGame = staticColumnNames.HERO_XP_LATE_GAME
+        val staticColumnNames = StaticColumnNames()
+        val statNames = RefinedGeneralGameStageColumnNames(
+                staticColumnNames.HERO_XP_EARLY_GAME,
+                staticColumnNames.HERO_XP_MID_GAME,
+                staticColumnNames.HERO_XP_LATE_GAME)
 
         gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
@@ -484,11 +483,12 @@ class GameSummaryDAOTests {
                 random.nextFloat(),
                 gameId)
 
-        val staticColumnNames = RefinedGameStagesColumnNames()
-        val statNames = RefinedGeneralGameStageColumnNames()
-        statNames.earlyGame = staticColumnNames.VILLAN_CREEPS_EARLY_GAME
-        statNames.midGame = staticColumnNames.VILLAN_CREEPS_MID_GAME
-        statNames.lateGame = staticColumnNames.VILLAN_CREEPS_LATE_GAME
+        val staticColumnNames = StaticColumnNames()
+        val statNames = RefinedGeneralGameStageColumnNames(
+                staticColumnNames.VILLAN_CREEPS_EARLY_GAME,
+             staticColumnNames.VILLAN_CREEPS_MID_GAME,
+               staticColumnNames.VILLAN_CREEPS_LATE_GAME)
+
 
         gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
@@ -546,11 +546,12 @@ class GameSummaryDAOTests {
                 random.nextFloat(),
                 gameId)
 
-        val staticColumnNames = RefinedGameStagesColumnNames()
-        val statNames = RefinedGeneralGameStageColumnNames()
-        statNames.earlyGame = staticColumnNames.VILLAN_DAMAGE_EARLY_GAME
-        statNames.midGame = staticColumnNames.VILLAN_DAMAGE_MID_GAME
-        statNames.lateGame = staticColumnNames.VILLAN_DAMAGE_LATE_GAME
+        val staticColumnNames = StaticColumnNames()
+        val statNames = RefinedGeneralGameStageColumnNames(
+                staticColumnNames.VILLAN_DAMAGE_EARLY_GAME,
+                staticColumnNames.VILLAN_DAMAGE_MID_GAME,
+                staticColumnNames.VILLAN_DAMAGE_LATE_GAME)
+
 
         gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
@@ -606,11 +607,12 @@ class GameSummaryDAOTests {
                 random.nextFloat(),
                 gameId)
 
-        val staticColumnNames = RefinedGameStagesColumnNames()
-        val statNames = RefinedGeneralGameStageColumnNames()
-        statNames.earlyGame = staticColumnNames.VILLAN_GOLD_EARLY_GAME
-        statNames.midGame = staticColumnNames.VILLAN_GOLD_MID_GAME
-        statNames.lateGame = staticColumnNames.VILLAN_GOLD_LATE_GAME
+        val staticColumnNames = StaticColumnNames()
+        val statNames = RefinedGeneralGameStageColumnNames(
+                staticColumnNames.VILLAN_GOLD_EARLY_GAME,
+                staticColumnNames.VILLAN_GOLD_MID_GAME,
+                staticColumnNames.VILLAN_GOLD_LATE_GAME)
+
 
         gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
@@ -683,11 +685,11 @@ class GameSummaryDAOTests {
                 random.nextFloat(),
                 game2)
 
-        val staticColumnNames = RefinedGameStagesColumnNames()
-        val statNames = RefinedGeneralGameStageColumnNames()
-        statNames.earlyGame = staticColumnNames.VILLAN_XP_EARLY_GAME
-        statNames.midGame = staticColumnNames.VILLAN_XP_MID_GAME
-        statNames.lateGame = staticColumnNames.VILLAN_XP_LATE_GAME
+        val staticColumnNames = StaticColumnNames()
+        val statNames = RefinedGeneralGameStageColumnNames(staticColumnNames.VILLAN_XP_EARLY_GAME,
+                staticColumnNames.VILLAN_XP_MID_GAME,
+                staticColumnNames.VILLAN_XP_LATE_GAME)
+
 
         val summarystatarray = ArrayList<RefinedStatSummary>()
         summarystatarray.add(refinedSummaryStat1)
@@ -752,11 +754,12 @@ class GameSummaryDAOTests {
                 random.nextFloat(),
                 gameId)
 
-        val staticColumnNames = RefinedGameStagesColumnNames()
-        val statNames = RefinedGeneralGameStageColumnNames()
-        statNames.earlyGame = staticColumnNames.VILLAN_XP_EARLY_GAME
-        statNames.midGame = staticColumnNames.VILLAN_XP_MID_GAME
-        statNames.lateGame = staticColumnNames.VILLAN_XP_LATE_GAME
+        val staticColumnNames = StaticColumnNames()
+        val statNames = RefinedGeneralGameStageColumnNames(
+                staticColumnNames.VILLAN_XP_EARLY_GAME,
+               staticColumnNames.VILLAN_XP_MID_GAME,
+                staticColumnNames.VILLAN_XP_LATE_GAME)
+
 
         gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)

@@ -3,7 +3,7 @@ package util.columnnames
 /**
  * @author Josiah Kendall
  */
-class RefinedGameStagesColumnNames {
+class StaticColumnNames {
 
     val HERO_XP_EARLY_GAME = "heroXpEarlyGame"
     val HERO_XP_MID_GAME = "heroXpMidGame"

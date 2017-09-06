@@ -13,7 +13,7 @@ import java.util.logging.Logger
 class MatchDAO(val dbHelper : DBHelper,
                val teamDAO: TeamDAO,
                val participantDAO: ParticipantDAO,
-               val participantIdentityDAO: ParticipantIdentityDAO) {
+               val participantIdentityDAO: ParticipantIdentityDAO) : MatchDAOContracts.MatchDAOContract {
 
     val MATCH_TABLE = "MatchTable"
     val matchColumns = MatchColumns()
@@ -22,7 +22,7 @@ class MatchDAO(val dbHelper : DBHelper,
      * Save a [Match] (buy a farm). This saves a match, and also saves (through their DAO's) all the children of this
      * [Match].
      */
-    fun saveMatch(match : Match) {
+    override fun saveMatch(match : Match) {
         dbHelper.connect()
         val sql = "insert into $MATCH_TABLE(" +
                 "${matchColumns.GAME_ID}, " +
@@ -96,7 +96,7 @@ class MatchDAO(val dbHelper : DBHelper,
      * Load a [Match] by the matches [MatchColumns.GAME_ID] provided by riot
      * @param gameId The matchId
      */
-    fun getMatch(gameId: Long) : Match {
+    override fun getMatch(gameId: Long) : Match {
         val sql = "Select * from $MATCH_TABLE " +
                 "WHERE ${matchColumns.GAME_ID} = $gameId"
         val result = dbHelper.executeSqlQuery(sql)

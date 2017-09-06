@@ -1,14 +1,13 @@
 package application.domain
 
-import db.summoner.SummonerDAO
-import db.summoner.SummonerDAOImpl
+import db.summoner.SummonerDAOContractImpl
 import network.riotapi.SummonerService
 import util.RIOT_API_KEY
 
 /**
  * @author Josiah Kendall
  */
-class SummonerManagement(private val summonerControl : SummonerDAOImpl,
+class SummonerManagement(private val summonerControl : SummonerDAOContractImpl,
                          private val summonerService: SummonerService) {
 
     /**

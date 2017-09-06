@@ -1,7 +1,7 @@
 package domain_tests
 
 import application.domain.SummonerManagement
-import db.summoner.SummonerDAOImpl
+import db.summoner.SummonerDAOContractImpl
 import model.Summoner
 import model.NetworkResult
 import network.riotapi.SummonerService
@@ -18,12 +18,12 @@ import kotlin.test.assertTrue
 class SummonerManagementTests {
 
     lateinit var summonerService : SummonerService
-    lateinit var summonerDao : SummonerDAOImpl
+    lateinit var summonerDao : SummonerDAOContractImpl
     lateinit var summonerManagement : SummonerManagement
 
     @Before
     fun setup() {
-        summonerDao = mock(SummonerDAOImpl::class.java)
+        summonerDao = mock(SummonerDAOContractImpl::class.java)
         summonerService = mock(SummonerService::class.java)
         summonerManagement = SummonerManagement(summonerDao,summonerService)
     }

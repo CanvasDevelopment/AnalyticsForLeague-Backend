@@ -8,7 +8,7 @@ import java.sql.ResultSet
 /**
  * @author Josiah Kendall
  */
-class MatchSummaryDAO(val dbHelper: DBHelper) {
+class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
 
     private val MATCH_SUMMARY = "matchsummary2"
     private val PLATFORM_ID = "PlatformId"
@@ -26,7 +26,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) {
      * Save a match summary.
      * @return return the id of the save, or -1 if the save failed.
      */
-    fun saveMatchSummary(matchSummary: MatchSummary) : Long {
+    override fun saveMatchSummary(matchSummary: MatchSummary) : Long {
         val queryString =
                 "INSERT INTO $MATCH_SUMMARY (" +
                         "$PLATFORM_ID, " +
@@ -51,7 +51,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) {
         return dbHelper.executeSQLScript(queryString)
     }
 
-    fun getMatchSummary(id : Long) : MatchSummary {
+    override fun getMatchSummary(id : Long) : MatchSummary {
         val queryString = String.format("SELECT * FROM %s WHERE Id = %s", MATCH_SUMMARY, id)
         val result : ResultSet = dbHelper.executeSqlQuery(queryString)
         if (result.next()) {
@@ -76,7 +76,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) {
      * @param gameId The game id that we want to check for
      * @return true if exists, false if not.
      */
-    fun checkMatchSummaryExists(gameId: Long) : Boolean {
+    override fun checkMatchSummaryExists(gameId: Long) : Boolean {
         val queryString = "SELECT * From $MATCH_SUMMARY WHERE GameId = $gameId"
         val result = dbHelper.executeSqlQuery(queryString)
         if (result.next()) return true
@@ -88,7 +88,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) {
      * @param gameId The game Id we are searching for.
      * @return A [MatchSummary]. Will be a blank match summary if it does not exist.
      */
-    fun getMatchSummaryByGameId(gameId : Long) : MatchSummary {
+    override fun getMatchSummaryByGameId(gameId : Long) : MatchSummary {
         val queryString = "SELECT * FROM $MATCH_SUMMARY WHERE GameId = $gameId"
         val result : ResultSet = dbHelper.executeSqlQuery(queryString)
         if (result.next()) {
@@ -103,7 +103,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) {
      * @param summonerId The summoner that we want to get the summaries for.
      * @return An [ArrayList] of [MatchSummary] that belong to that specific summoner.
      */
-    fun getAllMatchesBySummonerId(summonerId: Int) : ArrayList<MatchSummary> {
+    override fun getAllMatchesBySummonerId(summonerId: Int) : ArrayList<MatchSummary> {
         val queryString = "SELECT * FROM $MATCH_SUMMARY WHERE $SUMMONER_ID = $summonerId"
         val result = dbHelper.executeSqlQuery(queryString)
         val summaries = ArrayList<MatchSummary>()

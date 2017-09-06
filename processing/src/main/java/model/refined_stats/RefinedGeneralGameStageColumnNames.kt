@@ -8,8 +8,4 @@ package model.refined_stats
  *  - "heroXpMidGame"
  *  - "villanCreepsEarlyGame"
  */
-class RefinedGeneralGameStageColumnNames {
-    lateinit var earlyGame : String
-    lateinit var midGame : String
-    lateinit var lateGame : String
-}
+class RefinedGeneralGameStageColumnNames(val earlyGame : String, val midGame : String, val lateGame : String)

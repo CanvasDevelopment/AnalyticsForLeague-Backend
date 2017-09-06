@@ -5,7 +5,7 @@ import model.Summoner;
 /**
  * @author Josiah Kendall
  */
-public interface SummonerDAO {
+public interface SummonerDAOContract {
     public static final String SUMMONER_TABLE = "Summoner";
     public static final String ID = "Id";
     public static final String ACCOUNT_ID = "AccountId";
