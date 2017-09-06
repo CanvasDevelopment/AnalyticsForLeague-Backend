@@ -348,6 +348,7 @@ class MatchControlTests {
         matchContol.sync(-1)
         verify(matchDao, times(1)).saveMatch(matchDetail)
         verify(matchDao, times(1)).saveMatch(matchDetail2)
+        // test commit
     }
 
     @Test
