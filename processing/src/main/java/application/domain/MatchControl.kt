@@ -6,8 +6,7 @@ import db.refined_stats.RefinedStatDAOContract
 import db.summoner.SummonerDAOContract
 import model.refined_stats.RefinedGeneralGameStageColumnNames
 import network.riotapi.MatchServiceApi
-import util.RIOT_API_KEY
-import util.Tables
+import util.*
 import util.columnnames.StaticColumnNames
 
 /**
@@ -20,7 +19,6 @@ class MatchControl(private val matchDAO: MatchDAOContracts.MatchDAOContract,
                    private val gameSummaryDaoContract: GameSummaryDaoContract) {
 
     val tables = Tables()
-
 
     /**
      * Sync pulls down the latest matches for a summoner, and stores them in the match database.
@@ -46,15 +44,20 @@ class MatchControl(private val matchDAO: MatchDAOContracts.MatchDAOContract,
 
     /**
      * Refine our raw match data into refined stats.
+     * @param summonerId The summoner Id for whom we are refining the stats.
+     * @param role The role for which we are interested in.
+     * @param lane The lane for which we are interested in.
      */
     fun refineMatchData(summonerId: Long, role : String, lane : String) {
+        val tableName = getTableName(lane, role)
         val heroSummaryStats = refinedStatDAOContract.fetchGameSummaryStatsForHero(summonerId,role,lane)
-        var saved = gameSummaryDaoContract.saveHeroSummaryStats(summonerId, heroSummaryStats)
+        var saved = gameSummaryDaoContract.saveHeroSummaryStats(summonerId, heroSummaryStats, tableName)
         if (!saved) {
             return
         }
+
         val villanSummaryStats = refinedStatDAOContract.fetchGameSummaryStatsForVillan(summonerId, role, lane)
-        saved = gameSummaryDaoContract.saveVillanSummaryStats(summonerId,villanSummaryStats)
+        saved = gameSummaryDaoContract.saveVillanSummaryStats(summonerId,villanSummaryStats, tableName)
         // todo figure out a way to handle failed saves.
         val heroCreeps = refinedStatDAOContract.fetchGameStageStatListForHero(
                 tables.CREEPS_PER_MIN,
@@ -62,7 +65,7 @@ class MatchControl(private val matchDAO: MatchDAOContracts.MatchDAOContract,
                 role,
                 lane)
 
-        saved = gameSummaryDaoContract.saveGameStageStatList(summonerId,heroCreeps, getColumns(tables.CREEPS_PER_MIN, true))
+        saved = gameSummaryDaoContract.saveGameStageStatList(summonerId,heroCreeps, getColumns(tables.CREEPS_PER_MIN, true),tableName)
 
         val villanCreeps = refinedStatDAOContract.fetchGameStageStatListForVillian(
                 tables.CREEPS_PER_MIN,
@@ -70,42 +73,86 @@ class MatchControl(private val matchDAO: MatchDAOContracts.MatchDAOContract,
                 role,
                 lane)
 
+        saved = gameSummaryDaoContract.saveGameStageStatList(summonerId, villanCreeps, getColumns(tables.CREEPS_PER_MIN, false),tableName)
         val heroXp = refinedStatDAOContract.fetchGameStageStatListForHero(
                 tables.XP_PER_MIN,
                 summonerId,
                 role,
                 lane)
 
+        saved = gameSummaryDaoContract.saveGameStageStatList(summonerId, heroXp, getColumns(tables.XP_PER_MIN, true),tableName)
         val villanXp = refinedStatDAOContract.fetchGameStageStatListForVillian(
                 tables.XP_PER_MIN,
                 summonerId,
                 role,
                 lane)
+        saved = gameSummaryDaoContract.saveGameStageStatList(summonerId, villanXp, getColumns(tables.XP_PER_MIN, false),tableName)
 
         val heroGold = refinedStatDAOContract.fetchGameStageStatListForHero(
                 tables.GOLD_PER_MIN,
                 summonerId,
                 role,
                 lane)
+        saved = gameSummaryDaoContract.saveGameStageStatList(summonerId, heroGold, getColumns(tables.GOLD_PER_MIN, true),tableName)
+
         val villanGold = refinedStatDAOContract.fetchGameStageStatListForVillian(
                 tables.GOLD_PER_MIN,
                 summonerId,
                 role,
                 lane)
 
+        saved = gameSummaryDaoContract.saveGameStageStatList(summonerId, villanGold, getColumns(tables.GOLD_PER_MIN, false),tableName)
         val heroDamage = refinedStatDAOContract.fetchGameStageStatListForHero(
                 tables.DAMAGE_TAKEN_PER_MIN,
                 summonerId,
                 role,
                 lane)
+
+        saved = gameSummaryDaoContract.saveGameStageStatList(summonerId, heroDamage, getColumns(tables.DAMAGE_TAKEN_PER_MIN, true),tableName)
+
         val villanDamage = refinedStatDAOContract.fetchGameStageStatListForVillian(
                 tables.DAMAGE_TAKEN_PER_MIN,
                 summonerId,
                 role,
                 lane)
 
+        saved = gameSummaryDaoContract.saveGameStageStatList(summonerId, villanDamage, getColumns(tables.DAMAGE_TAKEN_PER_MIN, false),tableName)
+    }
 
-
+    /**
+     * Generate a table based on our role and lane. This is the 'gamesummary' table that we are going to be saving our
+     * refined stats to.
+     * @param lane The lane the stats are for.
+     * @param role The role the stats are for.
+     */
+    fun getTableName(lane: String, role: String) : String {
+        when(lane) {
+            BOT -> {
+                if (role == DUO_CARRY) {
+                    return ADC
+                }
+                if (role == DUO_SUPPORT) {
+                    return SUPPORT
+                }
+            }
+            MID -> {
+                if (role == SOLO) {
+                    return MID
+                }
+            }
+            TOP -> {
+                if (role == SOLO) {
+                    return TOP
+                }
+            }
+            JUNGLE -> {
+                if (role == NONE) {
+                    return JUNGLE
+                }
+            }
+        }
+        // We check for this
+        return ""
     }
 
     /**

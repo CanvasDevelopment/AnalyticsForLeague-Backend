@@ -10,20 +10,26 @@ import model.Summoner
 import model.match.Match
 import model.matchlist.MatchList
 import model.matchlist.MatchSummary
+import model.refined_stats.GameStageStat
+import model.refined_stats.RefinedStatSummary
 import network.riotapi.MatchServiceApi
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.mockito.ArgumentMatchers
 import org.mockito.Matchers
 import org.mockito.Mockito.*
-import util.RIOT_API_KEY
-import util.Tables
+import util.*
 import util.columnnames.StaticColumnNames
 
 /**
  * @author Josiah Kendall
  */
 class MatchControlTests {
+
+    val tables = Tables()
+    val role = "solo"
+    val lane = "top"
 
     lateinit var matchContol: MatchControl
     lateinit var matchDao: MatchDAOContracts.MatchDAOContract
@@ -428,6 +434,223 @@ class MatchControlTests {
         Assert.assertTrue(generatedNames.earlyGame == columnNames.HERO_DAMAGE_EARLY_GAME)
         Assert.assertTrue(generatedNames.midGame == columnNames.HERO_DAMAGE_MID_GAME)
         Assert.assertTrue(generatedNames.lateGame == columnNames.HERO_DAMAGE_LATE_GAME)
+    }
+
+    @Test
+    fun `Make sure that we save hero summary stats`() {
+
+        val heroSummaryList = ArrayList<RefinedStatSummary>()
+        heroSummaryList.add(mock(RefinedStatSummary::class.java))
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, "solo", "top")).thenReturn(heroSummaryList)
+        matchContol.refineMatchData(1,"solo", "top")
+        verify(gameSummaryDaoContract, times(1)).saveHeroSummaryStats(1, heroSummaryList,matchContol.getTableName(lane,role))
+    }
+
+    @Test
+    fun `Make sure that we save villan summary stats`() {
+        val villanSummaryList = ArrayList<RefinedStatSummary>()
+        villanSummaryList.add(mock(RefinedStatSummary::class.java))
+        val heroSummaryList = ArrayList<RefinedStatSummary>()
+        heroSummaryList.add(mock(RefinedStatSummary::class.java))
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, "solo", "top")).thenReturn(villanSummaryList)
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, "solo","top")).thenReturn(heroSummaryList)
+        `when`(gameSummaryDaoContract.saveHeroSummaryStats(1, heroSummaryList,matchContol.getTableName(lane,role))).thenReturn(true)
+        matchContol.refineMatchData(1, "solo", "top")
+        verify(gameSummaryDaoContract, times(1)).saveVillanSummaryStats(1, villanSummaryList,matchContol.getTableName(lane,role))
+    }
+
+    @Test
+    fun `Make sure that we exit if we fail to save initial summary stats`() {
+        val villanSummaryList = ArrayList<RefinedStatSummary>()
+        villanSummaryList.add(mock(RefinedStatSummary::class.java))
+        val heroSummaryList = ArrayList<RefinedStatSummary>()
+        heroSummaryList.add(mock(RefinedStatSummary::class.java))
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, "solo", "top")).thenReturn(villanSummaryList)
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, "solo","top")).thenReturn(heroSummaryList)
+        `when`(gameSummaryDaoContract.saveHeroSummaryStats(1, heroSummaryList,matchContol.getTableName(lane,role))).thenReturn(false)
+        matchContol.refineMatchData(1, "solo", "top")
+        verify(gameSummaryDaoContract, times(0)).saveVillanSummaryStats(1, villanSummaryList,matchContol.getTableName(lane,role))
+    }
+
+    @Test
+    fun `Make sure that we save hero creep stats`() {
+        val villanSummaryList = ArrayList<RefinedStatSummary>()
+        villanSummaryList.add(mock(RefinedStatSummary::class.java))
+        val heroSummaryList = ArrayList<RefinedStatSummary>()
+        heroSummaryList.add(mock(RefinedStatSummary::class.java))
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, "solo", "top")).thenReturn(villanSummaryList)
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, "solo","top")).thenReturn(heroSummaryList)
+        `when`(gameSummaryDaoContract.saveHeroSummaryStats(1, heroSummaryList,matchContol.getTableName(lane,role))).thenReturn(true)
+        val heroCreeps = ArrayList<GameStageStat>()
+        heroCreeps.add(mock(GameStageStat::class.java))
+
+        `when`(refinedStatDaoContract.fetchGameStageStatListForHero(tables.CREEPS_PER_MIN,1, role, lane)).thenReturn(heroCreeps)
+        matchContol.refineMatchData(1, "solo", "top")
+        verify(gameSummaryDaoContract, times(1)).saveVillanSummaryStats(1, villanSummaryList,matchContol.getTableName(lane,role))
+        val columns = matchContol.getColumns(tables.CREEPS_PER_MIN,true)
+        verify(gameSummaryDaoContract, times(1)).saveGameStageStatList(1,heroCreeps,columns,matchContol.getTableName(lane,role))
+    }
+
+    @Test
+    fun `Make sure that we save hero gold stats correctly`() {
+        val villanSummaryList = ArrayList<RefinedStatSummary>()
+        villanSummaryList.add(mock(RefinedStatSummary::class.java))
+        val heroSummaryList = ArrayList<RefinedStatSummary>()
+        heroSummaryList.add(mock(RefinedStatSummary::class.java))
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, "solo", "top")).thenReturn(villanSummaryList)
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, "solo","top")).thenReturn(heroSummaryList)
+        `when`(gameSummaryDaoContract.saveHeroSummaryStats(1, heroSummaryList,matchContol.getTableName(lane,role))).thenReturn(true)
+        val heroCreeps = ArrayList<GameStageStat>()
+        heroCreeps.add(mock(GameStageStat::class.java))
+
+        `when`(refinedStatDaoContract.fetchGameStageStatListForHero(tables.GOLD_PER_MIN,1, role, lane)).thenReturn(heroCreeps)
+        matchContol.refineMatchData(1, "solo", "top")
+        verify(gameSummaryDaoContract, times(1)).saveVillanSummaryStats(1, villanSummaryList,matchContol.getTableName(lane,role))
+        val columns = matchContol.getColumns(tables.GOLD_PER_MIN,true)
+        verify(gameSummaryDaoContract, times(1)).saveGameStageStatList(1,heroCreeps,columns,matchContol.getTableName(lane,role))
+    }
+
+    @Test
+    fun `Make sure that we save hero xp stats correctly`() {
+        val villanSummaryList = ArrayList<RefinedStatSummary>()
+        villanSummaryList.add(mock(RefinedStatSummary::class.java))
+        val heroSummaryList = ArrayList<RefinedStatSummary>()
+        heroSummaryList.add(mock(RefinedStatSummary::class.java))
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, "solo", "top")).thenReturn(villanSummaryList)
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, "solo","top")).thenReturn(heroSummaryList)
+        `when`(gameSummaryDaoContract.saveHeroSummaryStats(1, heroSummaryList,matchContol.getTableName(lane,role))).thenReturn(true)
+        val heroCreeps = ArrayList<GameStageStat>()
+        heroCreeps.add(mock(GameStageStat::class.java))
+
+        `when`(refinedStatDaoContract.fetchGameStageStatListForHero(tables.XP_PER_MIN,1, role, lane)).thenReturn(heroCreeps)
+        matchContol.refineMatchData(1, "solo", "top")
+        verify(gameSummaryDaoContract, times(1)).saveVillanSummaryStats(1, villanSummaryList,matchContol.getTableName(lane,role))
+        val columns = matchContol.getColumns(tables.XP_PER_MIN,true)
+        verify(gameSummaryDaoContract, times(1)).saveGameStageStatList(1,heroCreeps,columns,matchContol.getTableName(lane,role))
+    }
+
+    @Test
+    fun `Make sure that we save hero damage stats correctly`() {
+        val villanSummaryList = ArrayList<RefinedStatSummary>()
+        villanSummaryList.add(mock(RefinedStatSummary::class.java))
+        val heroSummaryList = ArrayList<RefinedStatSummary>()
+        heroSummaryList.add(mock(RefinedStatSummary::class.java))
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, "solo", "top")).thenReturn(villanSummaryList)
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, "solo","top")).thenReturn(heroSummaryList)
+        `when`(gameSummaryDaoContract.saveHeroSummaryStats(1, heroSummaryList,matchContol.getTableName(lane,role))).thenReturn(true)
+        val heroCreeps = ArrayList<GameStageStat>()
+        heroCreeps.add(mock(GameStageStat::class.java))
+
+        `when`(refinedStatDaoContract.fetchGameStageStatListForHero(tables.DAMAGE_TAKEN_PER_MIN,1, role, lane)).thenReturn(heroCreeps)
+        matchContol.refineMatchData(1, "solo", "top")
+        verify(gameSummaryDaoContract, times(1)).saveVillanSummaryStats(1, villanSummaryList,matchContol.getTableName(lane,role))
+        val columns = matchContol.getColumns(tables.DAMAGE_TAKEN_PER_MIN,true)
+        verify(gameSummaryDaoContract, times(1)).saveGameStageStatList(1,heroCreeps,columns,matchContol.getTableName(lane,role))
+    }
+    @Test
+    fun `Make sure that we save villan creep stats`() {
+        val villanSummaryList = ArrayList<RefinedStatSummary>()
+        villanSummaryList.add(mock(RefinedStatSummary::class.java))
+        val heroSummaryList = ArrayList<RefinedStatSummary>()
+        heroSummaryList.add(mock(RefinedStatSummary::class.java))
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, "solo", "top")).thenReturn(villanSummaryList)
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, "solo","top")).thenReturn(heroSummaryList)
+        `when`(gameSummaryDaoContract.saveHeroSummaryStats(1, heroSummaryList,matchContol.getTableName(lane,role))).thenReturn(true)
+        val heroCreeps = ArrayList<GameStageStat>()
+        heroCreeps.add(mock(GameStageStat::class.java))
+
+        `when`(refinedStatDaoContract.fetchGameStageStatListForVillian(tables.CREEPS_PER_MIN,1, role, lane)).thenReturn(heroCreeps)
+        matchContol.refineMatchData(1, "solo", "top")
+        verify(gameSummaryDaoContract, times(1)).saveVillanSummaryStats(1, villanSummaryList,matchContol.getTableName(lane,role))
+        val columns = matchContol.getColumns(tables.CREEPS_PER_MIN,false)
+        verify(gameSummaryDaoContract, times(1)).saveGameStageStatList(1,heroCreeps,columns,matchContol.getTableName(lane,role))
+    }
+
+    @Test
+    fun `Make sure that we save villan gold stats correctly`() {
+        val villanSummaryList = ArrayList<RefinedStatSummary>()
+        villanSummaryList.add(mock(RefinedStatSummary::class.java))
+        val heroSummaryList = ArrayList<RefinedStatSummary>()
+        heroSummaryList.add(mock(RefinedStatSummary::class.java))
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, "solo", "top")).thenReturn(villanSummaryList)
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, "solo","top")).thenReturn(heroSummaryList)
+        `when`(gameSummaryDaoContract.saveHeroSummaryStats(1, heroSummaryList,matchContol.getTableName(lane,role))).thenReturn(true)
+        val heroCreeps = ArrayList<GameStageStat>()
+        heroCreeps.add(mock(GameStageStat::class.java))
+
+        `when`(refinedStatDaoContract.fetchGameStageStatListForVillian(tables.GOLD_PER_MIN,1, role, lane)).thenReturn(heroCreeps)
+        matchContol.refineMatchData(1, "solo", "top")
+        verify(gameSummaryDaoContract, times(1)).saveVillanSummaryStats(1, villanSummaryList,matchContol.getTableName(lane,role))
+        val columns = matchContol.getColumns(tables.GOLD_PER_MIN,false)
+        verify(gameSummaryDaoContract, times(1)).saveGameStageStatList(1,heroCreeps,columns,matchContol.getTableName(lane,role))
+    }
+
+    @Test
+    fun `Make sure that we save villan xp stats correctly`() {
+        val villanSummaryList = ArrayList<RefinedStatSummary>()
+        villanSummaryList.add(mock(RefinedStatSummary::class.java))
+        val heroSummaryList = ArrayList<RefinedStatSummary>()
+        heroSummaryList.add(mock(RefinedStatSummary::class.java))
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, "solo", "top")).thenReturn(villanSummaryList)
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, "solo","top")).thenReturn(heroSummaryList)
+        `when`(gameSummaryDaoContract.saveHeroSummaryStats(1, heroSummaryList,matchContol.getTableName(lane,role))).thenReturn(true)
+        val heroCreeps = ArrayList<GameStageStat>()
+        heroCreeps.add(mock(GameStageStat::class.java))
+
+        `when`(refinedStatDaoContract.fetchGameStageStatListForVillian(tables.XP_PER_MIN,1, role, lane)).thenReturn(heroCreeps)
+        matchContol.refineMatchData(1, "solo", "top")
+        verify(gameSummaryDaoContract, times(1)).saveVillanSummaryStats(1, villanSummaryList,matchContol.getTableName(lane,role))
+        val columns = matchContol.getColumns(tables.XP_PER_MIN,false)
+        verify(gameSummaryDaoContract, times(1)).saveGameStageStatList(1,heroCreeps,columns,matchContol.getTableName(lane,role))
+    }
+
+    @Test
+    fun `Make sure that we save villan damage stats correctly`() {
+        val villanSummaryList = ArrayList<RefinedStatSummary>()
+        villanSummaryList.add(mock(RefinedStatSummary::class.java))
+        val heroSummaryList = ArrayList<RefinedStatSummary>()
+        heroSummaryList.add(mock(RefinedStatSummary::class.java))
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, "solo", "top")).thenReturn(villanSummaryList)
+        `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, "solo","top")).thenReturn(heroSummaryList)
+        `when`(gameSummaryDaoContract.saveHeroSummaryStats(1, heroSummaryList,matchContol.getTableName(lane,role))).thenReturn(true)
+        val heroCreeps = ArrayList<GameStageStat>()
+        heroCreeps.add(mock(GameStageStat::class.java))
+
+        `when`(refinedStatDaoContract.fetchGameStageStatListForVillian(tables.DAMAGE_TAKEN_PER_MIN,1, role, lane)).thenReturn(heroCreeps)
+        matchContol.refineMatchData(1, "solo", "top")
+        verify(gameSummaryDaoContract, times(1)).saveVillanSummaryStats(1, villanSummaryList,matchContol.getTableName(lane,role))
+        val columns = matchContol.getColumns(tables.DAMAGE_TAKEN_PER_MIN,false)
+        verify(gameSummaryDaoContract, times(1)).saveGameStageStatList(1,heroCreeps,columns,matchContol.getTableName(lane,role))
+    }
+
+    @Test
+    fun `Make sure that we can generate table name for solo top`() {
+        Assert.assertTrue(matchContol.getTableName(TOP,SOLO) == TOP)
+    }
+
+    @Test
+    fun `Make sure that we can generate table name for solo mid`() {
+        Assert.assertTrue(matchContol.getTableName(MID,SOLO) == MID)
+    }
+
+    @Test
+    fun `Make sure that we can generate table name for jungle`() {
+        Assert.assertTrue(matchContol.getTableName(JUNGLE, NONE) == JUNGLE)
+    }
+
+    @Test
+    fun `Make sure that we can generate table name for duo carry`() {
+        Assert.assertTrue(matchContol.getTableName(BOT, DUO_CARRY) == ADC)
+    }
+
+    @Test
+    fun `Make sure that we can generate table name for duo support`() {
+        Assert.assertTrue(matchContol.getTableName(BOT, DUO_SUPPORT) == SUPPORT)
+    }
+
+    @Test
+    fun `Make sure that we can fail if we try to generate using incorrect string`() {
+        Assert.assertTrue(matchContol.getTableName("mid","solo") == "")
     }
 
 

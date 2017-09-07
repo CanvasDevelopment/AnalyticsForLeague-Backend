@@ -31,7 +31,7 @@ class MockClientTests {
 
     fun getData() : String {
 
-        val inputs = FileInputStream("C:\\Users\\jek40\\Desktop\\analyticsforleague.com\\afl_backend\\src\\main\\resources\\json\\161340788.json")
+        val inputs = FileInputStream("C:\\Users\\jek40\\Desktop\\analyticsforleague.com\\afl_backend\\processing\\src\\main\\resources\\json\\161340788.json")
         val buf = BufferedReader(InputStreamReader(inputs))
         var line = buf.readLine()
         val sb = StringBuilder()

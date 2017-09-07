@@ -20,7 +20,8 @@ import kotlin.collections.ArrayList
  */
 class GameSummaryDAOTests {
 
-    private val GAME_SUMMARY_TABLE = "gamesummarystats"
+    private val GAME_SUMMARY_TABLE = "top_summaryStats"
+    private val tableName = "top"
     lateinit var dbHelper: DBHelper
     private lateinit var gameSummaryDAO: GameSummaryDAO
     private val random = Random()
@@ -54,7 +55,7 @@ class GameSummaryDAOTests {
                 random.nextInt(),
                 random.nextInt())
 
-        val result = gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat)
+        val result = gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat, tableName)
         Assert.assertTrue(result != (-1).toLong())
 
         // we dont need a save to produce the summary stat so lets just make it happen with the dbHelper
@@ -68,7 +69,7 @@ class GameSummaryDAOTests {
                 "heroTeamDragonKills,\n" +
                 "heroTeamRiftHeraldKills,\n" +
                 "heroTeamBaronKills " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = ${refinedSummaryStat.summonerId}"
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
 //        Assert.assertEquals(retrievedSummaryStats.fetchSize, 1)
@@ -114,9 +115,9 @@ class GameSummaryDAOTests {
                 random.nextInt(),
                 random.nextInt())
 
-        val heroResult = gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat2)
+        val heroResult = gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat2, tableName)
         Assert.assertTrue(heroResult!= (-1).toLong())
-        val result = gameSummaryDAO.saveVillanSummaryStat(summonerId, refinedSummaryStat)
+        val result = gameSummaryDAO.saveVillanSummaryStat(summonerId, refinedSummaryStat,tableName)
         Assert.assertTrue(result != (-1).toLong())
 
         // we dont need a save to produce the summary stat so lets just make it happen with the dbHelper
@@ -130,7 +131,7 @@ class GameSummaryDAOTests {
                 "villanTeamDragonKills,\n" +
                 "villanTeamRiftHeraldKills,\n" +
                 "villanTeamBaronKills " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = ${refinedSummaryStat.summonerId}"
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
 //        Assert.assertEquals(retrievedSummaryStats.fetchSize, 1)
@@ -189,7 +190,7 @@ class GameSummaryDAOTests {
         arrayOfStats.add(refinedSummaryStat2)
         arrayOfStats.add(refinedSummaryStat3)
 
-        gameSummaryDAO.saveHeroSummaryStats(summonerId, arrayOfStats)
+        gameSummaryDAO.saveHeroSummaryStats(summonerId, arrayOfStats,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -201,7 +202,7 @@ class GameSummaryDAOTests {
                 "heroTeamDragonKills,\n" +
                 "heroTeamRiftHeraldKills,\n" +
                 "heroTeamBaronKills " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = $summonerId"
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
 //        Assert.assertEquals(retrievedSummaryStats.fetchSize, 1)
@@ -249,8 +250,8 @@ class GameSummaryDAOTests {
                 staticColumnNames.HERO_CREEPS_MID_GAME,
                 staticColumnNames.HERO_CREEPS_LATE_GAME)
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
-        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
+        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -265,7 +266,7 @@ class GameSummaryDAOTests {
                 "${staticColumnNames.HERO_CREEPS_EARLY_GAME}," +
                 "${staticColumnNames.HERO_CREEPS_MID_GAME}," +
                 "${staticColumnNames.HERO_CREEPS_LATE_GAME} " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = $summonerId"
 
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
@@ -310,8 +311,8 @@ class GameSummaryDAOTests {
                staticColumnNames.HERO_DAMAGE_LATE_GAME)
 
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
-        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
+        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -326,7 +327,7 @@ class GameSummaryDAOTests {
                 "${statNames.earlyGame}," +
                 "${statNames.midGame}," +
                 "${statNames.lateGame} " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = $summonerId"
 
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
@@ -369,8 +370,8 @@ class GameSummaryDAOTests {
                staticColumnNames.HERO_GOLD_MID_GAME,
                 staticColumnNames.HERO_GOLD_LATE_GAME)
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
-        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
+        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -385,7 +386,7 @@ class GameSummaryDAOTests {
                 "${statNames.earlyGame}," +
                 "${statNames.midGame}," +
                 "${statNames.lateGame} " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = $summonerId"
 
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
@@ -429,8 +430,8 @@ class GameSummaryDAOTests {
                 staticColumnNames.HERO_XP_MID_GAME,
                 staticColumnNames.HERO_XP_LATE_GAME)
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
-        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
+        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -445,7 +446,7 @@ class GameSummaryDAOTests {
                 "${statNames.earlyGame}," +
                 "${statNames.midGame}," +
                 "${statNames.lateGame} " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = $summonerId"
 
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
@@ -490,8 +491,8 @@ class GameSummaryDAOTests {
                staticColumnNames.VILLAN_CREEPS_LATE_GAME)
 
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
-        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
+        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -506,7 +507,7 @@ class GameSummaryDAOTests {
                 "${statNames.earlyGame}," +
                 "${statNames.midGame}," +
                 "${statNames.lateGame} " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = $summonerId"
 
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
@@ -553,8 +554,8 @@ class GameSummaryDAOTests {
                 staticColumnNames.VILLAN_DAMAGE_LATE_GAME)
 
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
-        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
+        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -569,7 +570,7 @@ class GameSummaryDAOTests {
                 "${statNames.earlyGame}," +
                 "${statNames.midGame}," +
                 "${statNames.lateGame} " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = $summonerId"
 
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
@@ -614,8 +615,8 @@ class GameSummaryDAOTests {
                 staticColumnNames.VILLAN_GOLD_LATE_GAME)
 
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
-        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
+        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -630,7 +631,7 @@ class GameSummaryDAOTests {
                 "${statNames.earlyGame}," +
                 "${statNames.midGame}," +
                 "${statNames.lateGame} " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = $summonerId"
 
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
@@ -699,8 +700,8 @@ class GameSummaryDAOTests {
         gameStageStatArray.add(creepsStats)
         gameStageStatArray.add(creepsStats2)
 
-        gameSummaryDAO.saveHeroSummaryStats(summonerId, summarystatarray)
-        gameSummaryDAO.saveHeroGameStageStatList(summonerId,gameStageStatArray,statNames)
+        gameSummaryDAO.saveHeroSummaryStats(summonerId, summarystatarray,tableName)
+        gameSummaryDAO.saveGameStageStatList(summonerId,gameStageStatArray,statNames,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -715,7 +716,7 @@ class GameSummaryDAOTests {
                 "${statNames.earlyGame}," +
                 "${statNames.midGame}," +
                 "${statNames.lateGame} " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = $summonerId"
 
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
@@ -761,8 +762,8 @@ class GameSummaryDAOTests {
                 staticColumnNames.VILLAN_XP_LATE_GAME)
 
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
-        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames)
+        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -777,7 +778,7 @@ class GameSummaryDAOTests {
                 "${statNames.earlyGame}," +
                 "${statNames.midGame}," +
                 "${statNames.lateGame} " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = $summonerId"
 
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
@@ -818,8 +819,8 @@ class GameSummaryDAOTests {
                 random.nextInt(),
                 random.nextInt())
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
-        gameSummaryDAO.saveTeamStatsItemForHero(summonerId,fullgameStat)
+        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.saveTeamStatsItemForHero(summonerId,fullgameStat,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -836,7 +837,7 @@ class GameSummaryDAOTests {
                 "heroAssists," +
                 "heroWardsPlaced," +
                 "heroWardsKilled " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = $summonerId"
 
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
@@ -879,8 +880,8 @@ class GameSummaryDAOTests {
                 random.nextInt(),
                 random.nextInt())
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1)
-        gameSummaryDAO.saveTeamStatsItemForVillan(summonerId,fullgameStat)
+        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.saveTeamStatsItemForVillan(summonerId,fullgameStat,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -897,7 +898,7 @@ class GameSummaryDAOTests {
                 "villanAssists," +
                 "villanWardsPlaced," +
                 "villanWardsKilled " +
-                "From gamesummarystats " +
+                "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = $summonerId"
 
         val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)

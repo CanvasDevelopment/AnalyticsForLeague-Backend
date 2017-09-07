@@ -8,4 +8,13 @@ package model.refined_stats
  *  - "heroXpMidGame"
  *  - "villanCreepsEarlyGame"
  */
-class RefinedGeneralGameStageColumnNames(val earlyGame : String, val midGame : String, val lateGame : String)
+class RefinedGeneralGameStageColumnNames(val earlyGame : String, val midGame : String, val lateGame : String) {
+
+    override fun equals(other: Any?): Boolean {
+        if (other is RefinedGeneralGameStageColumnNames) {
+            return other.earlyGame == earlyGame && other.midGame == midGame && other.lateGame == lateGame
+        }
+
+        return false
+    }
+}
