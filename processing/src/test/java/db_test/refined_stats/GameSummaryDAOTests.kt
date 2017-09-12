@@ -5,7 +5,7 @@ import db.refined_stats.GameSummaryDAO
 import model.refined_stats.FullGameStat
 import model.refined_stats.GameStageStat
 import model.refined_stats.RefinedGeneralGameStageColumnNames
-import model.refined_stats.RefinedStatSummary
+import model.refined_stats.HeroTeamSummaryStat
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -44,7 +44,7 @@ class GameSummaryDAOTests {
 
     @Test
     fun gameSummaryCanSaveSummaryStat() {
-        val refinedSummaryStat = RefinedStatSummary(
+        val refinedSummaryStat = HeroTeamSummaryStat(
                 random.nextLong(),
                 random.nextInt(),
                 random.nextLong(),
@@ -55,7 +55,7 @@ class GameSummaryDAOTests {
                 random.nextInt(),
                 random.nextInt())
 
-        val result = gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat, tableName)
+        val result = gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat, tableName)
         Assert.assertTrue(result != (-1).toLong())
 
         // we dont need a save to produce the summary stat so lets just make it happen with the dbHelper
@@ -93,7 +93,7 @@ class GameSummaryDAOTests {
     fun gameSummaryCanSaveSummaryStatForVillan() {
         val summonerId = random.nextLong()
         val gameId = random.nextLong()
-        val refinedSummaryStat = RefinedStatSummary(
+        val refinedSummaryStat = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 gameId,
@@ -104,7 +104,7 @@ class GameSummaryDAOTests {
                 random.nextInt(),
                 random.nextInt())
 
-        val refinedSummaryStat2 = RefinedStatSummary(
+        val refinedSummaryStat2 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 gameId,
@@ -115,9 +115,9 @@ class GameSummaryDAOTests {
                 random.nextInt(),
                 random.nextInt())
 
-        val heroResult = gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat2, tableName)
+        val heroResult = gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat2, tableName)
         Assert.assertTrue(heroResult!= (-1).toLong())
-        val result = gameSummaryDAO.saveVillanSummaryStat(summonerId, refinedSummaryStat,tableName)
+        val result = gameSummaryDAO.saveVillanTeamSummaryStat(summonerId, refinedSummaryStat,tableName)
         Assert.assertTrue(result != (-1).toLong())
 
         // we dont need a save to produce the summary stat so lets just make it happen with the dbHelper
@@ -154,7 +154,7 @@ class GameSummaryDAOTests {
     @Test
     fun ensureThatWeCanSaveAnArrayOfHeroSummaryStats() {
         val summonerId = random.nextLong()
-        val refinedSummaryStat1 = RefinedStatSummary(
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 random.nextLong(),
@@ -164,7 +164,7 @@ class GameSummaryDAOTests {
                 random.nextInt(),
                 random.nextInt(),
                 random.nextInt())
-        val refinedSummaryStat2 = RefinedStatSummary(
+        val refinedSummaryStat2 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 random.nextLong(),
@@ -174,7 +174,7 @@ class GameSummaryDAOTests {
                 random.nextInt(),
                 random.nextInt(),
                 random.nextInt())
-        val refinedSummaryStat3 = RefinedStatSummary(
+        val refinedSummaryStat3 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 random.nextLong(),
@@ -185,12 +185,12 @@ class GameSummaryDAOTests {
                 random.nextInt(),
                 random.nextInt())
 
-        val arrayOfStats = ArrayList<RefinedStatSummary>()
+        val arrayOfStats = ArrayList<HeroTeamSummaryStat>()
         arrayOfStats.add(refinedSummaryStat1)
         arrayOfStats.add(refinedSummaryStat2)
         arrayOfStats.add(refinedSummaryStat3)
 
-        gameSummaryDAO.saveHeroSummaryStats(summonerId, arrayOfStats,tableName)
+        gameSummaryDAO.saveHeroTeamSummaryStats(summonerId, arrayOfStats,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -228,7 +228,7 @@ class GameSummaryDAOTests {
     fun ensureWeCanSaveCreepsScoreStageForHero() {
         val summonerId = random.nextLong()
         val gameId = random.nextLong()
-        val refinedSummaryStat1 = RefinedStatSummary(
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 gameId,
@@ -250,7 +250,7 @@ class GameSummaryDAOTests {
                 staticColumnNames.HERO_CREEPS_MID_GAME,
                 staticColumnNames.HERO_CREEPS_LATE_GAME)
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat1,tableName)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
@@ -289,7 +289,7 @@ class GameSummaryDAOTests {
     fun ensureWeCanSaveDamageScoreStageForHero() {
         val summonerId = random.nextLong()
         val gameId = random.nextLong()
-        val refinedSummaryStat1 = RefinedStatSummary(
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 gameId,
@@ -311,7 +311,7 @@ class GameSummaryDAOTests {
                staticColumnNames.HERO_DAMAGE_LATE_GAME)
 
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat1,tableName)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
@@ -349,7 +349,7 @@ class GameSummaryDAOTests {
     fun ensureWeCanSaveGoldScoreStageForHero() {
         val summonerId = random.nextLong()
         val gameId = random.nextLong()
-        val refinedSummaryStat1 = RefinedStatSummary(
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 gameId,
@@ -370,7 +370,7 @@ class GameSummaryDAOTests {
                staticColumnNames.HERO_GOLD_MID_GAME,
                 staticColumnNames.HERO_GOLD_LATE_GAME)
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat1,tableName)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
@@ -408,7 +408,7 @@ class GameSummaryDAOTests {
     fun ensureWeCanSaveXPScoreStageForHero() {
         val summonerId = random.nextLong()
         val gameId = random.nextLong()
-        val refinedSummaryStat1 = RefinedStatSummary(
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 gameId,
@@ -430,7 +430,7 @@ class GameSummaryDAOTests {
                 staticColumnNames.HERO_XP_MID_GAME,
                 staticColumnNames.HERO_XP_LATE_GAME)
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat1,tableName)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
@@ -468,7 +468,7 @@ class GameSummaryDAOTests {
     fun ensureWeCanSaveCreepsScoreStageForEnemy() {
         val summonerId = random.nextLong()
         val gameId = random.nextLong()
-        val refinedSummaryStat1 = RefinedStatSummary(
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 gameId,
@@ -491,7 +491,7 @@ class GameSummaryDAOTests {
                staticColumnNames.VILLAN_CREEPS_LATE_GAME)
 
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat1,tableName)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
@@ -531,7 +531,7 @@ class GameSummaryDAOTests {
     fun ensureWeCanSaveDamageScoreStageForEnemy() {
         val summonerId = random.nextLong()
         val gameId = random.nextLong()
-        val refinedSummaryStat1 = RefinedStatSummary(
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 gameId,
@@ -554,7 +554,7 @@ class GameSummaryDAOTests {
                 staticColumnNames.VILLAN_DAMAGE_LATE_GAME)
 
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat1,tableName)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
@@ -592,7 +592,7 @@ class GameSummaryDAOTests {
     fun ensureWeCanSaveGoldScoreStageForEnemy() {
         val summonerId = random.nextLong()
         val gameId = random.nextLong()
-        val refinedSummaryStat1 = RefinedStatSummary(
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 gameId,
@@ -615,7 +615,7 @@ class GameSummaryDAOTests {
                 staticColumnNames.VILLAN_GOLD_LATE_GAME)
 
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat1,tableName)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
@@ -655,7 +655,7 @@ class GameSummaryDAOTests {
         val gameId = random.nextLong()
         val game2 = random.nextLong()
 
-        val refinedSummaryStat1 = RefinedStatSummary(
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 gameId,
@@ -666,7 +666,7 @@ class GameSummaryDAOTests {
                 random.nextInt(),
                 random.nextInt())
 
-        val refinedSummaryStat2 = RefinedStatSummary(
+        val refinedSummaryStat2 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 game2,
@@ -692,7 +692,7 @@ class GameSummaryDAOTests {
                 staticColumnNames.VILLAN_XP_LATE_GAME)
 
 
-        val summarystatarray = ArrayList<RefinedStatSummary>()
+        val summarystatarray = ArrayList<HeroTeamSummaryStat>()
         summarystatarray.add(refinedSummaryStat1)
         summarystatarray.add(refinedSummaryStat2)
 
@@ -700,7 +700,7 @@ class GameSummaryDAOTests {
         gameStageStatArray.add(creepsStats)
         gameStageStatArray.add(creepsStats2)
 
-        gameSummaryDAO.saveHeroSummaryStats(summonerId, summarystatarray,tableName)
+        gameSummaryDAO.saveHeroTeamSummaryStats(summonerId, summarystatarray,tableName)
         gameSummaryDAO.saveGameStageStatList(summonerId,gameStageStatArray,statNames,tableName)
 
         val sql = "SELECT " +
@@ -739,7 +739,7 @@ class GameSummaryDAOTests {
     fun ensureWeCanSaveXPScoreStageForEnemy() {
         val summonerId = random.nextLong()
         val gameId = random.nextLong()
-        val refinedSummaryStat1 = RefinedStatSummary(
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 gameId,
@@ -762,7 +762,7 @@ class GameSummaryDAOTests {
                 staticColumnNames.VILLAN_XP_LATE_GAME)
 
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat1,tableName)
         gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
 
         val sql = "SELECT " +
@@ -800,7 +800,7 @@ class GameSummaryDAOTests {
     fun ensureThatWeCanSaveAndLoadFullGameStat() {
         val summonerId = random.nextLong()
         val gameId = random.nextLong()
-        val refinedSummaryStat1 = RefinedStatSummary(
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 gameId,
@@ -819,8 +819,8 @@ class GameSummaryDAOTests {
                 random.nextInt(),
                 random.nextInt())
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
-        gameSummaryDAO.saveTeamStatsItemForHero(summonerId,fullgameStat,tableName)
+        gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.savePlayerGameSummaryStatsItemForHero(summonerId,fullgameStat,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -861,7 +861,7 @@ class GameSummaryDAOTests {
     fun ensureThatWeCanSaveAndLoadFullGameStatForVillan() {
         val summonerId = random.nextLong()
         val gameId = random.nextLong()
-        val refinedSummaryStat1 = RefinedStatSummary(
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
                 summonerId,
                 random.nextInt(),
                 gameId,
@@ -880,8 +880,8 @@ class GameSummaryDAOTests {
                 random.nextInt(),
                 random.nextInt())
 
-        gameSummaryDAO.insertHeroSummaryStat(refinedSummaryStat1,tableName)
-        gameSummaryDAO.saveTeamStatsItemForVillan(summonerId,fullgameStat,tableName)
+        gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.savePlayerGameSummaryStatsItemForVillan(summonerId,fullgameStat,tableName)
 
         val sql = "SELECT " +
                 "gameId,\n" +
@@ -918,8 +918,8 @@ class GameSummaryDAOTests {
         Assert.assertEquals(count, 1)
     }
 
-    private fun ResultSet.produceTestResultForVillanGameStageStat() :RefinedStatSummary {
-        return RefinedStatSummary(
+    private fun ResultSet.produceTestResultForVillanGameStageStat() : HeroTeamSummaryStat {
+        return HeroTeamSummaryStat(
                 getLong("heroSummonerId"),
                 getInt("villanChampId"),
                 getLong("gameId"),
@@ -955,8 +955,8 @@ class GameSummaryDAOTests {
                 getLong("gameId"))
     }
 
-    private fun ResultSet.produceTestResultForHeroSummaryStat(): RefinedStatSummary {
-        return RefinedStatSummary(
+    private fun ResultSet.produceTestResultForHeroSummaryStat(): HeroTeamSummaryStat {
+        return HeroTeamSummaryStat(
                 getLong("heroSummonerId"),
                 getInt("heroChampId"),
                 getLong("gameId"),

@@ -1,5 +1,6 @@
 package network_tests
 
+import application.region.RegionController
 import com.google.gson.GsonBuilder
 import db_test.refined_stats.RefinedStatsTests
 import network.NetworkInterface
@@ -21,7 +22,7 @@ class SummonerServiceTests {
 
     @Before
     fun setUp() {
-        networkInterface = NetworkInterface("oc1")
+        networkInterface = NetworkInterface(RegionController())
         summonerServiceApi = networkInterface.getSummonerService()
     }
 

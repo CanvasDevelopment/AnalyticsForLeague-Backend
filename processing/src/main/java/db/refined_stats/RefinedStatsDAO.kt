@@ -5,11 +5,11 @@ import extensions.produceFullGameStat
 import extensions.produceGameStageRefinedStat
 import extensions.produceSummaryStat
 import model.refined_stats.GameStageStat
-import model.refined_stats.GameStages
-import model.refined_stats.RefinedStatSummary
+import model.refined_stats.HeroTeamSummaryStat
 import util.Tables
 import model.positions.Jungle
 import model.refined_stats.FullGameStat
+import util.columnnames.TeamColumns
 
 
 /**
@@ -19,7 +19,8 @@ import model.refined_stats.FullGameStat
  * easy way to pull out stats that we want about our hero and our villian. These stats will then be saved to our refined
  * table for easier access.
  */
-class RefinedStatsDAO(val dbHelper: DBHelper) {
+class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
+
 
     private val tables = Tables()
 
@@ -35,7 +36,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) {
      *                      to get the correct role / lane strings
      *
      */
-    fun fetchGameStageStatListForHero(
+    override fun fetchGameStageStatListForHero(
             deltaName: String,
             summonerId: Long,
             role: String,
@@ -74,7 +75,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) {
      * @param role The role of the hero and the villan
      * @param lane The lane of the hero and the villan
      */
-    fun fetchGameStageStatListForVillian(deltaName: String,
+    override fun fetchGameStageStatListForVillian(deltaName: String,
                                          summonerId: Long,
                                          role: String,
                                          lane: String) : ArrayList<GameStageStat> {
@@ -108,13 +109,13 @@ class RefinedStatsDAO(val dbHelper: DBHelper) {
 
 
     /**
-     * Fetch a list of [RefinedStatSummary] for a specific role.
+     * Fetch a list of [HeroTeamSummaryStat] for a specific role.
      *
      * @param summonerId    The riot given SummonerId of the hero
      * @param role          The role that we want to filter to.
      * @param lane          The Lane that we want to filter to.
      */
-    fun fetchGameSummaryStatsForHero(summonerId: Long, role: String, lane: String): ArrayList<RefinedStatSummary> {
+    override fun fetchGameSummaryStatsForHero(summonerId: Long, role: String, lane: String): ArrayList<HeroTeamSummaryStat> {
         val sql = "SELECT\n" +
                 "  ${tables.PARTICIPANT}.SummonerId,\n" +
                 "  ${tables.PARTICIPANT}.GameId,\n" +
@@ -137,7 +138,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) {
                 "      AND matchtable.GameDuration > 300"
 
         val result = dbHelper.executeSqlQuery(sql)
-        val statList = ArrayList<RefinedStatSummary>()
+        val statList = ArrayList<HeroTeamSummaryStat>()
         while (result.next()) {
             statList.add(result.produceSummaryStat())
         }
@@ -145,7 +146,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) {
         return statList
     }
 
-    fun fetchGameSummaryStatsForVillan(summonerId: Long, role: String, lane: String): ArrayList<RefinedStatSummary> {
+    override fun fetchGameSummaryStatsForVillan(summonerId: Long, role: String, lane: String): ArrayList<HeroTeamSummaryStat> {
        val sql = "SELECT\n" +
                "  participantidentity.SummonerId,\n" +
                "  participant.GameId,\n" +
@@ -169,7 +170,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) {
                "      AND participantidentity.role = '$role'\n" +
                "      AND matchtable.GameDuration > 300"
         val result = dbHelper.executeSqlQuery(sql)
-        val statList = ArrayList<RefinedStatSummary>()
+        val statList = ArrayList<HeroTeamSummaryStat>()
         while (result.next()) {
             statList.add(result.produceSummaryStat())
         }
@@ -183,7 +184,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) {
      * @param heroRole The hero role
      * @param heroLane The hero lane
      */
-    fun fetchPlayerStatisticsForHero(heroSummonerId: Long,
+    override fun fetchPlayerStatisticsForHero(heroSummonerId: Long,
                                      heroRole: String,
                                      heroLane: String) : ArrayList<FullGameStat> {
         val sql = "SELECT\n" +
@@ -216,7 +217,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) {
      * @param heroLane The lane of the hero
      * @param heroRole The role of the hero.
      */
-    fun fetchPlayerStatisticsForVillian(heroSummonerId: Int, heroRole: String, heroLane: String): ArrayList<FullGameStat> {
+    override fun fetchPlayerStatisticsForVillian(heroSummonerId: Long, heroRole: String, heroLane: String): ArrayList<FullGameStat> {
         val sql = "SELECT\n" +
                 "  participantidentity.gameId,\n" +
                 "  stats.kills,\n" +

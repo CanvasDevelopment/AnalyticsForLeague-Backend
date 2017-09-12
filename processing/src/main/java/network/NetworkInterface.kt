@@ -1,5 +1,6 @@
 package network
 
+import application.region.RegionController
 import com.google.gson.GsonBuilder
 import network.riotapi.MatchServiceApi
 import network.riotapi.SummonerService
@@ -10,10 +11,10 @@ import retrofit.converter.GsonConverter
 /**
  * @author Josiah Kendall
  */
-class NetworkInterface(val regionServer: String) {
+class NetworkInterface(regionController: RegionController) {
 
     val adapterBuilder : RestAdapter.Builder = RestAdapter.Builder()
-            .setEndpoint("https://$regionServer.api.riotgames.com")
+            .setEndpoint("https://${regionController.getRiotRegionName()}.api.riotgames.com")
             .setConverter(GsonConverter(GsonBuilder().create()))
             .setClient(UrlConnectionClient())
 

@@ -3,7 +3,7 @@ package db.refined_stats
 import db.DBHelper
 import model.refined_stats.FullGameStat
 import model.refined_stats.GameStageStat
-import model.refined_stats.RefinedStatSummary
+import model.refined_stats.HeroTeamSummaryStat
 import model.refined_stats.RefinedGeneralGameStageColumnNames
 
 /**
@@ -22,21 +22,22 @@ import model.refined_stats.RefinedGeneralGameStageColumnNames
  */
 class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
 
+
     override fun doesGameSummaryForSummonerExist(gameId: Long, summonerId: Long): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 
     /**
-     * Save an Array of [RefinedStatSummary] match objects for our hero. Each object will represent one game.
+     * Save an Array of [HeroTeamSummaryStat] match objects for our hero. Each object will represent one game.
      * @param summonerId        The hero summonerId. Currently unused, unsure if it will be in the future.
-     * @param summaryStats      The array list of [RefinedStatSummary] objects to save.
+     * @param summaryStatStats      The array list of [HeroTeamSummaryStat] objects to save.
      */
-    override fun saveHeroSummaryStats(summonerId: Long, summaryStats: ArrayList<RefinedStatSummary>, tableName: String): Boolean {
+    override fun saveHeroTeamSummaryStats(summonerId: Long, summaryStatStats: ArrayList<HeroTeamSummaryStat>, tableName: String): Boolean {
         // for every item in the list, we want to create a new list item.
         var success = true
-        summaryStats
-                .map { insertHeroSummaryStat(it, tableName) }
+        summaryStatStats
+                .map { insertHeroTeamSummaryStat(it, tableName) }
                 .forEach { success = it != (-1).toLong() }
 
         return success
@@ -44,9 +45,9 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
 
     /**
      * Insert a single summary stat into the gameSummaryStats table.
-     * @param summaryStat The [RefinedStatSummary] to save
+     * @param summaryStatStat The [HeroTeamSummaryStat] to save
      */
-    override fun insertHeroSummaryStat(summaryStat: RefinedStatSummary, tableName: String): Long {
+    override fun insertHeroTeamSummaryStat(summaryStatStat: HeroTeamSummaryStat, tableName: String): Long {
         val sql = "INSERT INTO ${tableName}_summaryStats (" +
                 "gameId,\n" +
                 "heroSummonerId,\n" +
@@ -57,28 +58,28 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
                 "heroTeamDragonKills,\n" +
                 "heroTeamRiftHeraldKills,\n" +
                 "heroTeamBaronKills) VALUES (" +
-                "${summaryStat.gameId}," +
-                "${summaryStat.summonerId}," +
-                "${summaryStat.champId}," +
-                "${summaryStat.teamId}," +
-                "${summaryStat.win}," +
-                "${summaryStat.teamTowerKills}," +
-                "${summaryStat.teamDragonKills}," +
-                "${summaryStat.teamRiftHeraldKills}," +
-                "${summaryStat.teamBaronKills})"
+                "${summaryStatStat.gameId}," +
+                "${summaryStatStat.summonerId}," +
+                "${summaryStatStat.champId}," +
+                "${summaryStatStat.teamId}," +
+                "${summaryStatStat.win}," +
+                "${summaryStatStat.teamTowerKills}," +
+                "${summaryStatStat.teamDragonKills}," +
+                "${summaryStatStat.teamRiftHeraldKills}," +
+                "${summaryStatStat.teamBaronKills})"
 
         return dbHelper.executeSQLScript(sql)
     }
 
     /**
-     * Save the [RefinedStatSummary] list for a villan
+     * Save the [HeroTeamSummaryStat] list for a villan
      * @param summonerId The hero summoner Id
-     * @param summaryStats The list of [RefinedStatSummary] to save
+     * @param summaryStatStats The list of [HeroTeamSummaryStat] to save
      * @param tableName The table to save these stats in.
      */
-    override fun saveVillanSummaryStats(summonerId: Long, summaryStats: ArrayList<RefinedStatSummary>, tableName: String): Boolean {
+    override fun saveVillanTeamSummaryStats(summonerId: Long, summaryStatStats: ArrayList<HeroTeamSummaryStat>, tableName: String): Boolean {
         var success = true
-        summaryStats.map { insertHeroSummaryStat(it, tableName) }
+        summaryStatStats.map { insertHeroTeamSummaryStat(it, tableName) }
                 .forEach { success = it != (-1).toLong() }
         return success
     }
@@ -86,18 +87,18 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
     /**
      * Insert a single summary stat into the gameSummaryStats table.
      * @param heroSummonerId    The summoner Id of our hero
-     * @param summaryStat       The [RefinedStatSummary] to save
+     * @param summaryStatStat       The [HeroTeamSummaryStat] to save
      */
-    override fun saveVillanSummaryStat(heroSummonerId: Long, summaryStat: RefinedStatSummary, tableName: String): Long {
+    override fun saveVillanTeamSummaryStat(heroSummonerId: Long, summaryStatStat: HeroTeamSummaryStat, tableName: String): Long {
         val sql = "Update ${tableName}_summaryStats " +
-                "SET villanChampId = ${summaryStat.champId},\n" +
-                "villanTeamId = ${summaryStat.teamId},\n" +
-                "villanWin = ${summaryStat.win},\n" +
-                "villanTeamTowerKills = ${summaryStat.teamTowerKills},\n" +
-                "villanTeamDragonKills = ${summaryStat.teamDragonKills},\n" +
-                "villanTeamRiftHeraldKills = ${summaryStat.teamRiftHeraldKills},\n" +
-                "villanTeamBaronKills = ${summaryStat.teamBaronKills} " +
-                "where gameId = ${summaryStat.gameId} and heroSummonerId = $heroSummonerId"
+                "SET villanChampId = ${summaryStatStat.champId},\n" +
+                "villanTeamId = ${summaryStatStat.teamId},\n" +
+                "villanWin = ${summaryStatStat.win},\n" +
+                "villanTeamTowerKills = ${summaryStatStat.teamTowerKills},\n" +
+                "villanTeamDragonKills = ${summaryStatStat.teamDragonKills},\n" +
+                "villanTeamRiftHeraldKills = ${summaryStatStat.teamRiftHeraldKills},\n" +
+                "villanTeamBaronKills = ${summaryStatStat.teamBaronKills} " +
+                "where gameId = ${summaryStatStat.gameId} and heroSummonerId = $heroSummonerId"
 
         return dbHelper.executeSQLScript(sql)
     }
@@ -150,10 +151,10 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
      * @param summonerId    The hero summonerId
      * @param stats         The full game stats for the hero that we want to save.
      */
-    override fun saveTeamStatsListForHero(summonerId: Long,
-                                 stats: ArrayList<FullGameStat>, tableName: String) {
+    override fun savePlayerGameSummaryStatsListForHero(summonerId: Long,
+                                                       stats: ArrayList<FullGameStat>, tableName: String) {
         for (stat in stats) {
-            saveTeamStatsItemForHero(summonerId, stat, tableName)
+            savePlayerGameSummaryStatsItemForHero(summonerId, stat, tableName)
         }
     }
 
@@ -163,8 +164,8 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
      * @param stat              The [FullGameStat] object to save.
      * @return                  The column row id. -1 if update fails.
      */
-    override fun saveTeamStatsItemForHero(heroSummonerId: Long,
-                                 stat: FullGameStat, tableName: String): Long {
+    override fun savePlayerGameSummaryStatsItemForHero(heroSummonerId: Long,
+                                                       stat: FullGameStat, tableName: String): Long {
         val sql = "UPDATE ${tableName}_summaryStats\n" +
                 "SET heroKills = ${stat.kills},\n" +
                 "  heroDeaths = ${stat.deaths},\n" +
@@ -177,13 +178,26 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
     }
 
     /**
+     * Save a list of [FullGameStat] for the villan
+     * @param summonerId The hero summoner id
+     * @param stats Our list of [FullGameStat] items to save. Each item represents once game.
+     * @param tableName The name of the table to save these stats into
+     * @return The row of the updated id. -1 if not successful.
+     */
+    override fun savePlayerGameSummaryStatsListForVillan(summonerId: Long, stats: ArrayList<FullGameStat>, tableName: String) {
+        for (stat in stats) {
+            savePlayerGameSummaryStatsItemForVillan(summonerId, stat, tableName)
+        }
+    }
+
+    /**
      * Save the team stats item : [FullGameStat] for our villan.
      * @param heroSummonerId    The heros summoner Id
      * @param stat              The full game stat to save for our villan.
      * @return                  The row id of the updated row. Returns -1 if not successfull.
      */
-    override fun saveTeamStatsItemForVillan(heroSummonerId: Long,
-                                   stat: FullGameStat, tableName: String): Long {
+    override fun savePlayerGameSummaryStatsItemForVillan(heroSummonerId: Long,
+                                                         stat: FullGameStat, tableName: String): Long {
         val sql = "UPDATE ${tableName}_summaryStats\n" +
                 "SET villanKills = ${stat.kills},\n" +
                 "  villanDeaths = ${stat.deaths},\n" +

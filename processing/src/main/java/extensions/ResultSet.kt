@@ -6,7 +6,7 @@ import model.match.*
 import model.matchlist.MatchSummary
 import model.refined_stats.FullGameStat
 import model.refined_stats.GameStageStat
-import model.refined_stats.RefinedStatSummary
+import model.refined_stats.HeroTeamSummaryStat
 import model.stats.GameStageDelta
 import util.ColumnNames
 import util.columnnames.*
@@ -302,8 +302,8 @@ fun ResultSet.produceGameStageRefinedStat(): GameStageStat {
             getLong(matchColumns.GAME_ID))
 }
 
-fun ResultSet.produceSummaryStat() : RefinedStatSummary{
-    return RefinedStatSummary(getLong(particpantColumns.SUMMONER_ID),
+fun ResultSet.produceSummaryStat() : HeroTeamSummaryStat {
+    return HeroTeamSummaryStat(getLong(particpantColumns.SUMMONER_ID),
             getInt(particpantColumns.CHAMPION_ID),
             getLong(particpantColumns.GAME_ID),
             getInt(teamColumns.TEAM_ID),

@@ -11,12 +11,12 @@ package model.refined_stats
  *  @param gameId            The id of the game.
  *  @param teamId            The team they were on. Will either be 100 or 200
  */
-data class RefinedStatSummary(val summonerId : Long,
-                              val champId : Int,
-                              val gameId : Long,
-                              val teamId : Int,
-                              val win : Boolean,
-                              val teamTowerKills : Int,
-                              val teamDragonKills : Int,
-                              val teamRiftHeraldKills : Int,
-                              val teamBaronKills : Int)
+data class HeroTeamSummaryStat(val summonerId : Long,
+                               val champId : Int,
+                               val gameId : Long,
+                               val teamId : Int,
+                               val win : Boolean,
+                               val teamTowerKills : Int,
+                               val teamDragonKills : Int,
+                               val teamRiftHeraldKills : Int,
+                               val teamBaronKills : Int)

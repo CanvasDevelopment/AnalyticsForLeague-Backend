@@ -1,12 +1,21 @@
 package di
 
+import application.domain.MatchControl
+import application.region.RegionController
 import com.github.salomonbrys.kodein.*
+import com.google.gson.GsonBuilder
 import db.DBHelper
 import db.champion.ChampionDAO
 import db.match.*
+import db.refined_stats.GameSummaryDAO
 import db.refined_stats.RefinedStatsDAO
 import db.stats.GameStageDeltaDAOImpl
 import db.stats.GameStageDeltasDAO
+import network.NetworkInterface
+import network.riotapi.MatchServiceApi
+import retrofit.RestAdapter
+import retrofit.client.UrlConnectionClient
+import retrofit.converter.GsonConverter
 
 /**
  * @author Josiah Kendall
@@ -17,6 +26,7 @@ import db.stats.GameStageDeltasDAO
 class KodeinManager {
 
     val kodein = Kodein {
+
         bind<DBHelper>() with singleton {
             DBHelper()
         }
@@ -86,6 +96,37 @@ class KodeinManager {
         bind<RefinedStatsDAO>() with provider {
             RefinedStatsDAO(
                     kodein.instance())
+        }
+
+        bind<RegionController>() with provider {
+            RegionController()
+        }
+
+        bind<NetworkInterface>() with provider {
+            NetworkInterface(kodein.instance())
+        }
+
+        bind<MatchControl>() with provider {
+            MatchControl(
+                    kodein.instance(),
+                    kodein.instance(),
+                    kodein.instance(),
+                    kodein.instance(),
+                    kodein.instance())
+        }
+
+        bind<GameSummaryDAO>() with provider {
+            GameSummaryDAO(kodein.instance())
+        }
+
+        bind<MatchServiceApi>() with provider {
+            val regionController = RegionController()
+            RestAdapter.Builder()
+                    .setEndpoint("https://${regionController.getRiotRegionName()}.api.riotgames.com")
+                    .setConverter(GsonConverter(GsonBuilder().create()))
+                    .setClient(UrlConnectionClient())
+                    .build()
+                    .create<MatchServiceApi>(MatchServiceApi::class.java)
         }
 
 

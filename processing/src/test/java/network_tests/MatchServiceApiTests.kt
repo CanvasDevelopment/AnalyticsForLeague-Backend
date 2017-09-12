@@ -1,5 +1,6 @@
 package network_tests
 
+import application.region.RegionController
 import network.NetworkInterface
 import network.riotapi.MatchServiceApi
 import org.junit.Assert
@@ -14,10 +15,12 @@ class MatchServiceApiTests {
 
     lateinit var networkInterface : NetworkInterface
     lateinit var matchServiceApi: MatchServiceApi
+    lateinit var regionController : RegionController
 
     @Before
     fun setUp() {
-        networkInterface = NetworkInterface("oc1")
+        regionController = RegionController()
+        networkInterface = NetworkInterface(regionController)
         matchServiceApi = networkInterface.getMatchService()
     }
 

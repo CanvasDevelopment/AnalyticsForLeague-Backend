@@ -1,5 +1,6 @@
 package application_tests
 
+import application.region.RegionController
 import db.DBHelper
 import db.match.*
 import db.matchlist.MatchSummaryDAO
@@ -37,6 +38,8 @@ class ApplicationTests {
 
     lateinit var networkInterface : NetworkInterface
 
+    val regionController : RegionController = RegionController()
+
     @Before
     fun setUp() {
         dbHelper = DBHelper()
@@ -60,7 +63,7 @@ class ApplicationTests {
                 participantDAO,
                 piDAO)
 
-        networkInterface = NetworkInterface("oc1")
+        networkInterface = NetworkInterface(regionController)
 
         matchSummaryDAO = MatchSummaryDAO(dbHelper)
     }

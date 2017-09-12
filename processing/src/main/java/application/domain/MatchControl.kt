@@ -21,10 +21,10 @@ class MatchControl(private val matchDAO: MatchDAOContracts.MatchDAOContract,
     val tables = Tables()
 
     /**
-     * Sync pulls down the latest matches for a summoner, and stores them in the match database.
+     * Pulls down the latest matches for a summoner, and stores them in the match database.
      * @param summonerId
      */
-    fun sync(summonerId : Long) {
+    fun downloadAndSaveMatches(summonerId : Long) {
         // if we don't get a summoner, return
         val summoner = summonerDAOContract.getSummoner(summonerId) ?: return
         val matchList = matchServiceApi.getMatchListForAccount(RIOT_API_KEY, summoner.accountId)
@@ -50,14 +50,15 @@ class MatchControl(private val matchDAO: MatchDAOContracts.MatchDAOContract,
      */
     fun refineMatchData(summonerId: Long, role : String, lane : String) {
         val tableName = getTableName(lane, role)
+
+        // summary stats
         val heroSummaryStats = refinedStatDAOContract.fetchGameSummaryStatsForHero(summonerId,role,lane)
-        var saved = gameSummaryDaoContract.saveHeroSummaryStats(summonerId, heroSummaryStats, tableName)
+        var saved = gameSummaryDaoContract.saveHeroTeamSummaryStats(summonerId, heroSummaryStats, tableName)
         if (!saved) {
             return
         }
-
         val villanSummaryStats = refinedStatDAOContract.fetchGameSummaryStatsForVillan(summonerId, role, lane)
-        saved = gameSummaryDaoContract.saveVillanSummaryStats(summonerId,villanSummaryStats, tableName)
+        saved = gameSummaryDaoContract.saveVillanTeamSummaryStats(summonerId,villanSummaryStats, tableName)
         // todo figure out a way to handle failed saves.
         val heroCreeps = refinedStatDAOContract.fetchGameStageStatListForHero(
                 tables.CREEPS_PER_MIN,
@@ -65,6 +66,7 @@ class MatchControl(private val matchDAO: MatchDAOContracts.MatchDAOContract,
                 role,
                 lane)
 
+        // Save game stages
         saved = gameSummaryDaoContract.saveGameStageStatList(summonerId,heroCreeps, getColumns(tables.CREEPS_PER_MIN, true),tableName)
 
         val villanCreeps = refinedStatDAOContract.fetchGameStageStatListForVillian(
@@ -117,6 +119,13 @@ class MatchControl(private val matchDAO: MatchDAOContracts.MatchDAOContract,
                 lane)
 
         saved = gameSummaryDaoContract.saveGameStageStatList(summonerId, villanDamage, getColumns(tables.DAMAGE_TAKEN_PER_MIN, false),tableName)
+
+        // save full game stats
+        val heroStats = refinedStatDAOContract.fetchPlayerStatisticsForHero(summonerId,role,lane)
+        gameSummaryDaoContract.savePlayerGameSummaryStatsListForHero(summonerId,heroStats,tableName)
+
+        val villanStats = refinedStatDAOContract.fetchPlayerStatisticsForVillian(summonerId, role, lane)
+        gameSummaryDaoContract.savePlayerGameSummaryStatsListForVillan(summonerId,villanStats,tableName)
     }
 
     /**
@@ -152,7 +161,7 @@ class MatchControl(private val matchDAO: MatchDAOContracts.MatchDAOContract,
             }
         }
         // We check for this
-        return ""
+        throw IllegalStateException("Incorrect role and lane combo supplied")
     }
 
     /**
