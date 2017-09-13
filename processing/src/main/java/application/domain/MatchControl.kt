@@ -1,5 +1,7 @@
 package application.domain
 
+import db.DBHelper
+import db.match.MatchDAO
 import db.match.MatchDAOContracts
 import db.refined_stats.GameSummaryDaoContract
 import db.refined_stats.RefinedStatDAOContract
@@ -12,7 +14,7 @@ import util.columnnames.StaticColumnNames
 /**
  * @author Josiah Kendall
  */
-class MatchControl(private val matchDAO: MatchDAOContracts.MatchDAOContract,
+class MatchControl(private val matchDAO: MatchDAO,
                    private val matchServiceApi: MatchServiceApi,
                    private val summonerDAOContract: SummonerDAOContract,
                    private val refinedStatDAOContract: RefinedStatDAOContract,
@@ -227,6 +229,10 @@ class MatchControl(private val matchDAO: MatchDAOContracts.MatchDAOContract,
             }
         }
         throw IllegalStateException("Get columns used with invalid table")
+    }
+
+    fun clearRawDatabasesOfSummoner(summonerId: Long) {
+        matchDAO.deleteAllMatchesFromRawDBForASummoner(summonerId)
     }
 
 

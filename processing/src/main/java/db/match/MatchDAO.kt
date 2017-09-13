@@ -3,6 +3,7 @@ package db.match
 import db.DBHelper
 import extensions.produceMatch
 import model.match.Match
+import util.Tables
 import util.columnnames.MatchColumns
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -14,6 +15,32 @@ class MatchDAO(val dbHelper : DBHelper,
                val teamDAO: TeamDAO,
                val participantDAO: ParticipantDAO,
                val participantIdentityDAO: ParticipantIdentityDAO) : MatchDAOContracts.MatchDAOContract {
+
+    /**
+     * Delete alll the matches from our raw database for a specific summoner.
+     * This is basically the clean up task that we do after processing
+     */
+    override fun deleteAllMatchesFromRawDBForASummoner(summonerId: Long) {
+        val tables = Tables()
+        dbHelper.executeSQLScript("DELETE FROM matchtable")
+        dbHelper.executeSQLScript("DELETE FROM mastery")
+        dbHelper.executeSQLScript("DELETE FROM participantIdentity")
+        dbHelper.executeSQLScript("DELETE FROM participant")
+        dbHelper.executeSQLScript("DELETE FROM ban")
+        dbHelper.executeSQLScript("DELETE FROM team")
+        dbHelper.executeSQLScript("DELETE FROM ${tables.CS_DIFF_PER_MIN}")
+        dbHelper.executeSQLScript("DELETE FROM ${tables.XP_PER_MIN}")
+        dbHelper.executeSQLScript("DELETE FROM ${tables.XP_DIFF_PER_MIN}")
+        dbHelper.executeSQLScript("DELETE FROM ${tables.DAMAGE_TAKEN_PER_MIN}")
+        dbHelper.executeSQLScript("DELETE FROM ${tables.DAMAGE_TAKEN_DIFF_PER_MIN}")
+        dbHelper.executeSQLScript("DELETE FROM ${tables.CREEPS_PER_MIN}")
+        dbHelper.executeSQLScript("DELETE FROM ${tables.GOLD_PER_MIN}")
+        dbHelper.executeSQLScript("DELETE FROM player")
+        dbHelper.executeSQLScript("DELETE FROM rune")
+        dbHelper.executeSQLScript("DELETE FROM stats")
+        dbHelper.executeSQLScript("DELETE FROM timeline")
+
+    }
 
     val MATCH_TABLE = "MatchTable"
     val matchColumns = MatchColumns()

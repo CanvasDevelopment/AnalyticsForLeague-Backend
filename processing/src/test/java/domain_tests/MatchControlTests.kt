@@ -1,6 +1,7 @@
 package domain_tests
 
 import application.domain.MatchControl
+import db.match.MatchDAO
 import db.match.MatchDAOContracts
 import db.matchlist.MatchSummaryDaoContract
 import db.refined_stats.GameSummaryDaoContract
@@ -32,7 +33,7 @@ class MatchControlTests {
     val lane = TOP
 
     lateinit var matchContol: MatchControl
-    lateinit var matchDao: MatchDAOContracts.MatchDAOContract
+    lateinit var matchDao: MatchDAO
     lateinit var matchSummaryDao: MatchSummaryDaoContract
     lateinit var matchServiceApi: MatchServiceApi
     lateinit var summonerDaoContract: SummonerDAOContract
@@ -45,7 +46,7 @@ class MatchControlTests {
         // mock dependencies
         gameSummaryDaoContract = mock(GameSummaryDaoContract::class.java)
         matchServiceApi = mock(MatchServiceApi::class.java)
-        matchDao = mock(MatchDAOContracts.MatchDAOContract::class.java)
+        matchDao = mock(MatchDAO::class.java)
         matchSummaryDao = mock(MatchSummaryDaoContract::class.java)
         summonerDaoContract = mock(SummonerDAOContract::class.java)
         refinedStatDaoContract = mock(RefinedStatDAOContract::class.java)

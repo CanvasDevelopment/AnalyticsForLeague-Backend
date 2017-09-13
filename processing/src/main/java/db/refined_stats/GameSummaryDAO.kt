@@ -22,11 +22,36 @@ import model.refined_stats.RefinedGeneralGameStageColumnNames
  */
 class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
 
-
     override fun doesGameSummaryForSummonerExist(gameId: Long, summonerId: Long): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+        val top = "Select * from top_summarystats where gameId = $gameId AND heroSummonerId = $summonerId"
+        val mid = "Select * from mid_summarystats where gameId = $gameId AND heroSummonerId = $summonerId"
+        val adc = "Select * from adc_summarystats where gameId = $gameId AND heroSummonerId = $summonerId"
+        val sup = "Select * from support_summarystats where gameId = $gameId AND heroSummonerId = $summonerId"
+        val jg = "Select * from jungle_summarystats where gameId = $gameId AND heroSummonerId = $summonerId"
 
+        val topResult = dbHelper.executeSqlQuery(top)
+        if (topResult.next()) {
+            return true
+        }
+        val midResult = dbHelper.executeSqlQuery(mid)
+        if (midResult.next()) {
+            return true
+        }
+        val adcResult = dbHelper.executeSqlQuery(adc)
+        if (adcResult.next()) {
+            return true
+        }
+        val supResult = dbHelper.executeSqlQuery(sup)
+        if (supResult.next()) {
+            return true
+        }
+        val jgResult = dbHelper.executeSqlQuery(jg)
+        if (jgResult.next()) {
+            return true
+        }
+
+        return false
+    }
 
     /**
      * Save an Array of [HeroTeamSummaryStat] match objects for our hero. Each object will represent one game.
@@ -79,7 +104,7 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
      */
     override fun saveVillanTeamSummaryStats(summonerId: Long, summaryStatStats: ArrayList<HeroTeamSummaryStat>, tableName: String): Boolean {
         var success = true
-        summaryStatStats.map { insertHeroTeamSummaryStat(it, tableName) }
+        summaryStatStats.map { saveVillanTeamSummaryStat(summonerId,it, tableName) }
                 .forEach { success = it != (-1).toLong() }
         return success
     }
@@ -207,6 +232,27 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
                 "where ${tableName}_summaryStats.gameId = ${stat.gameId} and ${tableName}_summaryStats.heroSummonerId = $heroSummonerId"
 
         return dbHelper.executeSQLScript(sql)
+    }
+
+
+    /**
+     * Select the creeps killed early game for a summoner in a specific match and role.
+     * @param gameId        The game that we want the stat for.
+     * @param summonerId    The summoner we want the stat for.
+     * @param tableName     The table to look for. This relates to role/lane
+     * @return              A float with the value. Can be 0. Will be -1 if we do not find any results in that table
+     *                      for the given summoner / game id combo
+     */
+    fun fetchCreepsEarlyGameForMatch(gameId: Long, summonerId: Long, tableName: String) : Float {
+        val sql = "select heroCreepsEarlyGame from ${tableName}_summarystats \n" +
+                "where heroSummonerId = $summonerId AND gameId = $gameId"
+
+        val result = dbHelper.executeSqlQuery(sql)
+        if (result.next()) {
+            return result.getFloat("heroCreepsEarlyGame")
+        }
+
+        return -1f
     }
 
 }

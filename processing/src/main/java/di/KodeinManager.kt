@@ -1,5 +1,6 @@
 package di
 
+import application.Sync
 import application.domain.MatchControl
 import application.region.RegionController
 import com.github.salomonbrys.kodein.*
@@ -8,9 +9,13 @@ import db.DBHelper
 import db.champion.ChampionDAO
 import db.match.*
 import db.refined_stats.GameSummaryDAO
+import db.refined_stats.GameSummaryDaoContract
+import db.refined_stats.RefinedStatDAOContract
 import db.refined_stats.RefinedStatsDAO
 import db.stats.GameStageDeltaDAOImpl
 import db.stats.GameStageDeltasDAO
+import db.summoner.SummonerDAOContract
+import db.summoner.SummonerDAOContractImpl
 import network.NetworkInterface
 import network.riotapi.MatchServiceApi
 import retrofit.RestAdapter
@@ -115,7 +120,18 @@ class KodeinManager {
                     kodein.instance())
         }
 
+        bind<SummonerDAOContract>() with provider {
+            SummonerDAOContractImpl(kodein.instance())
+        }
+
+        bind<RefinedStatDAOContract>() with provider {
+            RefinedStatsDAO(kodein.instance())
+        }
+
         bind<GameSummaryDAO>() with provider {
+            GameSummaryDAO(kodein.instance())
+        }
+        bind<GameSummaryDaoContract>() with provider {
             GameSummaryDAO(kodein.instance())
         }
 
@@ -127,6 +143,10 @@ class KodeinManager {
                     .setClient(UrlConnectionClient())
                     .build()
                     .create<MatchServiceApi>(MatchServiceApi::class.java)
+        }
+
+        bind<Sync>() with provider {
+            Sync(kodein.instance())
         }
 
 

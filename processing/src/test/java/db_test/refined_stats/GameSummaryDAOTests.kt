@@ -918,6 +918,109 @@ class GameSummaryDAOTests {
         Assert.assertEquals(count, 1)
     }
 
+    @Test
+    fun `Make sure the we find no previous result when there is none`() {
+        val haveAlreadySaved = gameSummaryDAO.doesGameSummaryForSummonerExist(-1, -1)
+        Assert.assertTrue(!haveAlreadySaved)
+        val summonerId = random.nextLong()
+        val gameId = random.nextLong()
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
+                summonerId,
+                random.nextInt(),
+                gameId,
+                random.nextInt(),
+                random.nextBoolean(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt())
+
+        val fullgameStat = FullGameStat(
+                gameId,
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt())
+
+        gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.savePlayerGameSummaryStatsItemForVillan(summonerId,fullgameStat,tableName)
+        val stillHaveAlreadySaved = gameSummaryDAO.doesGameSummaryForSummonerExist(-1, -1)
+        Assert.assertTrue(!stillHaveAlreadySaved)
+    }
+
+    @Test
+    fun `Make sure that we can properly check if we have previously saved data about this game for this summoner`() {
+        val haveAlreadySaved = gameSummaryDAO.doesGameSummaryForSummonerExist(-1, -1)
+        Assert.assertTrue(!haveAlreadySaved)
+        val summonerId = random.nextLong()
+        val gameId = random.nextLong()
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
+                summonerId,
+                random.nextInt(),
+                gameId,
+                random.nextInt(),
+                random.nextBoolean(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt())
+
+        val fullgameStat = FullGameStat(
+                gameId,
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt())
+
+        gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.savePlayerGameSummaryStatsItemForVillan(summonerId,fullgameStat,tableName)
+        val stillHaveAlreadySaved = gameSummaryDAO.doesGameSummaryForSummonerExist(gameId, summonerId)
+        Assert.assertTrue(stillHaveAlreadySaved)
+    }
+
+    @Test
+    fun `GetCreepsEarlyGame() Make sure we return -1 if we find nothing`() {
+        val creeps = gameSummaryDAO.fetchCreepsEarlyGameForMatch(1,1,tableName)
+        Assert.assertTrue(creeps == -1f)
+    }
+
+    @Test
+    fun `GetCreepsEarlyGame() Make sure we return the correct result when there is one`() {
+        val summonerId = random.nextLong()
+        val gameId = random.nextLong()
+        val refinedSummaryStat1 = HeroTeamSummaryStat(
+                summonerId,
+                random.nextInt(),
+                gameId,
+                random.nextInt(),
+                random.nextBoolean(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt())
+
+        val creepsStats = GameStageStat(
+                random.nextFloat(),
+                random.nextFloat(),
+                random.nextFloat(),
+                gameId)
+
+        val staticColumnNames = StaticColumnNames()
+        val statNames = RefinedGeneralGameStageColumnNames(
+                staticColumnNames.HERO_CREEPS_EARLY_GAME,
+                staticColumnNames.HERO_CREEPS_MID_GAME,
+                staticColumnNames.HERO_CREEPS_LATE_GAME)
+
+
+        gameSummaryDAO.insertHeroTeamSummaryStat(refinedSummaryStat1,tableName)
+        gameSummaryDAO.saveGameStageStat(summonerId,creepsStats,statNames,tableName)
+
+        val creeps = gameSummaryDAO.fetchCreepsEarlyGameForMatch(gameId,summonerId,tableName)
+        Assert.assertTrue(creeps == creepsStats.earlyGame)
+    }
+
     private fun ResultSet.produceTestResultForVillanGameStageStat() : HeroTeamSummaryStat {
         return HeroTeamSummaryStat(
                 getLong("heroSummonerId"),
