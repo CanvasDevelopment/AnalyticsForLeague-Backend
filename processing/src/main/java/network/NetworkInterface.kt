@@ -21,6 +21,7 @@ class NetworkInterface(regionController: RegionController) {
     val serviceAdapter = adapterBuilder.build()!!
 
 
+
     fun getMatchService() : MatchServiceApi {
         return serviceAdapter.create<MatchServiceApi>(MatchServiceApi::class.java)
     }
