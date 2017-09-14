@@ -8,7 +8,10 @@ import network.riotapi.ChampionService
 import org.junit.BeforeClass
 import org.junit.Test
 import retrofit.RestAdapter
+import retrofit.appengine.UrlFetchClient
+import retrofit.client.UrlConnectionClient
 import retrofit.converter.GsonConverter
+import util.RIOT_API_KEY
 import util.Tables
 import util.testing.MockClient
 import java.io.BufferedReader
@@ -88,7 +91,39 @@ class ChampServiceTests {
     }
 
     @Test
-    fun `Test that 
+    fun `Test that we can fetch champ by id over network (This relies on valid API_KEY)`() {
+        val adapterBuilder: RestAdapter.Builder = RestAdapter.Builder()
+                .setEndpoint("https://oc1.api.riotgames.com")
+                .setConverter(GsonConverter(GsonBuilder().create()))
+                .setClient(UrlConnectionClient())
+        val serviceAdapter = adapterBuilder.build()!!
+        champService = serviceAdapter.create(ChampionService::class.java)
+        val champ = champService.getChampById(62, "image", RIOT_API_KEY)
+        assert(champ.id == 62)
+        assert(champ.name == "Wukong")
+        assert(champ.title == "the Monkey King")
+        assert(champ.key == "MonkeyKing")
+        assert(champ.image.full == "MonkeyKing.png")
+        assert(champ.image.sprite == "champion2.png")
+        assert(champ.image.group == "champion")
+        assert(champ.image.x == 48)
+        assert(champ.image.y == 48)
+        assert(champ.image.w == 48)
+        assert(champ.image.h == 48)
+    }
+
+    @Test
+    fun `Test that we can fetch champ list from riot Api`() {
+        val adapterBuilder: RestAdapter.Builder = RestAdapter.Builder()
+                .setEndpoint("https://oc1.api.riotgames.com")
+                .setConverter(GsonConverter(GsonBuilder().create()))
+                .setClient(UrlConnectionClient())
+        val serviceAdapter = adapterBuilder.build()!!
+        champService = serviceAdapter.create(ChampionService::class.java)
+        val champList = champService.fetchChampList(RIOT_API_KEY)
+        assert(champList.champions[0].id == 266 )
+    }
+
 
 
 }
