@@ -3,7 +3,7 @@ package network.riotapi
 
 import application.region.RegionController
 import model.Summoner
-import model.NetworkResult
+import model.networking.NetworkResult
 import network.RequestHandler
 import java.net.URL
 

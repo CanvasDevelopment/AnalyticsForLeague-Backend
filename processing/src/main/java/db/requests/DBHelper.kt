@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package db
+package db.requests
 
 import com.google.appengine.api.utils.SystemProperty
 import util.Constant

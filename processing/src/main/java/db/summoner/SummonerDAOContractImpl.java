@@ -1,6 +1,6 @@
 package db.summoner;
 
-import db.DBHelper;
+import db.requests.DBHelper;
 import model.Summoner;
 
 import java.sql.ResultSet;

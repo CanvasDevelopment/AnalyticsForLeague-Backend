@@ -1,7 +1,7 @@
 package network.riotapi
 
 import model.Summoner
-import model.NetworkResult
+import model.networking.NetworkResult
 import retrofit.http.GET
 import retrofit.http.Path
 import retrofit.http.Query

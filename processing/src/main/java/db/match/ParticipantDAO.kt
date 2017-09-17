@@ -1,6 +1,6 @@
 package db.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import extensions.ID
 import extensions.produceParticipant
 import model.match.Mastery

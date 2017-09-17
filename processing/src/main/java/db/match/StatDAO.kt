@@ -1,6 +1,6 @@
 package db.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import extensions.produceStats
 import model.match.Stats
 import util.columnnames.StatsColumns

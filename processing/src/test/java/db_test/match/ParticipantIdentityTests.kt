@@ -1,6 +1,6 @@
 package db_test.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import db.match.ParticipantIdentityDAO
 import db.match.PlayerDAO
 import model.match.ParticipantIdentity
@@ -16,7 +16,7 @@ import java.util.*
  */
 class ParticipantIdentityTests {
 
-    lateinit var dbHelper :DBHelper
+    lateinit var dbHelper : DBHelper
     lateinit var piDAO : ParticipantIdentityDAO
     lateinit var playerDAO : PlayerDAO
 

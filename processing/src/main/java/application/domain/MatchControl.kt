@@ -1,8 +1,6 @@
 package application.domain
 
-import db.DBHelper
 import db.match.MatchDAO
-import db.match.MatchDAOContracts
 import db.refined_stats.GameSummaryDaoContract
 import db.refined_stats.RefinedStatDAOContract
 import db.summoner.SummonerDAOContract

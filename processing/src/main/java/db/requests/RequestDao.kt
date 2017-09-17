@@ -1,4 +1,4 @@
-package db
+package db.requests
 
 import com.google.appengine.api.memcache.MemcacheService
 import java.sql.ResultSet
@@ -9,9 +9,13 @@ import java.sql.ResultSet
 class RequestDao(val dbHelper: DBHelper,
                  val memcacheService: MemcacheService) : RequestDAOContract {
 
+
     private val RIOT_API_REQUEST_TABLE = "RiotApiRequests"
     private val NUMBER_OF_REQUESTS = "numberOfRequests"
     private val RATE_LIMIT_KEY = "rateLimit"
+    private var requestTimeFrame = 60 // one minute
+    private var requestsAllowed = 50
+
     /**
      * Insert a record for a request against riots api.
      * @param timestamp The time that this request occurred
@@ -45,6 +49,7 @@ class RequestDao(val dbHelper: DBHelper,
 
     /**
      * Get the number of requests that have been made since we last cleared
+     * @return The number of requests that have been made
      */
     override fun requestsSinceLastClearedRates(): Int {
         val sql = "select count(*) as $NUMBER_OF_REQUESTS from $RIOT_API_REQUEST_TABLE"
@@ -58,17 +63,24 @@ class RequestDao(val dbHelper: DBHelper,
      * Get our current rate limit
      * @return The rate as an int. Will return -1 if does not exist.
      */
-    override fun getRateLimitPerMinute(): Int {
-        return 50
+    override fun getRateLimit(): Int {
+        return requestsAllowed
 //        val result = memcacheService.get(RATE_LIMIT_KEY) ?: return -1
-//        return result as Int
     }
 
     /**
-     * Set the rate limit for the RIOT api.
+     * Set the rate limit for the RIOT api for our given time frame.
      */
-    override fun setRateLimit(numberOfRequests: Int) {
+    override fun setRequestRateLimit(numberOfRequests: Int) {
+        requestsAllowed = numberOfRequests
 //        memcacheService.put(RATE_LIMIT_KEY, numberOfRequests)
+    }
+
+    /**
+     * Set the time frame
+     */
+    override fun setRateTimeFrame(timeFrameInSeconds: Int) {
+
     }
 
     private fun ResultSet.produceDifferenceBetweenEarliestTimeStampAndNow() : Long {

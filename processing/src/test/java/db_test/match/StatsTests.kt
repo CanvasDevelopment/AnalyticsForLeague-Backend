@@ -1,6 +1,6 @@
 package db_test.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import db.match.StatDAO
 import model.match.Stats
 import org.junit.Assert
@@ -11,7 +11,7 @@ import org.junit.Test
  * @author Josiah Kendall
  */
 class StatsTests {
-    lateinit var dbHelper :DBHelper
+    lateinit var dbHelper : DBHelper
     lateinit var statDAO : StatDAO
 
     @Before

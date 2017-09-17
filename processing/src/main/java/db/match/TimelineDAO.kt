@@ -1,6 +1,6 @@
 package db.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import db.stats.GameStageDeltaDAOImpl
 import extensions.columnNames
 import extensions.produceTimeline

@@ -1,8 +1,8 @@
 package network
 
 import com.google.gson.Gson
-import db.RequestDAOContract
-import model.NetworkResult
+import db.requests.RequestDAOContract
+import model.networking.NetworkResult
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -14,34 +14,40 @@ import java.net.URL
  * Handles network requests to the riot api.
  */
 class RequestHandler(private val requestDAOContract: RequestDAOContract) {
+
     private val gson = Gson()
+
     /**
      * This is the duration on which we limit to a certain number of requests
      */
-    private val REQUEST_TIME_FRAME_MEASUREMENT = 60
+    private var timeFrameInSeconds = 60 // default to a minute
 
     /**
-     * Requests data from the server. Allows us to pass an Api/netork call as a higher order function and return its result.
+     * Requests data from the server. Allows us to pass an Api/network call as a higher order function and return its result.
      * This method handles the rate limiting of our requests
      * @param apiCall The api method to call.
      */
     fun <T> requestDataWithRateLimiting(apiCall: () -> T) : T {
 
         val requestsMadeThisMinute = requestDAOContract.requestsSinceLastClearedRates()
-        val requestsAllowedInAMinute = requestDAOContract.getRateLimitPerMinute()
-        val timeToWait : Long = (REQUEST_TIME_FRAME_MEASUREMENT - requestDAOContract.timeSinceLastClearedRates()) * 1000.toLong()
+        val requestsAllowedInAMinute = requestDAOContract.getRateLimit()
+        val timeToWait : Long = (timeFrameInSeconds *1000 - requestDAOContract.timeSinceLastClearedRates()).toLong()
 
-        if (requestsMadeThisMinute >= requestsAllowedInAMinute) {
+        // If time to wait is not above 0, this must be the first request in some time
+        if (timeToWait > 0) {
+            if (requestsMadeThisMinute >= requestsAllowedInAMinute) {
 
-            // Wait until we have exceeded the rate limit time.
-            Thread.sleep(timeToWait)
+                // Wait until we have exceeded the rate limit time.
+                Thread.sleep(timeToWait)
+            }
         }
+
 
         // Record our request
         requestDAOContract.recordRequest(System.currentTimeMillis())
 
         // Wipe out the saved requests if it has been over the given time period
-        if (requestDAOContract.timeSinceLastClearedRates() >= REQUEST_TIME_FRAME_MEASUREMENT) {
+        if (requestDAOContract.timeSinceLastClearedRates() >= timeFrameInSeconds) {
             requestDAOContract.clearRateLimitRequests()
         }
 
@@ -60,6 +66,7 @@ class RequestHandler(private val requestDAOContract: RequestDAOContract) {
         conn.requestMethod = "GET"
 
         val respCode = conn.responseCode
+
         if (respCode == HttpURLConnection.HTTP_OK) {
             val response = StringBuffer()
             val reader = BufferedReader(InputStreamReader(conn.inputStream))
@@ -77,4 +84,16 @@ class RequestHandler(private val requestDAOContract: RequestDAOContract) {
         return NetworkResult(null, respCode)
     }
 
+    /**
+     * Set the rate limit for our requests
+     * @param requests The number of requests in a given time frame
+     * @param timeFrameInSeconds The given time frame in seconds.
+     */
+    fun setApiKeyRate(requests : Int, timeFrameInSeconds : Int) {
+        // set the time frame
+        // set the number of requests
+        this.timeFrameInSeconds = timeFrameInSeconds
+        requestDAOContract.setRequestRateLimit(requests)
+
+    }
 }

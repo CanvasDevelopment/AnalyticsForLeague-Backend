@@ -1,14 +1,13 @@
 package application_tests
 
 import application.region.RegionController
-import db.DBHelper
+import db.requests.DBHelper
 import db.match.*
 import db.matchlist.MatchSummaryDAO
 import db.stats.GameStageDeltaDAOImpl
 import network.NetworkInterface
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
 
 
 /**

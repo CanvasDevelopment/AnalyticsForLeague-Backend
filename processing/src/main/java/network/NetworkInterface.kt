@@ -2,6 +2,7 @@ package network
 
 import application.region.RegionController
 import com.google.gson.GsonBuilder
+import network.riotapi.ChampionService
 import network.riotapi.MatchServiceApi
 import network.riotapi.SummonerService
 import retrofit.RestAdapter
@@ -28,6 +29,10 @@ class NetworkInterface(regionController: RegionController) {
 
     fun getSummonerService() : SummonerService {
         return serviceAdapter.create<SummonerService>(SummonerService::class.java)
+    }
+
+    fun getChampionService() : ChampionService {
+        return serviceAdapter.create<ChampionService>(ChampionService::class.java)
     }
 
 }

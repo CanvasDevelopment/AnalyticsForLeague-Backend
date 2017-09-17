@@ -1,6 +1,6 @@
 package db.refined_stats
 
-import db.DBHelper
+import db.requests.DBHelper
 import model.refined_stats.FullGameStat
 import model.refined_stats.GameStageStat
 import model.refined_stats.HeroTeamSummaryStat

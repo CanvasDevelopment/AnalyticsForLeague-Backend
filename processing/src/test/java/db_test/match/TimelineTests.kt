@@ -1,6 +1,6 @@
 package db_test.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import db.match.TimelineDAO
 import db.stats.GameStageDeltaDAOImpl
 import model.match.Timeline

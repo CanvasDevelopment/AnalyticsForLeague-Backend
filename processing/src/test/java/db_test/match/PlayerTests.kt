@@ -1,6 +1,6 @@
 package db_test.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import db.match.PlayerDAO
 import model.match.Player
 import org.junit.After

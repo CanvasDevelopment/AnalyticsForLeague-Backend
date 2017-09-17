@@ -1,7 +1,5 @@
 package db_test.champion
 
-import com.github.salomonbrys.kodein.instance
-import db.DBHelper
 import db.champion.ChampionDAO
 import di.KodeinManager
 import junit.framework.Assert.assertTrue

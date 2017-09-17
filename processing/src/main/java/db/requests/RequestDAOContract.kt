@@ -1,14 +1,15 @@
-package db
+package db.requests
 
 /**
  * @author Josiah Kendall
  */
 interface RequestDAOContract {
 
-    fun getRateLimitPerMinute() : Int
+    fun getRateLimit() : Int
     fun clearRateLimitRequests()
     fun timeSinceLastClearedRates() : Int
     fun requestsSinceLastClearedRates() : Int
     fun recordRequest(timestamp : Long)
-    fun setRateLimit(numberOfRequests : Int)
+    fun setRequestRateLimit(numberOfRequests : Int)
+    fun setRateTimeFrame(timeFrameInSeconds : Int)
 }

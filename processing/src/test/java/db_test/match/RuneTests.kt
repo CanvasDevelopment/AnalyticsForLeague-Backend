@@ -1,6 +1,6 @@
 package db_test.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import db.match.RuneDAO
 import model.match.Rune
 import org.junit.After

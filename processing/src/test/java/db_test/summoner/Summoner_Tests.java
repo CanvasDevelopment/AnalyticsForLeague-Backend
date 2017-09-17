@@ -1,6 +1,6 @@
 package db_test.summoner;
 
-import db.DBHelper;
+import db.requests.DBHelper;
 import db.summoner.SummonerDAOContractImpl;
 import model.Summoner;
 import org.junit.After;

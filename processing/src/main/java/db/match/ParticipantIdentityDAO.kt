@@ -1,6 +1,6 @@
 package db.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import extensions.produceParticipantIdentity
 import model.match.ParticipantIdentity
 import util.columnnames.ParticipantIdentityColumns

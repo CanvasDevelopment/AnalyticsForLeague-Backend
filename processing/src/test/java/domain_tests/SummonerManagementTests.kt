@@ -3,7 +3,7 @@ package domain_tests
 import application.domain.SummonerManagement
 import db.summoner.SummonerDAOContractImpl
 import model.Summoner
-import model.NetworkResult
+import model.networking.NetworkResult
 import network.riotapi.SummonerService
 import org.junit.Assert
 import org.junit.Before

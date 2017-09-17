@@ -1,6 +1,6 @@
 package db_test.refined_stats
 
-import db.DBHelper
+import db.requests.DBHelper
 import db.refined_stats.GameSummaryDAO
 import model.refined_stats.FullGameStat
 import model.refined_stats.GameStageStat

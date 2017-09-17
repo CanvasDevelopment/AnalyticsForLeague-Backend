@@ -1,6 +1,6 @@
 package db_test.stats;
 
-import db.DBHelper;
+import db.requests.DBHelper;
 import db.stats.CreepsPerMinDAOImpl;
 import model.stats.CreepsPerMin;
 import org.junit.After;

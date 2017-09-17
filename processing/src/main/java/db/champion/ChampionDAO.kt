@@ -3,7 +3,7 @@ package db.champion
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.KodeinAware
 import com.github.salomonbrys.kodein.instance
-import db.DBHelper
+import db.requests.DBHelper
 import extensions.*
 import model.champion.Champion
 import model.champion.ChampionImage
@@ -40,6 +40,7 @@ class ChampionDAO(override val kodein : Kodein) : KodeinAware {
                 "$CHAMP_NAME_COLUMN = '${champion.name}'," +
                 "$CHAMP_TITLE_COLUMN = '${champion.title}'"
         val result = dbHelper.executeSQLScript(insertString)
+        // log this
         return result
     }
 

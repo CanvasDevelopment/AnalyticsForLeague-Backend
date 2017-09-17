@@ -1,12 +1,10 @@
 package db.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import extensions.produceMatch
 import model.match.Match
 import util.Tables
 import util.columnnames.MatchColumns
-import java.util.logging.Level
-import java.util.logging.Logger
 
 /**
  * @author Josiah Kendall

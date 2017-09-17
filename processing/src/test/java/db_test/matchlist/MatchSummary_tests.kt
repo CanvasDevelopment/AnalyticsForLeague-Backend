@@ -1,6 +1,6 @@
 package db_test.matchlist
 
-import db.DBHelper
+import db.requests.DBHelper
 import db.matchlist.MatchSummaryDAO
 import model.matchlist.MatchSummary
 import org.junit.After

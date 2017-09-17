@@ -1,8 +1,6 @@
 package db.match
 
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
-import db.DBHelper
+import db.requests.DBHelper
 import extensions.produceBan
 import model.match.Ban
 import util.columnnames.BanColumns

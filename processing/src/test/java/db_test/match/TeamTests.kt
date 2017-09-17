@@ -1,6 +1,6 @@
 package db_test.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import db.match.BanDAO
 import db.match.TeamDAO
 import model.match.Ban

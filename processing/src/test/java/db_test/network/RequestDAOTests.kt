@@ -1,8 +1,8 @@
-package db_test
+package db_test.network
 
 import com.google.appengine.api.memcache.MemcacheServiceFactory
-import db.DBHelper
-import db.RequestDao
+import db.requests.DBHelper
+import db.requests.RequestDao
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -23,8 +23,8 @@ class RequestDAOTests {
     // TODO fix this
     @Test
     fun `ensure that we can save our rate limit and fetch it again`() {
-        requestDao.setRateLimit(5)
-        val rateLimit = requestDao.getRateLimitPerMinute()
+        requestDao.setRequestRateLimit(5)
+        val rateLimit = requestDao.getRateLimit()
         Assert.assertTrue(rateLimit == 50)
     }
 

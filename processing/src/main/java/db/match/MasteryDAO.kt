@@ -1,6 +1,6 @@
 package db.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import extensions.produceMastery
 import model.match.Mastery
 import util.ColumnNames

@@ -1,6 +1,6 @@
 package db_test.stats
 
-import db.DBHelper
+import db.requests.DBHelper
 import db.stats.GameStageDeltaDAOImpl
 import model.stats.GameStageDelta
 import org.junit.After

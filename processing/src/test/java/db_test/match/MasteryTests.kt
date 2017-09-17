@@ -1,6 +1,6 @@
 package db_test.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import db.match.MasteryDAO
 import model.match.Mastery
 import org.junit.After
@@ -12,7 +12,7 @@ import org.junit.Test
  * @author Josiah Kendall
  */
 class MasteryTests {
-    lateinit var dbHelper :DBHelper
+    lateinit var dbHelper : DBHelper
     lateinit var masteryDAO : MasteryDAO
 
     @Before

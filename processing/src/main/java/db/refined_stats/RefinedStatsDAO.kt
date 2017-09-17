@@ -1,6 +1,6 @@
 package db.refined_stats
 
-import db.DBHelper
+import db.requests.DBHelper
 import extensions.produceFullGameStat
 import extensions.produceGameStageRefinedStat
 import extensions.produceSummaryStat
@@ -9,7 +9,6 @@ import model.refined_stats.HeroTeamSummaryStat
 import util.Tables
 import model.positions.Jungle
 import model.refined_stats.FullGameStat
-import util.columnnames.TeamColumns
 
 
 /**

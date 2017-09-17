@@ -1,6 +1,6 @@
 package db.match
 
-import db.DBHelper
+import db.requests.DBHelper
 import extensions.producePlayer
 import model.match.Player
 import java.sql.ResultSet

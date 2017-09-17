@@ -1,6 +1,6 @@
 package db.stats
 
-import db.DBHelper
+import db.requests.DBHelper
 import extensions.produceGameStageStat
 import model.stats.GameStageDelta
 

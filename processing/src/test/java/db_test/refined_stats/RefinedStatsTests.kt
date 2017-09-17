@@ -2,7 +2,7 @@ package db_test.refined_stats
 
 import com.github.salomonbrys.kodein.instance
 import com.google.gson.GsonBuilder
-import db.DBHelper
+import db.requests.DBHelper
 import db.match.MatchDAO
 import db.refined_stats.RefinedStatsDAO
 import di.KodeinManager

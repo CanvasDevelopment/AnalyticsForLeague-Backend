@@ -1,18 +1,14 @@
 package network_tests
 
-import com.github.salomonbrys.kodein.instance
 import com.google.gson.GsonBuilder
-import db.DBHelper
+import db.requests.DBHelper
 import di.KodeinManager
 import network.riotapi.ChampionService
-import org.junit.BeforeClass
 import org.junit.Test
 import retrofit.RestAdapter
-import retrofit.appengine.UrlFetchClient
 import retrofit.client.UrlConnectionClient
 import retrofit.converter.GsonConverter
 import util.RIOT_API_KEY
-import util.Tables
 import util.testing.MockClient
 import java.io.BufferedReader
 import java.io.FileInputStream
