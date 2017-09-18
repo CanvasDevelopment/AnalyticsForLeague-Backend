@@ -27,7 +27,6 @@ class RateLimitBucket(
             && other.rateDuration == rateDuration
         }
         return false
-
     }
 
     override fun hashCode(): Int {
