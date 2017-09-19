@@ -3,6 +3,7 @@ package network.riotapi
 
 import application.region.RegionController
 import model.Summoner
+import model.networking.Endpoints
 import model.networking.NetworkResult
 import network.RequestHandler
 import java.net.URL
@@ -16,6 +17,8 @@ import java.net.URL
 class SummonerServiceImpl(private val requestHandler: RequestHandler,
                                  private val regionController : RegionController) : SummonerService {
 
+    private val endpoints = Endpoints()
+
     /**
      * Fetch a summoner using the summoner name given.
      * @param apiKey        The api key to use
@@ -27,6 +30,9 @@ class SummonerServiceImpl(private val requestHandler: RequestHandler,
                 regionController.getRiotRegionName() +
                 ".api.riotgames.com/" +
                 "lol/summoner/v3/summoners/by-name/$summonerName?api_key=$apiKey"
-        return requestHandler.requestDataWithRateLimiting { requestHandler.sendHttpGetRequest(Summoner::class.java, URL(url)) }
+        return requestHandler.requestDataWithRateLimiting (
+                { requestHandler.sendHttpGetRequest(Summoner::class.java, URL(url)) },
+                endpoints.V3_DEFAULT
+        )
     }
 }

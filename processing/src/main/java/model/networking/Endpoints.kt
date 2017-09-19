@@ -13,4 +13,6 @@ class Endpoints {
     val V3_RUNES = 6
     val V3_STATIC_DATA = 7
     val COMPLETE_APP = 8 // The app, not an endpoint
+    val V3_DEFAULT = 9
+
 }

@@ -1,6 +1,7 @@
 package application.domain
 
 import db.champion.ChampionDAO
+import model.networking.Endpoints
 import network.RequestHandler
 import network.riotapi.ChampionService
 import util.RIOT_API_KEY
@@ -15,6 +16,7 @@ class ChampControl(private val championService: ChampionService,
                    private val championDAO: ChampionDAO,
                    private val requestHandler: RequestHandler) {
 
+    val endpoints = Endpoints()
     // Rate limits for static apis is really low
     private val requestsAllowed = 1
     private val timeFrameInSeconds = 400
@@ -28,18 +30,10 @@ class ChampControl(private val championService: ChampionService,
         requestHandler.setApiKeyRate(requestsAllowed, timeFrameInSeconds)
         champList.champions
                 .map {
-                    requestHandler.requestDataWithRateLimiting {
-                        championService.getChampById(it.id, "image", RIOT_API_KEY)
-                    }
+                    requestHandler.requestDataWithRateLimiting (
+                            {championService.getChampById(it.id, "image", RIOT_API_KEY)},
+                            endpoints.V3_CHAMPION)
                 }
                 .forEach { championDAO.saveChampion(it) }
-    }
-
-    /**
-     * Fetch and save the champ details for a specific champ
-     * @param champId The champ id assigned to a champ by riot.
-     */
-    fun fetchAndSaveChampDetails(champId : Int) {
-
     }
 }
