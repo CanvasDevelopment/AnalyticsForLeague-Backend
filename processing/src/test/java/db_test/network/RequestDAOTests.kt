@@ -25,7 +25,7 @@ class RequestDAOTests {
     fun `ensure that we can save our rate limit and fetch it again`() {
         requestDao.setRequestRateLimit(5)
         val rateLimit = requestDao.getRateLimit()
-        Assert.assertTrue(rateLimit == 50)
+        Assert.assertTrue(rateLimit == 5)
     }
 
     @Test

@@ -23,7 +23,6 @@ class RateLimitBucket(
         if (other is RateLimitBucket) {
             return other.maxRequests == maxRequests
             && other.requestCount == requestCount
-            && other.firstRequestTime == firstRequestTime
             && other.rateDuration == rateDuration
         }
         return false

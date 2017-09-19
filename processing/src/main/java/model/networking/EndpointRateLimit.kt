@@ -7,12 +7,12 @@ import network.riotapi.header.RateLimitBucket
  *
  * Holds data about each request to the riot api servers in relation to the rate limits.
  */
-data class EndpointRateLimitStatus(val endpointId : Int,
-                                   val retryAfter : Int,
-                                   val rateLimitBuckets : ArrayList<RateLimitBucket>) {
+data class EndpointRateLimit(val endpointId : Int,
+                             val retryAfter : Int,
+                             val rateLimitBuckets : ArrayList<RateLimitBucket>) {
 
     override fun equals(other: Any?): Boolean {
-        if (other is EndpointRateLimitStatus) {
+        if (other is EndpointRateLimit) {
             return other.rateLimitBuckets.sameValuesInArray(rateLimitBuckets)
             && other.retryAfter == retryAfter
             && other.endpointId == endpointId

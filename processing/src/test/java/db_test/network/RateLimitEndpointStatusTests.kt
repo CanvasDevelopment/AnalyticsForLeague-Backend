@@ -3,7 +3,7 @@ package db_test.network
 import db.requests.DBHelper
 import db.requests.EndpointRateLimitStatusDao
 import db.requests.RateLimitDao
-import model.networking.EndpointRateLimitStatus
+import model.networking.EndpointRateLimit
 import model.networking.Endpoints
 import network.riotapi.header.RateLimitBucket
 import org.junit.After
@@ -41,7 +41,7 @@ class RateLimitEndpointStatusTests {
     fun `Make sure that we can save rate limit to database`() {
         // save new object
         val rateLimits = ArrayList<RateLimitBucket>()
-        val endpoint = EndpointRateLimitStatus(
+        val endpoint = EndpointRateLimit(
                 endpointIds.V3_MATCHES,
                 random.nextInt(),
                 rateLimits)
@@ -59,7 +59,7 @@ class RateLimitEndpointStatusTests {
     }
     @Test
     fun `Make sure the doesEndPointExist() returns true of the endpoint does exist`() {
-        val endpoint = EndpointRateLimitStatus(
+        val endpoint = EndpointRateLimit(
                 endpointIds.V3_MATCHES,
                 random.nextInt(),
                 ArrayList())
@@ -70,12 +70,12 @@ class RateLimitEndpointStatusTests {
 
     @Test
     fun `Make sure we can update already existing endpoint`() {
-        val endpoint = EndpointRateLimitStatus(
+        val endpoint = EndpointRateLimit(
                 endpointIds.V3_MATCHES,
                 random.nextInt(),
                 produceRandomArrayListOfRates())
 
-        val endPoint2 = EndpointRateLimitStatus(
+        val endPoint2 = EndpointRateLimit(
                 endpointIds.V3_MATCHES,
                 random.nextInt(),
                 produceRandomArrayListOfRates())

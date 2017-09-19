@@ -111,6 +111,23 @@ class RateLimitDao(val dbHelper: DBHelper) {
      * @param bucket The [RateLimitBucket] details that we want to update to
      */
     private fun updateRateLimit(endpointId: Int, bucket: RateLimitBucket) {
+        if (bucket.firstRequestTime != (-1).toLong()) {
+            updateRateLimitCompletely(endpointId, bucket)
+        } else {
+            updateRateLimitButDontChangeFirstRequestTime(endpointId, bucket)
+        }
+    }
+
+    private fun updateRateLimitButDontChangeFirstRequestTime(endpointId: Int, bucket: RateLimitBucket) {
+        val sql ="UPDATE $TABLE_NAME SET\n" +
+                "  $MAX_REQUESTS = ${bucket.maxRequests},\n" +
+                "  $REQUEST_COUNT = ${bucket.requestCount}\n" +
+                "    WHERE $ENDPOINT_ID = $endpointId and $RATE_DURATION = ${bucket.rateDuration}"
+        val result = dbHelper.executeSQLScript(sql)
+        log.info("Attempting to update rate limit for $endpointId. Result : $result")
+    }
+
+    private fun updateRateLimitCompletely(endpointId: Int, bucket: RateLimitBucket) {
         val sql ="UPDATE $TABLE_NAME SET\n" +
                 "  $MAX_REQUESTS = ${bucket.maxRequests},\n" +
                 "  $REQUEST_COUNT = ${bucket.requestCount},\n" +

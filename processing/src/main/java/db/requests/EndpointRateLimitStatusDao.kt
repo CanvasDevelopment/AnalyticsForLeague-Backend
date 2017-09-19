@@ -1,6 +1,6 @@
 package db.requests
 
-import model.networking.EndpointRateLimitStatus
+import model.networking.EndpointRateLimit
 import network.riotapi.header.RateLimitBucket
 import java.sql.ResultSet
 
@@ -18,14 +18,14 @@ class EndpointRateLimitStatusDao(val dbHelper: DBHelper,
 
     /**
      * Save or update the rate limit status for a certain Riot API endpoint.
-     * @param endpointRateLimitStatus Holds data about the current ratelimits for that status
+     * @param endpointRateLimit Holds data about the current ratelimits for that status
      * @return true of saved successfully, false if not.
      */
-    fun saveEndpointRateLimitStatus(endpointRateLimitStatus: EndpointRateLimitStatus) : Boolean {
-        return if (doesEndpointExistInDb(endpointRateLimitStatus.endpointId)) {
-            updateEndpointRLStatus(endpointRateLimitStatus)
+    fun saveEndpointRateLimitStatus(endpointRateLimit: EndpointRateLimit) : Boolean {
+        return if (doesEndpointExistInDb(endpointRateLimit.endpointId)) {
+            updateEndpointRLStatus(endpointRateLimit)
         } else {
-            saveEndpointRLStatus(endpointRateLimitStatus)
+            saveEndpointRLStatus(endpointRateLimit)
         }
     }
 
@@ -33,16 +33,16 @@ class EndpointRateLimitStatusDao(val dbHelper: DBHelper,
      * save an endpoint. Used for when we have no previously existing endpoint with that id
      * @return true if saved correctly, false if not.
      */
-    private fun saveEndpointRLStatus(endpointRateLimitStatus: EndpointRateLimitStatus): Boolean {
+    private fun saveEndpointRLStatus(endpointRateLimit: EndpointRateLimit): Boolean {
 
         val sql = "INSERT INTO $TABLE_NAME(" +
                 "$ENDPOINT_ID, " +
                 "$RETRY_AFTER) VALUES (" +
-                "${endpointRateLimitStatus.endpointId}," +
-                "${endpointRateLimitStatus.retryAfter})"
+                "${endpointRateLimit.endpointId}," +
+                "${endpointRateLimit.retryAfter})"
 
         val result = dbHelper.executeSQLScript(sql)
-        rateLimitDao.saveRateLimits(endpointRateLimitStatus.endpointId, endpointRateLimitStatus.rateLimitBuckets)
+        rateLimitDao.saveRateLimits(endpointRateLimit.endpointId, endpointRateLimit.rateLimitBuckets)
         return result != (-1).toLong()
     }
 
@@ -50,13 +50,13 @@ class EndpointRateLimitStatusDao(val dbHelper: DBHelper,
      * Update an already existing endpoint.
      * @return true if updated successfully, false if not
      */
-    private fun updateEndpointRLStatus(endpointRateLimitStatus: EndpointRateLimitStatus): Boolean {
+    private fun updateEndpointRLStatus(endpointRateLimit: EndpointRateLimit): Boolean {
         val sql = "UPDATE $TABLE_NAME " +
-                "SET $RETRY_AFTER = ${endpointRateLimitStatus.retryAfter} " +
-                "WHERE $ENDPOINT_ID = ${endpointRateLimitStatus.endpointId}"
+                "SET $RETRY_AFTER = ${endpointRateLimit.retryAfter} " +
+                "WHERE $ENDPOINT_ID = ${endpointRateLimit.endpointId}"
 
         val result = dbHelper.executeSQLScript(sql)
-        rateLimitDao.saveRateLimits(endpointRateLimitStatus.endpointId, endpointRateLimitStatus.rateLimitBuckets)
+        rateLimitDao.saveRateLimits(endpointRateLimit.endpointId, endpointRateLimit.rateLimitBuckets)
         return result != (-1).toLong()
     }
 
@@ -72,11 +72,11 @@ class EndpointRateLimitStatusDao(val dbHelper: DBHelper,
     /**
      * Fetch the current rate limit status for a certain endpoint.
      * @param endpointId The endpoint id. Use [model.networking.Endpoints] to load the endpoint
-     * @return An [EndpointRateLimitStatus] with the data for the requested endpoint.
+     * @return An [EndpointRateLimit] with the data for the requested endpoint.
      * @throws IllegalArgumentException If an endpoint id that does not exist is requested. Use  [doesEndpointExistInDb]
      *          before calling this.
      */
-    fun getEndPointRateLimitStatus(endpointId : Int) : EndpointRateLimitStatus {
+    fun getEndPointRateLimitStatus(endpointId : Int) : EndpointRateLimit {
         val sql = "SELECT * FROM $TABLE_NAME WHERE $ENDPOINT_ID = $endpointId"
         val result = dbHelper.executeSqlQuery(sql)
         if (!result.next()) {
@@ -87,10 +87,10 @@ class EndpointRateLimitStatusDao(val dbHelper: DBHelper,
     }
 
     /**
-     * Produce an [EndpointRateLimitStatus] object from a sql query [ResultSet]
+     * Produce an [EndpointRateLimit] object from a sql query [ResultSet]
      */
-    private fun ResultSet.produceEndpointRateLimitStatus(rates : ArrayList<RateLimitBucket>) : EndpointRateLimitStatus {
-        return EndpointRateLimitStatus(
+    private fun ResultSet.produceEndpointRateLimitStatus(rates : ArrayList<RateLimitBucket>) : EndpointRateLimit {
+        return EndpointRateLimit(
                 getInt(ENDPOINT_ID),
                 getInt(RETRY_AFTER),
                 rates)

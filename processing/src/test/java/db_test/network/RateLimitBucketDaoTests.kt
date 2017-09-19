@@ -118,6 +118,74 @@ class RateLimitBucketDaoTests {
         assert(buckets.size == updatedBuckets.size)
     }
 
+    @Test
+    fun `Make sure that we dont update first request time if it is -1`() {
+        val endpointId = random.nextInt()
+        val buckets = ArrayList<RateLimitBucket>()
+        val bucket1 = produceRandomBucket()
+        val bucket2 = produceRandomBucket()
+        val bucket3 = produceRandomBucket()
+        buckets.add(bucket1)
+        buckets.add(bucket2)
+        buckets.add(bucket3)
+        rateLimitBucketDao.saveRateLimits(endpointId, buckets)
+        val retrievedBuckets = rateLimitBucketDao.getRateLimitsForEndpoint(endpointId)
+        assert(retrievedBuckets == buckets)
+        buckets.remove(bucket1)
+        val newBucket1 = RateLimitBucket(
+                bucket1.maxRequests+100,
+                bucket1.requestCount,
+                -1,
+                bucket1.rateDuration)
+        buckets.add(newBucket1)
+        rateLimitBucketDao.saveRateLimits(endpointId, buckets)
+        val updatedBuckets = rateLimitBucketDao.getRateLimitsForEndpoint(endpointId)
+
+        updatedBuckets
+                .filter {
+                    // chances of having two the same are very low
+                    it.rateDuration == bucket1.rateDuration
+                }
+                .forEach{
+                    assert(it.firstRequestTime == bucket1.firstRequestTime)
+                }
+    }
+
+    @Test
+    fun `Make sure that our list is the same size after not updating the request time`() {
+        val endpointId = random.nextInt()
+        val buckets = ArrayList<RateLimitBucket>()
+        val bucket1 = produceRandomBucket()
+        val bucket2 = produceRandomBucket()
+        val bucket3 = produceRandomBucket()
+        buckets.add(bucket1)
+        buckets.add(bucket2)
+        buckets.add(bucket3)
+        rateLimitBucketDao.saveRateLimits(endpointId, buckets)
+        val retrievedBuckets = rateLimitBucketDao.getRateLimitsForEndpoint(endpointId)
+        assert(retrievedBuckets == buckets)
+        buckets.remove(bucket1)
+        val newBucket1 = RateLimitBucket(
+                bucket1.maxRequests+100,
+                bucket1.requestCount,
+                -1,
+                bucket1.rateDuration)
+        buckets.add(newBucket1)
+        rateLimitBucketDao.saveRateLimits(endpointId, buckets)
+        val updatedBuckets = rateLimitBucketDao.getRateLimitsForEndpoint(endpointId)
+
+        updatedBuckets
+                .filter {
+                    // chances of having two the same are very low
+                    it.rateDuration == bucket1.rateDuration
+                }
+                .forEach{
+                    assert(it.firstRequestTime == bucket1.firstRequestTime)
+                }
+
+        assert(buckets.size == updatedBuckets.size)
+    }
+
     private fun produceRandomBucket() : RateLimitBucket {
         return RateLimitBucket(
                 random.nextInt(),
