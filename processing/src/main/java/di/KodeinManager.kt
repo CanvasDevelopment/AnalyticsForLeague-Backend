@@ -16,10 +16,12 @@ import db.refined_stats.GameSummaryDAO
 import db.refined_stats.GameSummaryDaoContract
 import db.refined_stats.RefinedStatDAOContract
 import db.refined_stats.RefinedStatsDAO
+import db.requests.RateLimitDao
 import db.stats.GameStageDeltaDAOImpl
 import db.summoner.SummonerDAOContract
 import db.summoner.SummonerDAOContractImpl
 import network.NetworkInterface
+import network.RateLimiter
 import network.RequestHandler
 import network.riotapi.ChampionService
 import network.riotapi.MatchServiceApi
@@ -184,8 +186,19 @@ class KodeinManager {
             )
         }
 
+        bind<RateLimitDao>() with provider {
+            RateLimitDao(kodein.instance())
+        }
+
+        bind<RateLimiter>() with provider {
+            RateLimiter(kodein.instance())
+        }
+
         bind<RequestHandler>() with provider {
-            RequestHandler(kodein.instance())
+            RequestHandler(
+                    kodein.instance(),
+                    kodein.instance(),
+                    kodein.instance())
         }
     }
 }

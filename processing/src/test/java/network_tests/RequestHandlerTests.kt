@@ -4,10 +4,13 @@ import db.requests.EndpointRateLimitStatusDao
 import db.requests.RequestDao
 import model.Summoner
 import model.match.Match
+import network.RateLimiter
 import network.RequestHandler
 import network.riotapi.MatchServiceApi
+import network.riotapi.header.RateLimitBucket
 import org.junit.Assert
 import org.junit.Test
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import util.RIOT_API_KEY
 import java.net.URL
@@ -19,7 +22,8 @@ class RequestHandlerTests {
 
     private val requestDao = mock(RequestDao::class.java)
     private val endpointRateLimitDao = mock(EndpointRateLimitStatusDao::class.java)
-    private val requestHandler = RequestHandler(requestDao, endpointRateLimitDao)
+    private val rateLimiter = mock(RateLimiter::class.java)
+    private val requestHandler = RequestHandler(requestDao, endpointRateLimitDao, rateLimiter)
     private val matchService = mock(MatchServiceApi::class.java)
 
     @Test
@@ -27,9 +31,8 @@ class RequestHandlerTests {
         val timeLeftToWait = 5000
         val startTime = System.currentTimeMillis()
         // We are allowed 12 requests per minute
-        `when`(requestDao.getRateLimit()).thenReturn(12)
-        `when`(requestDao.timeSinceLastClearedRates()).thenReturn(55000)
-        `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(12)
+        `when`(rateLimiter.fetchWaitTime(ArgumentMatchers.anyInt())).thenReturn(timeLeftToWait)
+        `when`(endpointRateLimitDao.doesEndpointExistInDb(1)).thenReturn(true)
         requestHandler.requestDataWithRateLimiting(
                 { matchService.getMatchByMatchId("212", -1) },
                 1)
@@ -40,10 +43,10 @@ class RequestHandlerTests {
     @Test
     fun `Ensure that the wait time is accurate (100ms accuracy)`() {
         // We are allowed 12 requests per minute
-        `when`(requestDao.getRateLimit()).thenReturn(12)
-        `when`(requestDao.timeSinceLastClearedRates()).thenReturn(59000)
-        `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(12)
+
         val startTime = System.currentTimeMillis()
+        `when`(rateLimiter.fetchWaitTime(ArgumentMatchers.anyInt())).thenReturn(1000)
+        `when`(endpointRateLimitDao.doesEndpointExistInDb(1)).thenReturn(true)
         requestHandler.requestDataWithRateLimiting(
                 { matchService.getMatchByMatchId("212", -1) },
                 1)
@@ -56,9 +59,6 @@ class RequestHandlerTests {
 
     @Test
     fun `Make sure that we can handle the first request in a long time properly`() {
-        `when`(requestDao.getRateLimit()).thenReturn(12)
-        `when`(requestDao.timeSinceLastClearedRates()).thenReturn(500000)
-        `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(13)
         requestHandler.requestDataWithRateLimiting(
                 { matchService.getMatchByMatchId("212", -1) },
                 1)
@@ -66,70 +66,16 @@ class RequestHandlerTests {
     }
 
     @Test
-    fun `Test running more items that a time frame can handle`() {
-        `when`(requestDao.getRateLimit()).thenReturn(10)
-        `when`(requestDao.timeSinceLastClearedRates()).thenReturn(50000)
-        `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(13)
-    }
-
-    @Test
-    fun `Make sure that we clear request list if we have exceeded the waiting period`() {
-
-    }
-
-    @Test
     fun `ensure we fetch data if we are below rate limit`() {
-        val timeLeftToWait = 1000
+        val timeLeftToWait = 100
         val startTime = System.currentTimeMillis()
-        // We are allowed 12 requests per minute
-        `when`(requestDao.getRateLimit()).thenReturn(12)
-        `when`(requestDao.timeSinceLastClearedRates()).thenReturn(40000)
-        `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(11)
+        `when`(rateLimiter.fetchWaitTime(ArgumentMatchers.anyInt())).thenReturn(0)
+        `when`(endpointRateLimitDao.doesEndpointExistInDb(1)).thenReturn(true)
         requestHandler.requestDataWithRateLimiting(
                 { matchService.getMatchByMatchId("212", -1) },
                 1)
         val totalTime = System.currentTimeMillis()
         Assert.assertTrue(totalTime < (startTime + timeLeftToWait))
-    }
-
-    @Test
-    fun `ensure that we record quest in dao once we have sent it`() {
-        `when`(requestDao.getRateLimit()).thenReturn(24)
-        `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(3)
-        `when`(requestDao.timeSinceLastClearedRates()).thenReturn(40000)
-        requestHandler.requestDataWithRateLimiting(
-                { matchService.getMatchByMatchId("212", -1) },
-                1)
-        verify(requestDao, times(1)).recordRequest(anyLong())
-    }
-
-    @Test
-    fun `ensure that we record request even if we delay the request`() {
-        val timeLeftToWait = 5000
-        val startTime = System.currentTimeMillis()
-        // We are allowed 12 requests per minute
-        `when`(requestDao.getRateLimit()).thenReturn(12)
-        `when`(requestDao.timeSinceLastClearedRates()).thenReturn(55000)
-        `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(12)
-        requestHandler.requestDataWithRateLimiting(
-                { matchService.getMatchByMatchId("212", -1) },
-                1)
-        val totalTime = System.currentTimeMillis()
-        Assert.assertTrue(totalTime > (startTime + timeLeftToWait))
-        verify(requestDao, times(1)).recordRequest(anyLong())
-    }
-
-    @Test
-    fun `ensure that we successfully wipe requests table once duration exceeded`() {
-
-        // We are allowed 12 requests per minute
-        `when`(requestDao.getRateLimit()).thenReturn(12)
-        `when`(requestDao.timeSinceLastClearedRates()).thenReturn(60000)
-        `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(11)
-        requestHandler.requestDataWithRateLimiting(
-                { matchService.getMatchByMatchId("212", -1) },
-                1)
-        verify(requestDao, times(1)).clearRateLimitRequests()
     }
 
     @Test
@@ -157,7 +103,6 @@ class RequestHandlerTests {
         Assert.assertTrue(match == matchRecieved)
     }
 
-    // note that this test will need a working api key to succeed
     @Test
     fun `ensure that we can send a request and handle the response`() {
         `when`(requestDao.getRateLimit()).thenReturn(24)
@@ -189,5 +134,4 @@ class RequestHandlerTests {
         val summoner = networkResult.data
         Assert.assertEquals(summoner, null)
     }
-
 }
