@@ -19,11 +19,8 @@ import java.util.logging.Logger
 class ChampControl(private val championService: ChampionService,
                    private val championDAO: ChampionDAO,
                    private val requestHandler: RequestHandler) {
-    val log = Logger.getLogger(this::class.java.name)
-    val endpoints = Endpoints()
-    // Rate limits for static apis is really low
-    private val requestsAllowed = 1
-    private val timeFrameInSeconds = 400
+    private val log = Logger.getLogger(this::class.java.name)
+    private val endpoints = Endpoints()
 
     /**
      * Fetch and save all champs, and all their details to the database. This will overwrite any previous
@@ -41,7 +38,7 @@ class ChampControl(private val championService: ChampionService,
                                     URL("https://${regionController.getRiotRegionName()}.api.riotgames.com/lol/static-data/v3/champions/${it.id}?locale=en_US&tags=image&api_key=$RIOT_API_KEY"),
                                     endpoints.V3_STATIC_DATA)
                             },
-                            endpoints.V3_CHAMPION)
+                            endpoints.V3_STATIC_DATA)
                 }
                 .forEach {
                     if (it.data != null) {
