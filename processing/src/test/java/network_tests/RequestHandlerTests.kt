@@ -8,6 +8,7 @@ import network.RateLimiter
 import network.RequestHandler
 import network.riotapi.MatchServiceApi
 import network.riotapi.header.RateLimitBucket
+import network.riotapi.header.RiotApiResponseHeaderParser
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.ArgumentMatchers
@@ -23,7 +24,8 @@ class RequestHandlerTests {
     private val requestDao = mock(RequestDao::class.java)
     private val endpointRateLimitDao = mock(EndpointRateLimitStatusDao::class.java)
     private val rateLimiter = mock(RateLimiter::class.java)
-    private val requestHandler = RequestHandler(requestDao, endpointRateLimitDao, rateLimiter)
+    private val parser = mock(RiotApiResponseHeaderParser::class.java)
+    private val requestHandler = RequestHandler(requestDao, endpointRateLimitDao, rateLimiter, parser)
     private val matchService = mock(MatchServiceApi::class.java)
 
     @Test
@@ -110,7 +112,7 @@ class RequestHandlerTests {
         `when`(requestDao.timeSinceLastClearedRates()).thenReturn(40000)
         val url = URL("https://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/kloin?api_key=$RIOT_API_KEY")
         val networkResult = requestHandler.requestDataWithRateLimiting (
-                { requestHandler.sendHttpGetRequest(Summoner::class.java,url) },
+                { requestHandler.sendHttpGetRequest(Summoner::class.java,url,1) },
                 1)
         Assert.assertEquals(networkResult.code, 200)
         val summoner = networkResult.data
@@ -128,7 +130,7 @@ class RequestHandlerTests {
         `when`(requestDao.timeSinceLastClearedRates()).thenReturn(40000)
         val url = URL("https://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/kloinfdsfdsfdsfds?api_key=$RIOT_API_KEY")
         val networkResult = requestHandler.requestDataWithRateLimiting (
-                { requestHandler.sendHttpGetRequest(Summoner::class.java,url) },
+                { requestHandler.sendHttpGetRequest(Summoner::class.java,url,1) },
                 1)
         Assert.assertEquals(networkResult.code, 404)
         val summoner = networkResult.data

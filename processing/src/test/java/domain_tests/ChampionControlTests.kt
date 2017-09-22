@@ -28,9 +28,9 @@ class ChampionControlTests{
      */
     @Test
     fun `Make sure we can fetch and save all champions`() {
-//        val champController = ChampControl(champService, champDao, requestHandler)
-//        champController.fetchAndSaveAllChamps()
-//        assert( champDao.getChampion(62.toLong())?.name == "Wukong")
+        val champController = ChampControl(champService, champDao, requestHandler)
+        champController.fetchAndSaveAllChamps()
+        assert( champDao.getChampion(62.toLong())?.name == "Wukong")
     }
 
 
@@ -46,4 +46,6 @@ class ChampionControlTests{
 
         return sb.toString()
     }
+
+
 }

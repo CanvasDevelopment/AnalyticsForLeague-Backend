@@ -6,7 +6,7 @@ import network.riotapi.header.Headers
 import network.riotapi.header.RiotApiResponseHeaderParser
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers
+
 import org.mockito.Mockito.*
 import java.net.HttpURLConnection
 
@@ -15,8 +15,8 @@ import java.net.HttpURLConnection
  */
 class EndpointRateLimitParsingTests {
 
-    lateinit var parser : RiotApiResponseHeaderParser
-    val rateLimitStatusDao = mock(EndpointRateLimitStatusDao::class.java)
+    private lateinit var parser : RiotApiResponseHeaderParser
+    private val rateLimitStatusDao = mock(EndpointRateLimitStatusDao::class.java)
 
     @Before
     fun setUp() {
@@ -238,6 +238,22 @@ class EndpointRateLimitParsingTests {
         `when`(connection.getHeaderField(headers.METHOD_RATE_LIMIT)).thenReturn("")
         `when`(connection.getHeaderField(headers.METHOD_RATE_LIMIT_COUNT)).thenReturn("")
         `when`(connection.getHeaderField(headers.RETRY_AFTER)).thenReturn(retryAfter)
+
+        val resultsFromParser = parser.parseRateLimitsForAppAndEndpoint(connection,endpoints.COMPLETE_APP)
+        assert(resultsFromParser.appKeyRateLimit.rateLimitBuckets.size == 0)
+        assert(resultsFromParser.endpointRateLimit.rateLimitBuckets.size == 0)
+    }
+
+    @Test
+    fun `Make sure that we can handle null retry after`() {
+        val endpoints = Endpoints()
+        val headers = Headers()
+        val connection = mock(HttpURLConnection::class.java)
+        `when`(connection.getHeaderField(headers.APP_RATE_LIMIT)).thenReturn("")
+        `when`(connection.getHeaderField(headers.APP_RATE_LIMIT_COUNT)).thenReturn("")
+        `when`(connection.getHeaderField(headers.METHOD_RATE_LIMIT)).thenReturn("")
+        `when`(connection.getHeaderField(headers.METHOD_RATE_LIMIT_COUNT)).thenReturn("")
+        `when`(connection.getHeaderField(headers.RETRY_AFTER)).thenReturn(null)
 
         val resultsFromParser = parser.parseRateLimitsForAppAndEndpoint(connection,endpoints.COMPLETE_APP)
         assert(resultsFromParser.appKeyRateLimit.rateLimitBuckets.size == 0)

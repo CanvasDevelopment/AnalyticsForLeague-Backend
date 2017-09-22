@@ -28,8 +28,10 @@ class RiotApiResponseHeaderParser(private val rateLimitStatusDao: EndpointRateLi
 
         val methodRateLimitString = connection.getHeaderField(headers.METHOD_RATE_LIMIT)
         val methodRateLimitCountString = connection.getHeaderField(headers.METHOD_RATE_LIMIT_COUNT)
-        val retryAfter = connection.getHeaderField(headers.RETRY_AFTER)
-
+        var retryAfter = connection.getHeaderField(headers.RETRY_AFTER)
+        if (retryAfter == null) {
+            retryAfter = "0"
+        }
         // if retry after is not an int, we need to log an error here
         val appKeyRates = EndpointRateLimit(
                 Endpoints().COMPLETE_APP,

@@ -1,10 +1,14 @@
 package application.domain
 
+import application.region.RegionController
 import db.champion.ChampionDAO
+import model.champion.Champion
 import model.networking.Endpoints
 import network.RequestHandler
 import network.riotapi.ChampionService
 import util.RIOT_API_KEY
+import java.net.URL
+import java.util.logging.Logger
 
 /**
  * @author Josiah Kendall
@@ -15,7 +19,7 @@ import util.RIOT_API_KEY
 class ChampControl(private val championService: ChampionService,
                    private val championDAO: ChampionDAO,
                    private val requestHandler: RequestHandler) {
-
+    val log = Logger.getLogger(this::class.java.name)
     val endpoints = Endpoints()
     // Rate limits for static apis is really low
     private val requestsAllowed = 1
@@ -26,14 +30,23 @@ class ChampControl(private val championService: ChampionService,
      * details about any previously saved champs with their values from the server.
      */
     fun fetchAndSaveAllChamps() {
+        val regionController = RegionController()
         val champList = championService.fetchChampList(RIOT_API_KEY)
-        requestHandler.setApiKeyRate(requestsAllowed, timeFrameInSeconds)
         champList.champions
                 .map {
                     requestHandler.requestDataWithRateLimiting (
-                            {championService.getChampById(it.id, "image", RIOT_API_KEY)},
+                            {
+                                log.info("requesting champion with id of ${it.id}")
+                                requestHandler.sendHttpGetRequest(Champion::class.java,
+                                    URL("https://${regionController.getRiotRegionName()}.api.riotgames.com/lol/static-data/v3/champions/${it.id}?locale=en_US&tags=image&api_key=$RIOT_API_KEY"),
+                                    endpoints.V3_STATIC_DATA)
+                            },
                             endpoints.V3_CHAMPION)
                 }
-                .forEach { championDAO.saveChampion(it) }
+                .forEach {
+                    if (it.data != null) {
+                        championDAO.saveChampion(it.data!!)
+                        }
+                    }
     }
 }

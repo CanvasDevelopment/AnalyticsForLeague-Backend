@@ -8,6 +8,7 @@ import network.riotapi.header.RateLimitBucket
  * @author Josiah Kendall
  */
 class RateLimiter(val endpointRateLimitStatusDao: EndpointRateLimitStatusDao) {
+
     /**
      * This fetches the wait time for a request.
      * @return returns 0 if we have no time to wait, else it returns the time to wait in milliseconds

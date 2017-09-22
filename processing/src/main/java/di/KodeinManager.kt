@@ -7,16 +7,13 @@ import com.github.salomonbrys.kodein.*
 import com.google.appengine.api.memcache.MemcacheService
 import com.google.appengine.api.memcache.MemcacheServiceFactory
 import com.google.gson.GsonBuilder
-import db.requests.DBHelper
-import db.requests.RequestDAOContract
-import db.requests.RequestDao
 import db.champion.ChampionDAO
 import db.match.*
 import db.refined_stats.GameSummaryDAO
 import db.refined_stats.GameSummaryDaoContract
 import db.refined_stats.RefinedStatDAOContract
 import db.refined_stats.RefinedStatsDAO
-import db.requests.RateLimitDao
+import db.requests.*
 import db.stats.GameStageDeltaDAOImpl
 import db.summoner.SummonerDAOContract
 import db.summoner.SummonerDAOContractImpl
@@ -25,6 +22,7 @@ import network.RateLimiter
 import network.RequestHandler
 import network.riotapi.ChampionService
 import network.riotapi.MatchServiceApi
+import network.riotapi.header.RiotApiResponseHeaderParser
 import retrofit.RestAdapter
 import retrofit.client.UrlConnectionClient
 import retrofit.converter.GsonConverter
@@ -194,8 +192,19 @@ class KodeinManager {
             RateLimiter(kodein.instance())
         }
 
+        bind<EndpointRateLimitStatusDao>() with provider {
+            EndpointRateLimitStatusDao(
+                    kodein.instance(),
+                    kodein.instance())
+        }
+
+        bind<RiotApiResponseHeaderParser>() with provider {
+            RiotApiResponseHeaderParser(kodein.instance())
+        }
+
         bind<RequestHandler>() with provider {
             RequestHandler(
+                    kodein.instance(),
                     kodein.instance(),
                     kodein.instance(),
                     kodein.instance())

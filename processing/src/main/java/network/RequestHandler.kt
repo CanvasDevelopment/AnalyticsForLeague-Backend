@@ -7,6 +7,7 @@ import db.requests.RequestDAOContract
 import model.networking.Endpoints
 import model.networking.NetworkResult
 import network.riotapi.header.RateLimitBucket
+import network.riotapi.header.RiotApiResponseHeaderParser
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -19,7 +20,8 @@ import java.net.URL
  */
 class RequestHandler(private val requestDAOContract: RequestDAOContract,
                      private val endpointRateLimitDao: EndpointRateLimitStatusDao,
-                     private val rateLimiter: RateLimiter) {
+                     private val rateLimiter: RateLimiter,
+                     private val riotApiResponseHeaderParser: RiotApiResponseHeaderParser) {
 
     private val gson = Gson()
 
@@ -50,13 +52,18 @@ class RequestHandler(private val requestDAOContract: RequestDAOContract,
      * @param type The class type we want our data response to be
      * @param url The url to send our GET request to
      */
-    fun <T> sendHttpGetRequest(type : Class<T>, url : URL) : NetworkResult<T> {
+    fun <T> sendHttpGetRequest(type : Class<T>, url : URL, endpointId: Int) : NetworkResult<T> {
         val conn = url.openConnection() as HttpURLConnection
         conn.doOutput = true
         conn.requestMethod = "GET"
 
-        val respCode = conn.responseCode
+        val rateLimitsFromHeaders = riotApiResponseHeaderParser.parseRateLimitsForAppAndEndpoint(conn, endpointId)
 
+        // save method endpoint
+        endpointRateLimitDao.saveEndpointRateLimitStatus(rateLimitsFromHeaders.endpointRateLimit)
+        endpointRateLimitDao.saveEndpointRateLimitStatus(rateLimitsFromHeaders.appKeyRateLimit)
+
+        val respCode = conn.responseCode
         if (respCode == HttpURLConnection.HTTP_OK) {
             val response = StringBuffer()
             val reader = BufferedReader(InputStreamReader(conn.inputStream))
