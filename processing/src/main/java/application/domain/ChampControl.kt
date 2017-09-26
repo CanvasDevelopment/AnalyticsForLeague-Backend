@@ -42,6 +42,7 @@ class ChampControl(private val championService: ChampionService,
                 }
                 .forEach {
                     if (it.data != null) {
+                        log.info("Saving champ called ${it.data!!.name}")
                         championDAO.saveChampion(it.data!!)
                         }
                     }

@@ -24,15 +24,19 @@ class ChampionControlTests{
     private val requestHandler = km.kodein.instance<RequestHandler>()
 
     /**
-     * This test will take hours to complete :P
+     * This test will take hours to complete
      */
     @Test
-    fun `Make sure we can fetch and save all champions`() {
+    fun `Make sure we can fetch and save all champions (LIVE)`() {
         val champController = ChampControl(champService, champDao, requestHandler)
         champController.fetchAndSaveAllChamps()
         assert( champDao.getChampion(62.toLong())?.name == "Wukong")
     }
 
+    @Test
+    fun `Make sure that we can fetch and save all champions (MOCKED)`() {
+
+    }
 
     private fun getChampList(): String {
         val inputs = FileInputStream("C:\\Users\\jek40\\Desktop\\analyticsforleague.com\\afl_backend\\processing\\src\\main\\resources\\json\\champList.json")
