@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<application xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_5.xsd" version="5">
+  <display-name>afl-module-ear</display-name>
+  <module>
+    <web>
+      <web-uri>api-1.0.war</web-uri>
+      <context-root>/api</context-root>
+    </web>
+  </module>
+  <module>
+    <web>
+      <web-uri>processing-1.0.war</web-uri>
+      <context-root>/processing</context-root>
+    </web>
+  </module>
+  <library-directory>lib</library-directory>
+</application>

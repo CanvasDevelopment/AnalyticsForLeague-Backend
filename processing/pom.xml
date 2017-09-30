@@ -9,7 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>com.analyticsforleague</groupId>
     <artifactId>processing</artifactId>
+    <packaging>war</packaging>
+    <version>1.0</version>
     <properties>
         <appengine.target.version>1.9.34</appengine.target.version>
         <build.output.dir>${project.build.directory}/classes</build.output.dir>

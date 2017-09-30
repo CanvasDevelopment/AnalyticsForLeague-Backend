@@ -11,11 +11,13 @@
     <modules>
         <module>processing</module>
         <module>api</module>
+        <module>afl_module_ear</module>
     </modules>
     <properties>
-        <appengine.target.version>1.9.34</appengine.target.version>
-        <build.output.dir>${project.build.directory}/classes</build.output.dir>
+        <appengine.app.version>1</appengine.app.version>
+        <appengine.target.version>1.9.50</appengine.target.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <build.output.dir>${project.build.directory}/classes</build.output.dir>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <kotlin.version>1.1.4</kotlin.version>
     </properties>
