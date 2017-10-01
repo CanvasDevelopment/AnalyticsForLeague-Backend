@@ -1,4 +1,4 @@
-package model
+package model.response_beans
 
 /**
  * @author Josiah Kendall

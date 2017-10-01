@@ -9,9 +9,9 @@ interface ProcessingContract {
      * Creates a new user in our database. This fetches the user from the riot service and stores it
      * in our database.
      *
-     * @return True if the user was successfully found and saved, false if not
+     * @return 200 if successfully found and saved. 404 if summoner was not found, 500 if an error occurred while saving
      */
-    fun createNewUser(accountName : String) : Boolean
+    fun createNewUser(accountName : String) : Int
 
     /**
      * Fetches all matches for this user on that are currently on the riot games server but not ours. This

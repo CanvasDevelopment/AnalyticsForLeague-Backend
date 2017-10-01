@@ -2,14 +2,14 @@ package db.summoner
 
 import database.DbHelper
 import database.summoner.SummonerDAOContract
-import model.SummonerDetails
+import model.response_beans.SummonerDetails
 import java.sql.SQLException
 import java.util.logging.Logger
 
 /**
  * @author Josiah Kendall
  */
-class SummonerDao(private val dbHelper: DbHelper) : SummonerDAOContract {
+class SummonerDao(private val dbHelper : DbHelper) : SummonerDAOContract {
 
     /**
      * Save a summoner to the summoner table.
@@ -95,7 +95,7 @@ class SummonerDao(private val dbHelper: DbHelper) : SummonerDAOContract {
         try {
             val resultSet = dbHelper.executeSqlQuery(queryString)
             if (resultSet.next()) {
-                val summoner =  SummonerDetails(resultSet.getLong(SummonerDAOContract.ID),
+                val summoner = SummonerDetails(resultSet.getLong(SummonerDAOContract.ID),
                         resultSet.getLong("AccountId"),
                         resultSet.getString("SummonerName"),
                         resultSet.getInt("ProfileIconId"),

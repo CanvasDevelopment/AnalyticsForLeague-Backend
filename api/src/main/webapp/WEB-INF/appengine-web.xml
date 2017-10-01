@@ -6,4 +6,7 @@
     <basic-scaling>
         <max-instances>5</max-instances>
     </basic-scaling>
+    <env-variables>
+        <env-var name="ENDPOINTS_SERVICE_NAME" value="analytics-for-league.appspot.com" />
+    </env-variables>
 </appengine-web-app>

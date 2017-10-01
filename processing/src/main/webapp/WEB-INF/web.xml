@@ -14,8 +14,8 @@
         See the License for the specific language governing permissions and
         limitations under the License.
         -->
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"  version="2.5">
-    <!-- Wrap the backend with Endpoints Frameworks v2. -->
+<!--<web-app xmlns="http://java.sun.com/xml/ns/javaee"  version="2.5">-->
+    <!--&lt;!&ndash; Wrap the backend with Endpoints Frameworks v2. &ndash;&gt;-->
     <!--<servlet>-->
         <!--<servlet-name>EndpointsServlet</servlet-name>-->
         <!--<servlet-class>com.google.api.server.spi.EndpointsServlet</servlet-class>-->
@@ -24,13 +24,13 @@
             <!--<param-value>com.example.echo.Echo</param-value>-->
         <!--</init-param>-->
     <!--</servlet>-->
-    <!-- Route API method requests to the backend. -->
+     <!--Route API method requests to the backend. -->
     <!--<servlet-mapping>-->
         <!--<servlet-name>EndpointsServlet</servlet-name>-->
         <!--<url-pattern>/_ah/api/*</url-pattern>-->
     <!--</servlet-mapping>-->
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-    </welcome-file-list>
+    <!--<welcome-file-list>-->
+        <!--<welcome-file>index.html</welcome-file>-->
+    <!--</welcome-file-list>-->
 
-</web-app>
+<!--</web-app>-->
