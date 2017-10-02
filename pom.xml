@@ -18,7 +18,7 @@
         <endpoints.framework.version>2.0.8</endpoints.framework.version>
         <endpoints.management.version>1.0.4</endpoints.management.version>
         <endpoints.project.id>analytics-for-league</endpoints.project.id>
-        <appengine.target.version>1.9.48</appengine.target.version>
+        <appengine.target.version>1.9.56</appengine.target.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <build.output.dir>${project.build.directory}/classes</build.output.dir>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -82,7 +82,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <jvmTarget>1.6</jvmTarget>
+                    <jvmTarget>1.8</jvmTarget>
                 </configuration>
             </plugin>
             <plugin>
@@ -126,28 +126,28 @@
             <version>1.0.2</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-endpoints</artifactId>
-            <version>${appengine.target.version}</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.appengine</groupId>
-                    <artifactId>appengine-api-1.0-sdk</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.google.endpoints</groupId>
-            <artifactId>endpoints-framework</artifactId>
-            <version>${endpoints.framework.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.endpoints</groupId>
-            <artifactId>endpoints-management-control-appengine-all</artifactId>
-            <version>1.0.5</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.google.appengine</groupId>-->
+            <!--<artifactId>appengine-endpoints</artifactId>-->
+            <!--<version>${appengine.target.version}</version>-->
+            <!--<scope>compile</scope>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>com.google.appengine</groupId>-->
+                    <!--<artifactId>appengine-api-1.0-sdk</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.google.endpoints</groupId>-->
+            <!--<artifactId>endpoints-framework</artifactId>-->
+            <!--<version>${endpoints.framework.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.google.endpoints</groupId>-->
+            <!--<artifactId>endpoints-management-control-appengine-all</artifactId>-->
+            <!--<version>1.0.5</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
@@ -213,11 +213,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jre8</artifactId>
-            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

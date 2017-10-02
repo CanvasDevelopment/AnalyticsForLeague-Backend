@@ -1,6 +1,6 @@
 package summoner_tests
 
-import api.Summoner
+import api.controller.SummonerController
 import com.google.gson.Gson
 import database.DbHelper
 import db.summoner.SummonerDao
@@ -21,7 +21,7 @@ class SummonerUnitTests {
     private val summonerDao = mock(SummonerDao::class.java)
     private val dbHelper = mock(DbHelper::class.java)
     private val processor = mock(ProcessingContract::class.java)
-    val summonerApi = Summoner(dbHelper, summonerDao, processor)
+    val summonerApi = SummonerController(dbHelper, summonerDao, processor)
 
     @Test
     fun `Make sure that we can register summoner correctly`() {

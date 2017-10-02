@@ -12,7 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <endpoints.framework.version>2.0.8</endpoints.framework.version>
-        <endpoints.management.version>1.0.4</endpoints.management.version>
+        <endpoints.management.version>1.0.5</endpoints.management.version>
         <endpoints.project.id>analytics-for-league</endpoints.project.id>
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.compiler.source>1.7</maven.compiler.source>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-api-1.0-sdk</artifactId>
-            <version>1.9.48</version>
+            <version>1.9.56</version>
         </dependency>
         <dependency>
             <groupId>com.google.endpoints</groupId>

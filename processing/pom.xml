@@ -14,7 +14,7 @@
     <packaging>war</packaging>
     <version>1.0</version>
     <properties>
-        <appengine.target.version>1.9.34</appengine.target.version>
+        <appengine.target.version>1.9.56</appengine.target.version>
         <build.output.dir>${project.build.directory}/classes</build.output.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -50,13 +50,6 @@
                 <configuration>
                     <enableJarClasses>false</enableJarClasses>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>endpoints_get_discovery_doc</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -143,6 +136,16 @@
                     <artifactId>appengine-api-1.0-sdk</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.endpoints</groupId>
+            <artifactId>endpoints-framework</artifactId>
+            <version>${endpoints.framework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.endpoints</groupId>
+            <artifactId>endpoints-management-control-appengine-all</artifactId>
+            <version>1.0.5</version>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>

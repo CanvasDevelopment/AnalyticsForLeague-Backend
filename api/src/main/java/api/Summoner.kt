@@ -1,13 +1,11 @@
 package api
 
+import api.controller.SummonerController
 import com.google.api.server.spi.config.*
-import com.google.gson.Gson
 import database.DbHelper
 import db.summoner.SummonerDao
 import model.Response
-import model.response_beans.SummonerDetails
-import model.response_beans.SummonerExistence
-import service_contracts.ProcessingContract
+import service_contracts.ProcessingImpl
 
 /**
  * @author Josiah Kendall
@@ -18,13 +16,17 @@ import service_contracts.ProcessingContract
                 ownerName = "com.analyticsforleague",
                 packagePath = "")
 )
-class Summoner(val dbHelper : DbHelper,
-               val summonerDao: SummonerDao,
-               val processingInterface : ProcessingContract) {
 
-    val gson = Gson()
+class Summoner {
 
-    @ApiMethod(name = "sayHello", path = "sayHello/{name}")
+    private val dbHelper = DbHelper()
+    private val summonerDao = SummonerDao(dbHelper)
+    private val processingInterface = ProcessingImpl()
+    private val summonerController = SummonerController(dbHelper,summonerDao,processingInterface)
+
+    @ApiMethod(name = "sayHello",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "sayHello/{name}")
     fun sayHello(@Named("name") name : String) : Response {
         return Response(200, "Hello $name")
     }
@@ -37,8 +39,7 @@ class Summoner(val dbHelper : DbHelper,
      */
     @ApiMethod(name = "isSummonerRegistered", path = "exists/{name}")
     fun isSummonerRegistered(@Named("name") summonerName: String) : Response {
-        val existence = SummonerExistence(summonerDao.getSummoner(summonerName) != null)
-        return Response(200, gson.toJson(existence))
+        return summonerController.isSummonerRegistered(summonerName)
     }
 
     /**
@@ -50,16 +51,7 @@ class Summoner(val dbHelper : DbHelper,
      */
     @ApiMethod(name = "registerSummoner", path = "register/{name}")
     fun registerSummoner(@Named("name") summonerName: String) : Response {
-        val creationResultCode = processingInterface.createNewUser(summonerName)
-        if (creationResultCode == 200) {
-            val summonerDetails = summonerDao.getSummoner(summonerName)
-            if (summonerDetails != null) {
-                return Response(200, gson.toJson(summonerDetails))
-            }
-        }
-
-        // failed
-        return Response(creationResultCode, "")
+        return summonerController.registerSummoner(summonerName)
 
     }
 
