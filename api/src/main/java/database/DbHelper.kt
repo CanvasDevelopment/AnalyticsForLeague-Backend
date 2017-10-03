@@ -43,12 +43,14 @@ class DbHelper {
         this.host = Constant.DEFAULT_HOST
         this.username = Constant.DEFAULT_USERNAME
         this.password = Constant.DEFAULT_PASSWORD
+        connect()
     }
 
     constructor(host: String, username: String, password: String) {
         this.host = host
         this.username = username
         this.password = password
+        connect()
     }
 
     /**

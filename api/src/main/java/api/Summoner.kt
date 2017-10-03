@@ -5,6 +5,7 @@ import com.google.api.server.spi.config.*
 import database.DbHelper
 import db.summoner.SummonerDao
 import model.Response
+import model.response_beans.SummonerDetails
 import service_contracts.ProcessingImpl
 
 /**
@@ -22,7 +23,7 @@ class Summoner {
     private val dbHelper = DbHelper()
     private val summonerDao = SummonerDao(dbHelper)
     private val processingInterface = ProcessingImpl()
-    private val summonerController = SummonerController(dbHelper,summonerDao,processingInterface)
+    private val summonerController = SummonerController(summonerDao,processingInterface)
 
     @ApiMethod(name = "sayHello",
             httpMethod = ApiMethod.HttpMethod.GET,
@@ -37,7 +38,9 @@ class Summoner {
      * @param summonerName  The name of the summoner we are checking for
      * @return              True if the summoner exists, false if not.
      */
-    @ApiMethod(name = "isSummonerRegistered", path = "exists/{name}")
+    @ApiMethod(name = "isSummonerRegistered",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "exists/{name}")
     fun isSummonerRegistered(@Named("name") summonerName: String) : Response {
         return summonerController.isSummonerRegistered(summonerName)
     }
@@ -49,18 +52,23 @@ class Summoner {
      * @param summonerName  The name of the summoner who we are registering.
      * @return              The summoner id, or -1 if the registration process was unsuccessful.
      */
-    @ApiMethod(name = "registerSummoner", path = "register/{name}")
+    @ApiMethod(name = "registerSummoner",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "register/{name}")
     fun registerSummoner(@Named("name") summonerName: String) : Response {
         return summonerController.registerSummoner(summonerName)
-
     }
 
-//    /**
-//     * Fetch the details for a summoner
-//     * @param summonerId The id of the summoner for whom we want the details
-//     * @return A [SummonerDetails] object with the relevant info for our summoner.
-//     */
-////    fun fetchSummonerDetails(summonerId : Long) : SummonerDetails {
-////        TODO()
-////    }
+    /**
+     * Fetch the details for a summoner
+     * @param summonerId    The id of the summoner for whom we want the details
+     * @return              A [Response] object with the relevant info for our summoner. The data is a json string of
+     *                      a [SummonerDetails] object
+     */
+    @ApiMethod(name = "summonerDetails",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "summonerDetails/{summonerId}")
+    fun getSummonerDetails(@Named("summonerId") summonerId : Long) : Response {
+        return summonerController.fetchSummonerDetails(summonerId)
+    }
 }

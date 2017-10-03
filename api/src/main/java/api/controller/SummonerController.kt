@@ -1,26 +1,18 @@
 package api.controller
 
-import com.google.api.server.spi.config.ApiMethod
-import com.google.api.server.spi.config.Named
 import com.google.gson.Gson
-import database.DbHelper
 import db.summoner.SummonerDao
 import model.Response
+import model.response_beans.SummonerDetails
 import model.response_beans.SummonerExistence
 import service_contracts.ProcessingContract
 
 /**
  * @author Josiah Kendall
  */
-class SummonerController(val dbHelper : DbHelper,
-                         val summonerDao: SummonerDao,
-                         val processingInterface : ProcessingContract) {
-    val gson = Gson()
-
-
-    fun sayHello( name : String) : Response {
-        return Response(200, "Hello $name")
-    }
+class SummonerController(private val summonerDao: SummonerDao,
+                         private val processingInterface : ProcessingContract) {
+    private val gson = Gson()
 
     /**
      * Find out if a summoner is registered with our database.
@@ -30,7 +22,10 @@ class SummonerController(val dbHelper : DbHelper,
      */
     fun isSummonerRegistered(summonerName: String) : Response {
         val existence = SummonerExistence(summonerDao.getSummoner(summonerName) != null)
-        return Response(200, gson.toJson(existence))
+        if (existence.exists) {
+            return Response(200, gson.toJson(existence))
+        }
+        return Response(404, gson.toJson(existence))
     }
 
     /**
@@ -50,16 +45,19 @@ class SummonerController(val dbHelper : DbHelper,
         }
 
         // failed
-        return Response(creationResultCode, "")
+        return Response(creationResultCode, "{}")
 
     }
 
-//    /**
-//     * Fetch the details for a summoner
-//     * @param summonerId The id of the summoner for whom we want the details
-//     * @return A [SummonerDetails] object with the relevant info for our summoner.
-//     */
-////    fun fetchSummonerDetails(summonerId : Long) : SummonerDetails {
-////        TODO()
-////    }
+    /**
+     * Fetch the details for a summoner
+     * @param summonerId The id of the summoner for whom we want the details
+     * @return A [SummonerDetails] object with the relevant info for our summoner.
+     */
+    fun fetchSummonerDetails(summonerId : Long) : Response {
+        val summonerDetails = summonerDao.getSummoner(summonerId)
+                // If null, return 404
+                ?: return Response(404, "{}")
+        return Response(200, gson.toJson(summonerDetails))
+    }
 }
