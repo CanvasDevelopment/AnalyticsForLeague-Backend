@@ -1,4 +1,4 @@
-package api.controller
+package api.controllers
 
 import com.google.gson.Gson
 import db.summoner.SummonerDao

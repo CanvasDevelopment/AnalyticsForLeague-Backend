@@ -1,6 +1,6 @@
 package summoner_tests
 
-import api.controller.SummonerController
+import api.controllers.SummonerController
 import com.google.gson.Gson
 import db.summoner.SummonerDao
 import model.response_beans.SummonerDetails

@@ -1,11 +1,10 @@
 package api
 
-import api.controller.SummonerController
+import api.controllers.SummonerController
 import com.google.api.server.spi.config.*
 import database.DbHelper
 import db.summoner.SummonerDao
 import model.Response
-import model.response_beans.SummonerDetails
 import service_contracts.ProcessingImpl
 
 /**
