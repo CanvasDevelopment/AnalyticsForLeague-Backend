@@ -9,6 +9,7 @@ import com.google.appengine.api.memcache.MemcacheServiceFactory
 import com.google.gson.GsonBuilder
 import db.champion.ChampionDAO
 import db.match.*
+import db.matchlist.MatchSummaryDAO
 import db.refined_stats.GameSummaryDAO
 import db.refined_stats.GameSummaryDaoContract
 import db.refined_stats.RefinedStatDAOContract
@@ -124,8 +125,13 @@ class KodeinManager {
             NetworkInterface(kodein.instance())
         }
 
+        bind<MatchSummaryDAO>() with provider {
+            MatchSummaryDAO(kodein.instance())
+        }
+
         bind<MatchControl>() with provider {
             MatchControl(
+                    kodein.instance(),
                     kodein.instance(),
                     kodein.instance(),
                     kodein.instance(),

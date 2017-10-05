@@ -1,22 +1,28 @@
 package application.domain
 
 import db.match.MatchDAO
+import db.matchlist.MatchSummaryDAO
 import db.refined_stats.GameSummaryDaoContract
 import db.refined_stats.RefinedStatDAOContract
 import db.summoner.SummonerDAOContract
+import model.matchlist.MatchSummary
 import model.refined_stats.RefinedGeneralGameStageColumnNames
 import network.riotapi.MatchServiceApi
 import util.*
 import util.columnnames.StaticColumnNames
+import java.util.logging.Logger
 
 /**
  * @author Josiah Kendall
  */
 class MatchControl(private val matchDAO: MatchDAO,
                    private val matchServiceApi: MatchServiceApi,
+                   private val matchSummaryDAO: MatchSummaryDAO,
                    private val summonerDAOContract: SummonerDAOContract,
                    private val refinedStatDAOContract: RefinedStatDAOContract,
                    private val gameSummaryDaoContract: GameSummaryDaoContract) {
+
+    private val log = Logger.getLogger(this::class.java.name)
 
     val tables = Tables()
 
@@ -24,7 +30,8 @@ class MatchControl(private val matchDAO: MatchDAO,
      * Pulls down the latest matches for a summoner, and stores them in the match database.
      * @param summonerId
      */
-    fun downloadAndSaveMatches(summonerId : Long) {
+    fun downloadAndSaveMatchSummaries(summonerId : Long) {
+
         // if we don't get a summoner, return
         val summoner = summonerDAOContract.getSummoner(summonerId) ?: return
         val matchList = matchServiceApi.getMatchListForAccount(RIOT_API_KEY, summoner.accountId)
@@ -34,6 +41,39 @@ class MatchControl(private val matchDAO: MatchDAO,
 
         // For each match summary
         matchList.matches.forEach { matchSummary ->
+            if (!matchSummaryDAO.exists(matchSummary.gameId)) {
+                val result = matchSummaryDAO.saveMatchSummary(matchSummary)
+                log.info("Saving match summary with a match id of ${matchSummary.gameId}. Saved with id: $result")
+            } else {
+                log.info("Match summary with id : ${matchSummary.gameId} already exists. Skipping to next")
+            }
+        }
+    }
+
+    /**
+     * Fetch and save all the matches from the riot api for a summoner. This does not fetch matches that we already have
+     * fetched and saved previously.
+     *
+     * @param summonerId                The summoner that we want to fetch the matches for.
+     * @param numberOfMatchesToFetch    The number of matches to fetch. For instance, fetching the last 10 matches, use 10.
+     *                                  The last 20, use 20. To fetch all matches that we have a match summary for, use
+     *                                  0 or a negative number.
+     */
+    fun fetchAndSaveMatchesForASummoner(summonerId: Long, numberOfMatchesToFetch : Int) {
+        // fetch
+        if (numberOfMatchesToFetch <= 0) {
+            log.info("No limit of matches given. Fetching all match summaries.")
+            val matchSummaries = matchSummaryDAO.getAllMatchesBySummonerId(summonerId)
+            fetchMatchesUsingGivenMatchSummaries(summonerId, matchSummaries)
+        } else {
+            log.info("Limit given of $numberOfMatchesToFetch")
+            // TODO finish this next
+            val matchSummariesTOP = matchSummaryDAO.getRecentMatchesBySummonerIdForRole(summonerId, 20, SOLO, TOP)
+        }
+    }
+
+    private fun fetchMatchesUsingGivenMatchSummaries(summonerId: Long, matchSummaries : ArrayList<MatchSummary>) {
+        matchSummaries.forEach { matchSummary ->
             val alreadySaved = gameSummaryDaoContract.doesGameSummaryForSummonerExist(matchSummary.gameId, summonerId)
             if (!alreadySaved) {
                 val matchDetails = matchServiceApi.getMatchByMatchId(RIOT_API_KEY, matchSummary.gameId)
@@ -44,9 +84,10 @@ class MatchControl(private val matchDAO: MatchDAO,
 
     /**
      * Refine our raw match data into refined stats.
-     * @param summonerId The summoner Id for whom we are refining the stats.
-     * @param role The role for which we are interested in.
-     * @param lane The lane for which we are interested in.
+     *
+     * @param summonerId    The summoner Id for whom we are refining the stats.
+     * @param role          The role for which we are interested in.
+     * @param lane          The lane for which we are interested in.
      */
     fun refineMatchData(summonerId: Long, role : String, lane : String) {
         val tableName = getTableName(lane, role)
@@ -131,6 +172,7 @@ class MatchControl(private val matchDAO: MatchDAO,
     /**
      * Generate a table based on our role and lane. This is the 'gamesummary' table that we are going to be saving our
      * refined stats to.
+     *
      * @param lane The lane the stats are for.
      * @param role The role the stats are for.
      */

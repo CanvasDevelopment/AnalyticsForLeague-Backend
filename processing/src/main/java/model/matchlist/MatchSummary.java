@@ -18,7 +18,7 @@ public class MatchSummary {
     private long summonerId;
 
     public MatchSummary() {
-        // for the sloppy
+        // ?? why is this here?
     }
 
     public MatchSummary(int id,

@@ -4,6 +4,7 @@ import application.Sync
 import application.domain.MatchControl
 import com.github.salomonbrys.kodein.instance
 import com.google.gson.Gson
+import db.matchlist.MatchSummaryDAO
 import db.summoner.SummonerDAOContract
 import di.KodeinManager
 import model.Summoner
@@ -107,9 +108,11 @@ class SyncTestsForGameSummaryColumns {
             val summoner = Summoner()
             summoner.accountId = 1234567
             val summonerDAOmock = mock(SummonerDAOContract::class.java)
+            val matchSummaryDaoMock = mock(MatchSummaryDAO::class.java)
             `when`(summonerDAOmock.getSummoner(ArgumentMatchers.anyLong())).thenReturn(summoner)
             val matchControl = MatchControl(km.kodein.instance(),
                     matchServiceApi,
+                    matchSummaryDaoMock,
                     summonerDAOmock,
                     km.kodein.instance(),
                     km.kodein.instance())

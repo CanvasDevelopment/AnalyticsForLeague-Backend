@@ -2,8 +2,7 @@ package domain_tests
 
 import application.domain.MatchControl
 import db.match.MatchDAO
-import db.match.MatchDAOContracts
-import db.matchlist.MatchSummaryDaoContract
+import db.matchlist.MatchSummaryDAO
 import db.refined_stats.GameSummaryDaoContract
 import db.refined_stats.RefinedStatDAOContract
 import db.summoner.SummonerDAOContract
@@ -28,13 +27,13 @@ import util.columnnames.StaticColumnNames
  */
 class MatchControlTests {
 
-    val tables = Tables()
-    val role = SOLO
-    val lane = TOP
+    private val tables = Tables()
+    private val role = SOLO
+    private val lane = TOP
 
     lateinit var matchContol: MatchControl
     lateinit var matchDao: MatchDAO
-    lateinit var matchSummaryDao: MatchSummaryDaoContract
+    lateinit var matchSummaryDao: MatchSummaryDAO
     lateinit var matchServiceApi: MatchServiceApi
     lateinit var summonerDaoContract: SummonerDAOContract
     lateinit var refinedStatDaoContract: RefinedStatDAOContract
@@ -47,13 +46,14 @@ class MatchControlTests {
         gameSummaryDaoContract = mock(GameSummaryDaoContract::class.java)
         matchServiceApi = mock(MatchServiceApi::class.java)
         matchDao = mock(MatchDAO::class.java)
-        matchSummaryDao = mock(MatchSummaryDaoContract::class.java)
+        matchSummaryDao = mock(MatchSummaryDAO::class.java)
         summonerDaoContract = mock(SummonerDAOContract::class.java)
         refinedStatDaoContract = mock(RefinedStatDAOContract::class.java)
 
         // match control
         matchContol = MatchControl(matchDao,
                 matchServiceApi,
+                matchSummaryDao,
                 summonerDaoContract,
                 refinedStatDaoContract,
                 gameSummaryDaoContract)
@@ -62,7 +62,7 @@ class MatchControlTests {
     @Test
     fun `Make sure we exit if we don't find summoner`() {
         `when`(summonerDaoContract.getSummoner(Matchers.anyLong())).thenReturn(null)
-        matchContol.downloadAndSaveMatches(1)
+        matchContol.downloadAndSaveMatchSummaries(1)
         verify(summonerDaoContract, times(1)).getSummoner(1)
         verify(matchServiceApi, times(0)).getMatchListForAccount(Matchers.anyString(), Matchers.anyLong())
     }
@@ -112,7 +112,7 @@ class MatchControlTests {
         val matchList = MatchList()
         matchList.matches = matchSummaries
         `when`(matchServiceApi.getMatchListForAccount(RIOT_API_KEY, 1)).thenReturn(matchList)
-        matchContol.downloadAndSaveMatches(1)
+        matchContol.downloadAndSaveMatchSummaries(1)
         verify(summonerDaoContract, times(1)).getSummoner(1)
         verify(matchServiceApi, times(1)).getMatchListForAccount(RIOT_API_KEY, 1)
     }
@@ -164,7 +164,7 @@ class MatchControlTests {
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(1, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(2, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(3, -1)).thenReturn(false)
-        matchContol.downloadAndSaveMatches(-1)
+        matchContol.downloadAndSaveMatchSummaries(-1)
         verify(gameSummaryDaoContract, times(1)).doesGameSummaryForSummonerExist(1, -1)
         verify(gameSummaryDaoContract, times(1)).doesGameSummaryForSummonerExist(2, -1)
         verify(gameSummaryDaoContract, times(1)).doesGameSummaryForSummonerExist(3, -1)
@@ -217,14 +217,14 @@ class MatchControlTests {
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(1, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(2, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(3, -1)).thenReturn(false)
-        matchContol.downloadAndSaveMatches(-1)
+        matchContol.downloadAndSaveMatchSummaries(-1)
         verify(matchServiceApi, times(1)).getMatchByMatchId(RIOT_API_KEY, 1)
         verify(matchServiceApi, times(1)).getMatchByMatchId(RIOT_API_KEY, 2)
         verify(matchServiceApi, times(1)).getMatchByMatchId(RIOT_API_KEY, 3)
     }
 
     @Test
-    fun `Make sure that we don't try to fetch any matches that we already have saved for that summoner`() {
+    fun `Make sure that we don't try to fetch any match summaries that we already have saved for that summoner`() {
         val summoner = Summoner()
         summoner.accountId = -1
         `when`(summonerDaoContract.getSummoner(Matchers.anyLong())).thenReturn(summoner)
@@ -267,94 +267,13 @@ class MatchControlTests {
         val matchList = MatchList()
         matchList.matches = matchSummaries
         `when`(matchServiceApi.getMatchListForAccount(RIOT_API_KEY, -1)).thenReturn(matchList)
-        `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(1, -1)).thenReturn(false)
-        `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(2, -1)).thenReturn(false)
-        `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(3, -1)).thenReturn(true)
-        matchContol.downloadAndSaveMatches(-1)
-        verify(matchServiceApi, times(1)).getMatchByMatchId(RIOT_API_KEY, 1)
-        verify(matchServiceApi, times(1)).getMatchByMatchId(RIOT_API_KEY, 2)
-        verify(matchServiceApi, times(0)).getMatchByMatchId(RIOT_API_KEY, 3)
-    }
-
-    @Test
-    fun `Make sure that we save a match when we retrieve it`() {
-        val summoner = Summoner()
-        summoner.accountId = -1
-        `when`(summonerDaoContract.getSummoner(Matchers.anyLong())).thenReturn(summoner)
-        `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(Matchers.anyLong(), Matchers.anyLong())).thenReturn(false)
-        val matchSummaries = ArrayList<MatchSummary>()
-        val matchSummary1 = MatchSummary(1,
-                "oce",
-                1,
-                34,
-                1,
-                9,
-                123456,
-                role,
-                lane,
-                -1)
-        val matchSummary2 = MatchSummary(2,
-                "oce",
-                2,
-                34,
-                1,
-                9,
-                123456,
-                role,
-                lane,
-                -1)
-        val matchSummary3 = MatchSummary(3,
-                "oce",
-                3,
-                34,
-                1,
-                9,
-                123456,
-                role,
-                lane,
-                -1)
-
-        matchSummaries.add(matchSummary1)
-        matchSummaries.add(matchSummary2)
-        matchSummaries.add(matchSummary3)
-        val matchList = MatchList()
-        matchList.matches = matchSummaries
-        `when`(matchServiceApi.getMatchListForAccount(RIOT_API_KEY, -1)).thenReturn(matchList)
-        `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(1, -1)).thenReturn(false)
-        `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(2, -1)).thenReturn(false)
-        `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(3, -1)).thenReturn(true)
-        val matchDetail = Match(1,
-                "oce",
-                1234,
-                1234,
-                1,
-                1,
-                1,
-                "fdfd",
-                "",
-                "",
-                ArrayList(),
-                ArrayList(),
-                ArrayList())
-
-        val matchDetail2 = Match(2,
-                "oce",
-                1234,
-                1234,
-                1,
-                1,
-                1,
-                "fdfd",
-                "",
-                "",
-                ArrayList(),
-                ArrayList(),
-                ArrayList())
-        `when`(matchServiceApi.getMatchByMatchId(RIOT_API_KEY, 1)).thenReturn(matchDetail)
-        `when`(matchServiceApi.getMatchByMatchId(RIOT_API_KEY, 2)).thenReturn(matchDetail2)
-        matchContol.downloadAndSaveMatches(-1)
-        verify(matchDao, times(1)).saveMatch(matchDetail)
-        verify(matchDao, times(1)).saveMatch(matchDetail2)
+        `when`(matchSummaryDao.exists(1)).thenReturn(false)
+        `when`(matchSummaryDao.exists(2)).thenReturn(false)
+        `when`(matchSummaryDao.exists(3)).thenReturn(true)
+        matchContol.downloadAndSaveMatchSummaries(-1)
+        verify(matchSummaryDao, times(1)).saveMatchSummary(matchSummary1)
+        verify(matchSummaryDao, times(1)).saveMatchSummary(matchSummary2)
+        verify(matchSummaryDao, times(0)).saveMatchSummary(matchSummary3)
     }
 
     @Test
@@ -686,7 +605,7 @@ class MatchControlTests {
 
     @Test(expected = IllegalStateException::class)
     fun `Make sure that we can fail if we try to generate using incorrect string`() {
-        Assert.assertTrue(matchContol.getTableName("mid",role) == "")
+        Assert.assertTrue(matchContol.getTableName("middle",role) == "")
     }
 
 

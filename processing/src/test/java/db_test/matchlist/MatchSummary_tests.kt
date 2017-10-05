@@ -7,11 +7,13 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import java.util.*
 
 /**
  * @author Josiah Kendall
  */
 class MatchSummary_tests {
+    private val random = Random()
 
     lateinit var dbHelper : DBHelper
     lateinit var matchSummaryDAO : MatchSummaryDAO
@@ -111,13 +113,13 @@ class MatchSummary_tests {
 
         matchSummaryDAO.saveMatchSummary(matchSummary2)
 
-        val matchSummaries = matchSummaryDAO.getAllMatchesBySummonerId(summonerId.toInt())
+        val matchSummaries = matchSummaryDAO.getAllMatchesBySummonerId(summonerId)
         Assert.assertTrue(matchSummaries.size == 2)
     }
 
     @Test
     fun ensureThatWeReturnFalseIfMatchSummaryDoesNotExist() {
-        val exists = matchSummaryDAO.checkMatchSummaryExists(-12345678)
+        val exists = matchSummaryDAO.exists(-12345678)
         Assert.assertTrue(!exists)
     }
 
@@ -134,7 +136,47 @@ class MatchSummary_tests {
         matchSummary.role = "SOLO"
         matchSummary.summonerId = summonerId
         matchSummaryDAO.saveMatchSummary(matchSummary)
-        val exists = matchSummaryDAO.checkMatchSummaryExists(gameId)
+        val exists = matchSummaryDAO.exists(gameId)
         Assert.assertTrue(exists)
+    }
+
+    @Test
+    fun `Make sure that we can fetch a limited amount of match summaries for a summoner`() {
+        val summonerId = random.nextLong()
+        val matchSummary1 = generateMatchSummaryForSummoner(summonerId, "SOLO", "TOP")
+        val matchSummary2 = generateMatchSummaryForSummoner(summonerId, "SOLO", "TOP")
+        val matchSummary3 = generateMatchSummaryForSummoner(summonerId, "SOLO", "TOP")
+        val matchSummary4 = generateMatchSummaryForSummoner(summonerId, "SOLO", "TOP")
+        val matchSummary5 = generateMatchSummaryForSummoner(summonerId, "SOLO", "MID")
+        val matchSummary6 = generateMatchSummaryForSummoner(summonerId, "SOLO", "MID")
+        val matchSummary7 = generateMatchSummaryForSummoner(-1, "SOLO", "MID")
+        val matchSummary8 = generateMatchSummaryForSummoner(-1, "SOLO", "MID")
+
+        matchSummaryDAO.saveMatchSummary(matchSummary1)
+        matchSummaryDAO.saveMatchSummary(matchSummary2)
+        matchSummaryDAO.saveMatchSummary(matchSummary3)
+        matchSummaryDAO.saveMatchSummary(matchSummary4)
+        matchSummaryDAO.saveMatchSummary(matchSummary5)
+        matchSummaryDAO.saveMatchSummary(matchSummary6)
+        matchSummaryDAO.saveMatchSummary(matchSummary7)
+        matchSummaryDAO.saveMatchSummary(matchSummary8)
+
+        val summaries = matchSummaryDAO.getRecentMatchesBySummonerIdForRole(summonerId,2,"SOLO", "TOP")
+        assert(summaries.size == 2)
+        assert(summaries[0].gameId == matchSummary4.gameId)
+        assert(summaries[1].gameId == matchSummary3.gameId)
+    }
+
+    private fun generateMatchSummaryForSummoner(summonerId: Long, role : String, lane : String) : MatchSummary {
+        return MatchSummary(random.nextInt(),
+                "oce",
+                random.nextLong(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextLong(),
+                role,
+                lane,
+                summonerId)
     }
 }

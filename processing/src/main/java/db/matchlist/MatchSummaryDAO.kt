@@ -76,7 +76,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
      * @param gameId The game id that we want to check for
      * @return true if exists, false if not.
      */
-    override fun checkMatchSummaryExists(gameId: Long) : Boolean {
+    override fun exists(gameId: Long) : Boolean {
         val queryString = "SELECT * From $MATCH_SUMMARY WHERE GameId = $gameId"
         val result = dbHelper.executeSqlQuery(queryString)
         if (result.next()) return true
@@ -103,7 +103,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
      * @param summonerId The summoner that we want to get the summaries for.
      * @return An [ArrayList] of [MatchSummary] that belong to that specific summoner.
      */
-    override fun getAllMatchesBySummonerId(summonerId: Int) : ArrayList<MatchSummary> {
+    override fun getAllMatchesBySummonerId(summonerId: Long) : ArrayList<MatchSummary> {
         val queryString = "SELECT * FROM $MATCH_SUMMARY WHERE $SUMMONER_ID = $summonerId"
         val result = dbHelper.executeSqlQuery(queryString)
         val summaries = ArrayList<MatchSummary>()
@@ -113,4 +113,30 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
 
         return summaries
     }
+
+    /**
+     * Fetch a specified number of match summaries for a specific summoner. Note that this will filter from most recent,
+     * so if you specify you want 20 [MatchSummary]'s, it will return the most recent 20 [MatchSummary]'s
+     *
+     * @param summonerId        The summoner to fetch the results for
+     * @param numberOfMatches   The number of matches to fetch.
+     * @return                  An ArrayList of the [MatchSummary] objects that were found. The most recent will be first
+     *                          in the list
+     */
+    fun getRecentMatchesBySummonerIdForRole(summonerId: Long, numberOfMatches : Int, role : String, lane : String) : ArrayList<MatchSummary> {
+        val queryString = "SELECT * FROM $MATCH_SUMMARY " +
+                "WHERE $SUMMONER_ID = $summonerId AND $ROLE = '$role' AND $LANE = '$lane' " +
+                "ORDER BY $ID DESC " +
+                "LIMIT $numberOfMatches"
+        val result = dbHelper.executeSqlQuery(queryString)
+        val summaries = ArrayList<MatchSummary>()
+        while (result.next()) {
+            summaries.add(result.produceMatchSummary())
+        }
+
+        return summaries
+    }
+
+
+
 }

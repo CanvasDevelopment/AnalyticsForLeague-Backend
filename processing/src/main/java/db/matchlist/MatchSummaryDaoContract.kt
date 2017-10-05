@@ -9,7 +9,7 @@ interface MatchSummaryDaoContract {
 
     fun saveMatchSummary(matchSummary: MatchSummary) : Long
     fun getMatchSummary(id : Long) : MatchSummary
-    fun checkMatchSummaryExists(gameId: Long) : Boolean
+    fun exists(gameId: Long) : Boolean
     fun getMatchSummaryByGameId(gameId : Long) : MatchSummary
-    fun getAllMatchesBySummonerId(summonerId: Int) : ArrayList<MatchSummary>
+    fun getAllMatchesBySummonerId(summonerId: Long) : ArrayList<MatchSummary>
 }
