@@ -54,25 +54,40 @@ class MatchControl(private val matchDAO: MatchDAO,
      * Fetch and save all the matches from the riot api for a summoner. This does not fetch matches that we already have
      * fetched and saved previously.
      *
-     * @param summonerId                The summoner that we want to fetch the matches for.
-     * @param numberOfMatchesToFetch    The number of matches to fetch. For instance, fetching the last 10 matches, use 10.
-     *                                  The last 20, use 20. To fetch all matches that we have a match summary for, use
-     *                                  0 or a negative number.
+     * @param summonerId The summoner that we want to fetch the matches for.
+     * @param numberOfMatchesToFetchForEachRole     The number of matches to fetch. For instance, fetching the last 10 matches, use 10.
+     *                                              The last 20, use 20. To fetch all matches that we have a match summary for, use
+     *                                              0 or a negative number.
      */
-    fun fetchAndSaveMatchesForASummoner(summonerId: Long, numberOfMatchesToFetch : Int) {
+    fun fetchAndSaveMatchesForASummoner(summonerId: Long, numberOfMatchesToFetchForEachRole: Int) {
         // fetch
-        if (numberOfMatchesToFetch <= 0) {
+        if (numberOfMatchesToFetchForEachRole <= 0) {
             log.info("No limit of matches given. Fetching all match summaries.")
             val matchSummaries = matchSummaryDAO.getAllMatchesBySummonerId(summonerId)
-            fetchMatchesUsingGivenMatchSummaries(summonerId, matchSummaries)
+            fetchAndSaveMatchesUsingGivenMatchSummaries(summonerId, matchSummaries)
         } else {
-            log.info("Limit given of $numberOfMatchesToFetch")
+            log.info("Limit given of $numberOfMatchesToFetchForEachRole")
             // TODO finish this next
-            val matchSummariesTOP = matchSummaryDAO.getRecentMatchesBySummonerIdForRole(summonerId, 20, SOLO, TOP)
+
+            val matchSummariesTop = matchSummaryDAO.getRecentMatchesBySummonerIdForRole(summonerId, numberOfMatchesToFetchForEachRole, SOLO, TOP)
+            val matchSummariesJungle = matchSummaryDAO.getRecentMatchesBySummonerIdForRole(summonerId, numberOfMatchesToFetchForEachRole, NONE, JUNGLE)
+            val matchSummariesMid = matchSummaryDAO.getRecentMatchesBySummonerIdForRole(summonerId, numberOfMatchesToFetchForEachRole, SOLO, MID)
+            val matchSummariesADC = matchSummaryDAO.getRecentMatchesBySummonerIdForRole(summonerId, numberOfMatchesToFetchForEachRole, DUO_CARRY, BOT)
+            val matchSummariesSupport = matchSummaryDAO.getRecentMatchesBySummonerIdForRole(summonerId, numberOfMatchesToFetchForEachRole, DUO_SUPPORT, BOT)
+            val allMatchSummaries = ArrayList<MatchSummary>()
+
+            // Add all match summaries together to make them fit
+            allMatchSummaries.addAll(matchSummariesTop)
+            allMatchSummaries.addAll(matchSummariesJungle)
+            allMatchSummaries.addAll(matchSummariesMid)
+            allMatchSummaries.addAll(matchSummariesADC)
+            allMatchSummaries.addAll(matchSummariesSupport)
+
+            fetchAndSaveMatchesUsingGivenMatchSummaries(summonerId,allMatchSummaries)
         }
     }
 
-    private fun fetchMatchesUsingGivenMatchSummaries(summonerId: Long, matchSummaries : ArrayList<MatchSummary>) {
+    fun fetchAndSaveMatchesUsingGivenMatchSummaries(summonerId: Long, matchSummaries : ArrayList<MatchSummary>) {
         matchSummaries.forEach { matchSummary ->
             val alreadySaved = gameSummaryDaoContract.doesGameSummaryForSummonerExist(matchSummary.gameId, summonerId)
             if (!alreadySaved) {
