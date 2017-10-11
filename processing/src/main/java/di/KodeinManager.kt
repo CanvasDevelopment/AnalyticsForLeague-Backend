@@ -2,6 +2,7 @@ package di
 
 import application.Sync
 import application.domain.MatchControl
+import application.domain.SummonerControl
 import application.region.RegionController
 import com.github.salomonbrys.kodein.*
 import com.google.appengine.api.memcache.MemcacheService
@@ -23,6 +24,8 @@ import network.RateLimiter
 import network.RequestHandler
 import network.riotapi.ChampionService
 import network.riotapi.MatchServiceApi
+import network.riotapi.SummonerService
+import network.riotapi.SummonerServiceImpl
 import network.riotapi.header.RiotApiResponseHeaderParser
 import retrofit.RestAdapter
 import retrofit.client.UrlConnectionClient
@@ -212,6 +215,22 @@ class KodeinManager {
             RequestHandler(
                     kodein.instance(),
                     kodein.instance(),
+                    kodein.instance(),
+                    kodein.instance())
+        }
+
+        bind<SummonerServiceImpl>() with provider {
+            SummonerServiceImpl(
+                    kodein.instance(),
+                    kodein.instance())
+        }
+
+        bind<SummonerDAOContractImpl>() with provider {
+            SummonerDAOContractImpl(kodein.instance())
+        }
+
+        bind<SummonerControl>() with provider {
+            SummonerControl(
                     kodein.instance(),
                     kodein.instance())
         }

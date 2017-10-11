@@ -67,7 +67,6 @@ class MatchControl(private val matchDAO: MatchDAO,
             fetchAndSaveMatchesUsingGivenMatchSummaries(summonerId, matchSummaries)
         } else {
             log.info("Limit given of $numberOfMatchesToFetchForEachRole")
-            // TODO finish this next
 
             val matchSummariesTop = matchSummaryDAO.getRecentMatchesBySummonerIdForRole(summonerId, numberOfMatchesToFetchForEachRole, SOLO, TOP)
             val matchSummariesJungle = matchSummaryDAO.getRecentMatchesBySummonerIdForRole(summonerId, numberOfMatchesToFetchForEachRole, NONE, JUNGLE)
@@ -91,6 +90,7 @@ class MatchControl(private val matchDAO: MatchDAO,
         matchSummaries.forEach { matchSummary ->
             val alreadySaved = gameSummaryDaoContract.doesGameSummaryForSummonerExist(matchSummary.gameId, summonerId)
             if (!alreadySaved) {
+                log.info("Fetching match from server. MatchId: ${matchSummary.gameId}")
                 val matchDetails = matchServiceApi.getMatchByMatchId(RIOT_API_KEY, matchSummary.gameId)
                 matchDAO.saveMatch(matchDetails)
             }

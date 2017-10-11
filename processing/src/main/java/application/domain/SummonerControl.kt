@@ -1,14 +1,16 @@
 package application.domain
 
 import db.summoner.SummonerDAOContractImpl
+import model.Summoner
 import network.riotapi.SummonerService
+import network.riotapi.SummonerServiceImpl
 import util.RIOT_API_KEY
 
 /**
  * @author Josiah Kendall
  */
-class SummonerManagement(private val summonerControl : SummonerDAOContractImpl,
-                         private val summonerService: SummonerService) {
+class SummonerControl(private val summonerDao: SummonerDAOContractImpl,
+                      private val summonerService: SummonerServiceImpl) {
 
     /**
      * Check if a summoner exists in our database.
@@ -16,7 +18,7 @@ class SummonerManagement(private val summonerControl : SummonerDAOContractImpl,
      * @return True of the summoner exists, false if not.
      */
     fun checkSummonerExists(summonerId : Long) : Boolean {
-        val summoner = summonerControl.getSummoner(summonerId)
+        val summoner = summonerDao.getSummoner(summonerId)
         return summoner != null
     }
 
@@ -26,7 +28,7 @@ class SummonerManagement(private val summonerControl : SummonerDAOContractImpl,
      * @return True of the summoner exists, false if not.
      */
     fun checkSummonerExists(summonerName: String) : Boolean {
-        val summoner = summonerControl.getSummoner(summonerName)
+        val summoner = summonerDao.getSummoner(summonerName)
         return summoner != null
     }
 
@@ -37,13 +39,13 @@ class SummonerManagement(private val summonerControl : SummonerDAOContractImpl,
      */
     fun registerSummoner(summonerName: String): Boolean {
         val result = summonerService.fetchSummonerBySummonerName(RIOT_API_KEY, summonerName)
-        val summoner = result.data
+        val summoner : Summoner? = result.data
         if (summoner == null ||result.code == 404) {
             return false
         }
         if (result.code == 200) {
-            if (summonerControl.getSummoner(summoner.id) == null) {
-                val saveSummonerResult = summonerControl.saveSummoner(summoner)
+            if (summonerDao.getSummoner(summoner.id) == null) {
+                val saveSummonerResult = summonerDao.saveSummoner(summoner)
                 if (saveSummonerResult != (-1).toLong()) {
                     return true
                 }
