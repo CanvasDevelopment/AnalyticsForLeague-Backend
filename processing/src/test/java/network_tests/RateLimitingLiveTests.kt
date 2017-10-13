@@ -4,10 +4,8 @@ import application.domain.MatchControl
 import application.domain.SummonerControl
 import com.github.salomonbrys.kodein.instance
 import di.KodeinManager
-import network.riotapi.SummonerService
 import org.junit.Before
 import org.junit.Test
-import util.RIOT_API_KEY
 
 /**
  * @author Josiah Kendall
@@ -38,7 +36,7 @@ class RateLimitingLiveTests {
         // fetch match summaries for me
         matchControl.downloadAndSaveMatchSummaries(1542360)
         val preFetchMatchTime = System.currentTimeMillis()
-        matchControl.fetchAndSaveMatchesForASummoner(1542360, 10)
+        matchControl.fetchAndSaveMatchesForASummoner(1542360, 20)
         assert(preFetchMatchTime < System.currentTimeMillis() -2000)
 
         // by the time we finish, we should have all matches saved and it should have taken us

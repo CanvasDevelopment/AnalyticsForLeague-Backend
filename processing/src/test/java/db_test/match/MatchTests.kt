@@ -146,6 +146,83 @@ class MatchTests {
         Assert.assertTrue(match.participants.size == matchRecovered.participants.size)
     }
 
+    @Test
+    fun `Make sure that we can find if match already exists`() {
+        val team1 = getTeam()
+        val team2 = getTeam()
+        val teams = arrayListOf<Team>()
+        teams.add(team1)
+        teams.add(team2)
+
+        val participant1 = getParticipant()
+        val participant2 = getParticipant()
+        val participant3 = getParticipant()
+        val participant4 = getParticipant()
+        val participant5 = getParticipant()
+        val participant6 = getParticipant()
+        val participant7 = getParticipant()
+        val participant8 = getParticipant()
+        val participant9 = getParticipant()
+        val participant10 = getParticipant()
+
+        val participants = arrayListOf<Participant>()
+        participants.add(participant1)
+        participants.add(participant2)
+        participants.add(participant3)
+        participants.add(participant4)
+        participants.add(participant5)
+        participants.add(participant6)
+        participants.add(participant7)
+        participants.add(participant8)
+        participants.add(participant9)
+        participants.add(participant10)
+
+        val participantIdentity1 = getParticipantIdentity()
+        val participantIdentity2 = getParticipantIdentity()
+        val participantIdentity3 = getParticipantIdentity()
+        val participantIdentity4 = getParticipantIdentity()
+        val participantIdentity5 = getParticipantIdentity()
+        val participantIdentity6 = getParticipantIdentity()
+        val participantIdentity7 = getParticipantIdentity()
+        val participantIdentity8 = getParticipantIdentity()
+        val participantIdentity9 = getParticipantIdentity()
+        val participantIdentity10 = getParticipantIdentity()
+
+        val participantIdentities = arrayListOf<ParticipantIdentity>()
+        participantIdentities.add(participantIdentity1)
+        participantIdentities.add(participantIdentity2)
+        participantIdentities.add(participantIdentity3)
+        participantIdentities.add(participantIdentity4)
+        participantIdentities.add(participantIdentity5)
+        participantIdentities.add(participantIdentity6)
+        participantIdentities.add(participantIdentity7)
+        participantIdentities.add(participantIdentity8)
+        participantIdentities.add(participantIdentity9)
+        participantIdentities.add(participantIdentity10)
+
+        val match = Match(
+                -1,
+                "oce",
+                123456,
+                123456,
+                1,
+                1,
+                6,
+                "test",
+                "test",
+                "test",
+                teams,
+                participants,
+                participantIdentities
+        )
+
+        val matchExists1 = matchDAO.exists(match.gameId)
+        assert(!matchExists1)
+        matchDAO.saveMatch(match)
+        val matchExists2 = matchDAO.exists(match.gameId)
+        assert(matchExists2)
+    }
+
     private fun getParticipant() : Participant {
         val random = Random()
         val masteries = ArrayList<Mastery>()

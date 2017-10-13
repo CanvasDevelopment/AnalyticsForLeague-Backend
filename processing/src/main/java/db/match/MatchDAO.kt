@@ -88,7 +88,6 @@ class MatchDAO(val dbHelper : DBHelper,
                 summonerId = player.summonerId
                 participantDAO.saveParticipant(participant, match.gameId, summonerId)
             }
-
         }
 
         var teamId = -1
@@ -115,6 +114,18 @@ class MatchDAO(val dbHelper : DBHelper,
                         lane)
             }
         }
+    }
+
+    /**
+     * Check if a match already exists.
+     * @param gameId The Id of the match that we want to check exists
+     * @return
+     */
+    fun exists(gameId: Long) : Boolean {
+        val sql = "Select ${matchColumns.GAME_ID} from $MATCH_TABLE " +
+                "WHERE ${matchColumns.GAME_ID} = $gameId"
+        val result = dbHelper.executeSqlQuery(sql)
+        return result.next()
     }
 
     /**

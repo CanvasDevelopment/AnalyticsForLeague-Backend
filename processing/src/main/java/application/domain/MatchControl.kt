@@ -42,6 +42,7 @@ class MatchControl(private val matchDAO: MatchDAO,
         // For each match summary
         matchList.matches.forEach { matchSummary ->
             if (!matchSummaryDAO.exists(matchSummary.gameId)) {
+                matchSummary.summonerId = summonerId
                 val result = matchSummaryDAO.saveMatchSummary(matchSummary)
                 log.info("Saving match summary with a match id of ${matchSummary.gameId}. Saved with id: $result")
             } else {
@@ -92,7 +93,9 @@ class MatchControl(private val matchDAO: MatchDAO,
             if (!alreadySaved) {
                 log.info("Fetching match from server. MatchId: ${matchSummary.gameId}")
                 val matchDetails = matchServiceApi.getMatchByMatchId(RIOT_API_KEY, matchSummary.gameId)
-                matchDAO.saveMatch(matchDetails)
+                if (!matchDAO.exists(matchDetails.gameId)) {
+                    matchDAO.saveMatch(matchDetails)
+                }
             }
         }
     }
