@@ -5,18 +5,23 @@ import db.matchlist.MatchSummaryDAO
 import db.refined_stats.GameSummaryDaoContract
 import db.refined_stats.RefinedStatDAOContract
 import db.summoner.SummonerDAOContract
+import model.match.Match
+import model.matchlist.MatchList
 import model.matchlist.MatchSummary
+import model.networking.NetworkResult
 import model.refined_stats.RefinedGeneralGameStageColumnNames
 import network.riotapi.MatchServiceApi
+import network.riotapi.MatchServiceApiImpl
 import util.*
 import util.columnnames.StaticColumnNames
+import java.util.logging.Level
 import java.util.logging.Logger
 
 /**
  * @author Josiah Kendall
  */
 class MatchControl(private val matchDAO: MatchDAO,
-                   private val matchServiceApi: MatchServiceApi,
+                   private val matchServiceApi: MatchServiceApiImpl,
                    private val matchSummaryDAO: MatchSummaryDAO,
                    private val summonerDAOContract: SummonerDAOContract,
                    private val refinedStatDAOContract: RefinedStatDAOContract,
@@ -34,8 +39,13 @@ class MatchControl(private val matchDAO: MatchDAO,
 
         // if we don't get a summoner, return
         val summoner = summonerDAOContract.getSummoner(summonerId) ?: return
-        val matchList = matchServiceApi.getMatchListForAccount(RIOT_API_KEY, summoner.accountId)
-
+        val networkResult : NetworkResult<MatchList> = matchServiceApi.getMatchListForAccount(RIOT_API_KEY, summoner.accountId)
+        if (networkResult.code != 200) {
+            // issues
+            return
+        }
+        val matchList = networkResult.data
+        matchList ?: return
         // If we have not match summaries, no point doing anything here.
         matchList.matches ?: return
 
@@ -92,9 +102,20 @@ class MatchControl(private val matchDAO: MatchDAO,
             val alreadySaved = gameSummaryDaoContract.doesGameSummaryForSummonerExist(matchSummary.gameId, summonerId)
             if (!alreadySaved) {
                 log.info("Fetching match from server. MatchId: ${matchSummary.gameId}")
-                val matchDetails = matchServiceApi.getMatchByMatchId(RIOT_API_KEY, matchSummary.gameId)
-                if (!matchDAO.exists(matchDetails.gameId)) {
-                    matchDAO.saveMatch(matchDetails)
+                if (!matchDAO.exists(matchSummary.gameId)) {
+                    val matchDetails = matchServiceApi.getMatchByMatchId(RIOT_API_KEY, matchSummary.gameId)
+                    // The ide says it cannot be null, but it can when testing.
+                    if (matchDetails != null) {
+                        // TODO handle this better?
+                        if (matchDetails.code == 429) log.log(Level.WARNING,"Exceeded rate limits when fetching match")
+                        val match = matchDetails.data
+
+                        // If null, exit
+                        log.log(Level.WARNING,"Request was 200 - OK, but the data was null (Match save)")
+                        if (match!= null) {
+                            matchDAO.saveMatch(match)
+                        }
+                    }
                 }
             }
         }

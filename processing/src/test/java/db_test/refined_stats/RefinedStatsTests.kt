@@ -56,7 +56,7 @@ class RefinedStatsTests {
             dbHelper.executeSQLScript("DELETE FROM stats")
             dbHelper.executeSQLScript("DELETE FROM timeline")
 
-            var mockClient = MockClient({ -> getListData() })
+            var mockClient = MockClient({ getListData() })
             val adapterBuilder: RestAdapter.Builder = RestAdapter.Builder()
                     .setEndpoint("https://oc1.api.riotgames.com")
                     .setConverter(GsonConverter(GsonBuilder().create()))

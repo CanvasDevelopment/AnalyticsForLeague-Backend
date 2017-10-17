@@ -3,7 +3,7 @@ package db.refined_stats
 import db.requests.DBHelper
 import model.refined_stats.FullGameStat
 import model.refined_stats.GameStageStat
-import model.refined_stats.HeroTeamSummaryStat
+import model.refined_stats.TeamSummaryStat
 import model.refined_stats.RefinedGeneralGameStageColumnNames
 
 /**
@@ -54,11 +54,11 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
     }
 
     /**
-     * Save an Array of [HeroTeamSummaryStat] match objects for our hero. Each object will represent one game.
+     * Save an Array of [TeamSummaryStat] match objects for our hero. Each object will represent one game.
      * @param summonerId        The hero summonerId. Currently unused, unsure if it will be in the future.
-     * @param summaryStatStats      The array list of [HeroTeamSummaryStat] objects to save.
+     * @param summaryStatStats      The array list of [TeamSummaryStat] objects to save.
      */
-    override fun saveHeroTeamSummaryStats(summonerId: Long, summaryStatStats: ArrayList<HeroTeamSummaryStat>, tableName: String): Boolean {
+    override fun saveHeroTeamSummaryStats(summonerId: Long, summaryStatStats: ArrayList<TeamSummaryStat>, tableName: String): Boolean {
         // for every item in the list, we want to create a new list item.
         var success = true
         summaryStatStats
@@ -70,9 +70,9 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
 
     /**
      * Insert a single summary stat into the gameSummaryStats table.
-     * @param summaryStatStat The [HeroTeamSummaryStat] to save
+     * @param summaryStatStat The [TeamSummaryStat] to save
      */
-    override fun insertHeroTeamSummaryStat(summaryStatStat: HeroTeamSummaryStat, tableName: String): Long {
+    override fun insertHeroTeamSummaryStat(summaryStatStat: TeamSummaryStat, tableName: String): Long {
         val sql = "INSERT INTO ${tableName}_summaryStats (" +
                 "gameId,\n" +
                 "heroSummonerId,\n" +
@@ -97,12 +97,12 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
     }
 
     /**
-     * Save the [HeroTeamSummaryStat] list for a villan
+     * Save the [TeamSummaryStat] list for a villan
      * @param summonerId The hero summoner Id
-     * @param summaryStatStats The list of [HeroTeamSummaryStat] to save
+     * @param summaryStatStats The list of [TeamSummaryStat] to save
      * @param tableName The table to save these stats in.
      */
-    override fun saveVillanTeamSummaryStats(summonerId: Long, summaryStatStats: ArrayList<HeroTeamSummaryStat>, tableName: String): Boolean {
+    override fun saveVillanTeamSummaryStats(summonerId: Long, summaryStatStats: ArrayList<TeamSummaryStat>, tableName: String): Boolean {
         var success = true
         summaryStatStats.map { saveVillanTeamSummaryStat(summonerId,it, tableName) }
                 .forEach { success = it != (-1).toLong() }
@@ -112,9 +112,9 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
     /**
      * Insert a single summary stat into the gameSummaryStats table.
      * @param heroSummonerId    The summoner Id of our hero
-     * @param summaryStatStat       The [HeroTeamSummaryStat] to save
+     * @param summaryStatStat       The [TeamSummaryStat] to save
      */
-    override fun saveVillanTeamSummaryStat(heroSummonerId: Long, summaryStatStat: HeroTeamSummaryStat, tableName: String): Long {
+    override fun saveVillanTeamSummaryStat(heroSummonerId: Long, summaryStatStat: TeamSummaryStat, tableName: String): Long {
         val sql = "Update ${tableName}_summaryStats " +
                 "SET villanChampId = ${summaryStatStat.champId},\n" +
                 "villanTeamId = ${summaryStatStat.teamId},\n" +

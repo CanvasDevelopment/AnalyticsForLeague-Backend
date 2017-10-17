@@ -9,10 +9,11 @@ import db.summoner.SummonerDAOContract
 import model.Summoner
 import model.matchlist.MatchList
 import model.matchlist.MatchSummary
+import model.networking.NetworkResult
 import model.refined_stats.FullGameStat
 import model.refined_stats.GameStageStat
-import model.refined_stats.HeroTeamSummaryStat
-import network.riotapi.MatchServiceApi
+import model.refined_stats.TeamSummaryStat
+import network.riotapi.MatchServiceApiImpl
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -21,6 +22,7 @@ import org.mockito.Mockito.*
 import util.*
 import util.columnnames.StaticColumnNames
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * @author Josiah Kendall
@@ -36,7 +38,7 @@ class MatchControlTests {
     private lateinit var matchControl: MatchControl
     lateinit var matchDao: MatchDAO
     lateinit var matchSummaryDao: MatchSummaryDAO
-    lateinit var matchServiceApi: MatchServiceApi
+    lateinit var matchServiceApi: MatchServiceApiImpl
     lateinit var summonerDaoContract: SummonerDAOContract
     lateinit var refinedStatDaoContract: RefinedStatDAOContract
     lateinit var gameSummaryDaoContract: GameSummaryDAO
@@ -46,7 +48,7 @@ class MatchControlTests {
 
         // mock dependencies
         gameSummaryDaoContract = mock(GameSummaryDAO::class.java)
-        matchServiceApi = mock(MatchServiceApi::class.java)
+        matchServiceApi = mock(MatchServiceApiImpl::class.java)
         matchDao = mock(MatchDAO::class.java)
         matchSummaryDao = mock(MatchSummaryDAO::class.java)
         summonerDaoContract = mock(SummonerDAOContract::class.java)
@@ -113,7 +115,7 @@ class MatchControlTests {
         matchSummaries.add(matchSummary3)
         val matchList = MatchList()
         matchList.matches = matchSummaries
-        `when`(matchServiceApi.getMatchListForAccount(RIOT_API_KEY, 1)).thenReturn(matchList)
+        `when`(matchServiceApi.getMatchListForAccount(RIOT_API_KEY, 1)).thenReturn(NetworkResult(matchList, 200))
         matchControl.downloadAndSaveMatchSummaries(1)
         verify(summonerDaoContract, times(1)).getSummoner(1)
         verify(matchServiceApi, times(1)).getMatchListForAccount(RIOT_API_KEY, 1)
@@ -264,7 +266,7 @@ class MatchControlTests {
         matchSummaries.add(matchSummary3)
         val matchList = MatchList()
         matchList.matches = matchSummaries
-        `when`(matchServiceApi.getMatchListForAccount(RIOT_API_KEY, -1)).thenReturn(matchList)
+        `when`(matchServiceApi.getMatchListForAccount(RIOT_API_KEY, -1)).thenReturn(NetworkResult(matchList, 200))
         `when`(matchSummaryDao.exists(1)).thenReturn(false)
         `when`(matchSummaryDao.exists(2)).thenReturn(false)
         `when`(matchSummaryDao.exists(3)).thenReturn(true)
@@ -356,9 +358,8 @@ class MatchControlTests {
 
     @Test
     fun `Make sure that we save hero summary stats`() {
-
-        val heroSummaryList = ArrayList<HeroTeamSummaryStat>()
-        heroSummaryList.add(mock(HeroTeamSummaryStat::class.java))
+        val heroSummaryList = ArrayList<TeamSummaryStat>()
+        heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role, lane)).thenReturn(heroSummaryList)
         matchControl.refineMatchData(1,role, lane)
         verify(gameSummaryDaoContract, times(1)).saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))
@@ -366,10 +367,10 @@ class MatchControlTests {
 
     @Test
     fun `Make sure that we save villan summary stats`() {
-        val villanSummaryList = ArrayList<HeroTeamSummaryStat>()
-        villanSummaryList.add(mock(HeroTeamSummaryStat::class.java))
-        val heroSummaryList = ArrayList<HeroTeamSummaryStat>()
-        heroSummaryList.add(mock(HeroTeamSummaryStat::class.java))
+        val villanSummaryList = ArrayList<TeamSummaryStat>()
+        villanSummaryList.add(mock(TeamSummaryStat::class.java))
+        val heroSummaryList = ArrayList<TeamSummaryStat>()
+        heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, role, lane)).thenReturn(villanSummaryList)
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role,lane)).thenReturn(heroSummaryList)
         `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))).thenReturn(true)
@@ -379,10 +380,10 @@ class MatchControlTests {
 
     @Test
     fun `Make sure that we exit if we fail to save initial summary stats`() {
-        val villanSummaryList = ArrayList<HeroTeamSummaryStat>()
-        villanSummaryList.add(mock(HeroTeamSummaryStat::class.java))
-        val heroSummaryList = ArrayList<HeroTeamSummaryStat>()
-        heroSummaryList.add(mock(HeroTeamSummaryStat::class.java))
+        val villanSummaryList = ArrayList<TeamSummaryStat>()
+        villanSummaryList.add(mock(TeamSummaryStat::class.java))
+        val heroSummaryList = ArrayList<TeamSummaryStat>()
+        heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, role, lane)).thenReturn(villanSummaryList)
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role,lane)).thenReturn(heroSummaryList)
         `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))).thenReturn(false)
@@ -392,10 +393,10 @@ class MatchControlTests {
 
     @Test
     fun `Make sure that we save hero creep stats`() {
-        val villanSummaryList = ArrayList<HeroTeamSummaryStat>()
-        villanSummaryList.add(mock(HeroTeamSummaryStat::class.java))
-        val heroSummaryList = ArrayList<HeroTeamSummaryStat>()
-        heroSummaryList.add(mock(HeroTeamSummaryStat::class.java))
+        val villanSummaryList = ArrayList<TeamSummaryStat>()
+        villanSummaryList.add(mock(TeamSummaryStat::class.java))
+        val heroSummaryList = ArrayList<TeamSummaryStat>()
+        heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, role, lane)).thenReturn(villanSummaryList)
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role,lane)).thenReturn(heroSummaryList)
         `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))).thenReturn(true)
@@ -411,10 +412,10 @@ class MatchControlTests {
 
     @Test
     fun `Make sure that we save hero gold stats correctly`() {
-        val villanSummaryList = ArrayList<HeroTeamSummaryStat>()
-        villanSummaryList.add(mock(HeroTeamSummaryStat::class.java))
-        val heroSummaryList = ArrayList<HeroTeamSummaryStat>()
-        heroSummaryList.add(mock(HeroTeamSummaryStat::class.java))
+        val villanSummaryList = ArrayList<TeamSummaryStat>()
+        villanSummaryList.add(mock(TeamSummaryStat::class.java))
+        val heroSummaryList = ArrayList<TeamSummaryStat>()
+        heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, role, lane)).thenReturn(villanSummaryList)
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role,lane)).thenReturn(heroSummaryList)
         `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))).thenReturn(true)
@@ -430,10 +431,10 @@ class MatchControlTests {
 
     @Test
     fun `Make sure that we save hero xp stats correctly`() {
-        val villanSummaryList = ArrayList<HeroTeamSummaryStat>()
-        villanSummaryList.add(mock(HeroTeamSummaryStat::class.java))
-        val heroSummaryList = ArrayList<HeroTeamSummaryStat>()
-        heroSummaryList.add(mock(HeroTeamSummaryStat::class.java))
+        val villanSummaryList = ArrayList<TeamSummaryStat>()
+        villanSummaryList.add(mock(TeamSummaryStat::class.java))
+        val heroSummaryList = ArrayList<TeamSummaryStat>()
+        heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, role, lane)).thenReturn(villanSummaryList)
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role,lane)).thenReturn(heroSummaryList)
         `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))).thenReturn(true)
@@ -449,10 +450,10 @@ class MatchControlTests {
 
     @Test
     fun `Make sure that we save hero damage stats correctly`() {
-        val villanSummaryList = ArrayList<HeroTeamSummaryStat>()
-        villanSummaryList.add(mock(HeroTeamSummaryStat::class.java))
-        val heroSummaryList = ArrayList<HeroTeamSummaryStat>()
-        heroSummaryList.add(mock(HeroTeamSummaryStat::class.java))
+        val villanSummaryList = ArrayList<TeamSummaryStat>()
+        villanSummaryList.add(mock(TeamSummaryStat::class.java))
+        val heroSummaryList = ArrayList<TeamSummaryStat>()
+        heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, role, lane)).thenReturn(villanSummaryList)
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role,lane)).thenReturn(heroSummaryList)
         `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))).thenReturn(true)
@@ -467,10 +468,10 @@ class MatchControlTests {
     }
     @Test
     fun `Make sure that we save villan creep stats`() {
-        val villanSummaryList = ArrayList<HeroTeamSummaryStat>()
-        villanSummaryList.add(mock(HeroTeamSummaryStat::class.java))
-        val heroSummaryList = ArrayList<HeroTeamSummaryStat>()
-        heroSummaryList.add(mock(HeroTeamSummaryStat::class.java))
+        val villanSummaryList = ArrayList<TeamSummaryStat>()
+        villanSummaryList.add(mock(TeamSummaryStat::class.java))
+        val heroSummaryList = ArrayList<TeamSummaryStat>()
+        heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, role, lane)).thenReturn(villanSummaryList)
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role,lane)).thenReturn(heroSummaryList)
         `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))).thenReturn(true)
@@ -486,10 +487,10 @@ class MatchControlTests {
 
     @Test
     fun `Make sure that we save villan gold stats correctly`() {
-        val villanSummaryList = ArrayList<HeroTeamSummaryStat>()
-        villanSummaryList.add(mock(HeroTeamSummaryStat::class.java))
-        val heroSummaryList = ArrayList<HeroTeamSummaryStat>()
-        heroSummaryList.add(mock(HeroTeamSummaryStat::class.java))
+        val villanSummaryList = ArrayList<TeamSummaryStat>()
+        villanSummaryList.add(mock(TeamSummaryStat::class.java))
+        val heroSummaryList = ArrayList<TeamSummaryStat>()
+        heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, role, lane)).thenReturn(villanSummaryList)
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role,lane)).thenReturn(heroSummaryList)
         `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))).thenReturn(true)
@@ -505,10 +506,10 @@ class MatchControlTests {
 
     @Test
     fun `Make sure that we save villan xp stats correctly`() {
-        val villanSummaryList = ArrayList<HeroTeamSummaryStat>()
-        villanSummaryList.add(mock(HeroTeamSummaryStat::class.java))
-        val heroSummaryList = ArrayList<HeroTeamSummaryStat>()
-        heroSummaryList.add(mock(HeroTeamSummaryStat::class.java))
+        val villanSummaryList = ArrayList<TeamSummaryStat>()
+        villanSummaryList.add(mock(TeamSummaryStat::class.java))
+        val heroSummaryList = ArrayList<TeamSummaryStat>()
+        heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, role, lane)).thenReturn(villanSummaryList)
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role,lane)).thenReturn(heroSummaryList)
         `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))).thenReturn(true)
@@ -524,10 +525,10 @@ class MatchControlTests {
 
     @Test
     fun `Make sure that we save villan damage stats correctly`() {
-        val villanSummaryList = ArrayList<HeroTeamSummaryStat>()
-        villanSummaryList.add(mock(HeroTeamSummaryStat::class.java))
-        val heroSummaryList = ArrayList<HeroTeamSummaryStat>()
-        heroSummaryList.add(mock(HeroTeamSummaryStat::class.java))
+        val villanSummaryList = ArrayList<TeamSummaryStat>()
+        villanSummaryList.add(mock(TeamSummaryStat::class.java))
+        val heroSummaryList = ArrayList<TeamSummaryStat>()
+        heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, role, lane)).thenReturn(villanSummaryList)
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role,lane)).thenReturn(heroSummaryList)
         `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))).thenReturn(true)
@@ -543,10 +544,10 @@ class MatchControlTests {
 
     @Test
     fun `Make sure that we save hero player stats correctly`() {
-        val villanSummaryList = ArrayList<HeroTeamSummaryStat>()
-        villanSummaryList.add(mock(HeroTeamSummaryStat::class.java))
-        val heroSummaryList = ArrayList<HeroTeamSummaryStat>()
-        heroSummaryList.add(mock(HeroTeamSummaryStat::class.java))
+        val villanSummaryList = ArrayList<TeamSummaryStat>()
+        villanSummaryList.add(mock(TeamSummaryStat::class.java))
+        val heroSummaryList = ArrayList<TeamSummaryStat>()
+        heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, role, lane)).thenReturn(villanSummaryList)
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role,lane)).thenReturn(heroSummaryList)
         `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))).thenReturn(true)
@@ -560,10 +561,10 @@ class MatchControlTests {
 
     @Test
     fun `Make sure that we save villan player stats correctly`() {
-        val villanSummaryList = ArrayList<HeroTeamSummaryStat>()
-        villanSummaryList.add(mock(HeroTeamSummaryStat::class.java))
-        val heroSummaryList = ArrayList<HeroTeamSummaryStat>()
-        heroSummaryList.add(mock(HeroTeamSummaryStat::class.java))
+        val villanSummaryList = ArrayList<TeamSummaryStat>()
+        villanSummaryList.add(mock(TeamSummaryStat::class.java))
+        val heroSummaryList = ArrayList<TeamSummaryStat>()
+        heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForVillan(1, role, lane)).thenReturn(villanSummaryList)
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role,lane)).thenReturn(heroSummaryList)
         `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))).thenReturn(true)
@@ -651,6 +652,47 @@ class MatchControlTests {
     @Test(expected = IllegalStateException::class)
     fun `Make sure that we can fail if we try to generate using incorrect string`() {
         Assert.assertTrue(matchControl.getTableName("middle",role) == "")
+    }
+
+//    @Test
+//    fun `Make sure that we can do a full load for a specific role`() {
+//        val summonerId : Long = 12345678
+//
+//        val fullGameStatsForHero = ArrayList<FullGameStat>()
+//        fullGameStatsForHero.add(produceFullGameStat(1))
+//        fullGameStatsForHero.add(produceFullGameStat(1))
+//        val heroSummaryList = ArrayList<TeamSummaryStat>()
+//
+//        `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(summonerId, SOLO, TOP )).thenReturn(heroSummaryList)
+//
+//        `when`(refinedStatDaoContract.fetchPlayerStatisticsForHero(
+//                summonerId,
+//                "SOLO",
+//                "TOP")).thenReturn(fullGameStatsForHero)
+//        `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(summonerId, heroSummaryList, anyString())).thenReturn(true)
+//
+//        matchControl.refineMatchData()
+//    }
+
+    private fun produceHeroTeamSummary(summonerId: Long, gameId: Long) : TeamSummaryStat {
+        return TeamSummaryStat(summonerId,
+                random.nextInt(),
+                gameId,
+                random.nextInt(),
+                random.nextBoolean(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt())
+    }
+
+    private fun produceFullGameStat(gameId: Long) : FullGameStat {
+        return FullGameStat(gameId,
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt())
     }
 
     private fun generateMatchSummaryForSummoner(summonerId: Long, role : String, lane : String) : MatchSummary {

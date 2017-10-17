@@ -3,7 +3,6 @@ package db.refined_stats
 import model.positions.Jungle
 import model.refined_stats.*
 import util.Tables
-import util.columnnames.TeamColumns
 
 
 /**
@@ -41,15 +40,15 @@ interface RefinedStatDAOContract {
                                          lane: String) : ArrayList<GameStageStat>
 
     /**
-     * Fetch a list of [HeroTeamSummaryStat] for a specific role.
+     * Fetch a list of [TeamSummaryStat] for a specific role.
      *
      * @param summonerId    The riot given SummonerId of the hero
      * @param role          The role that we want to filter to.
      * @param lane          The Lane that we want to filter to.
      */
-    fun fetchGameSummaryStatsForHero(summonerId: Long, role: String, lane: String): ArrayList<HeroTeamSummaryStat>
+    fun fetchGameSummaryStatsForHero(summonerId: Long, role: String, lane: String): ArrayList<TeamSummaryStat>
 
-    fun fetchGameSummaryStatsForVillan(summonerId: Long, role: String, lane: String): ArrayList<HeroTeamSummaryStat>
+    fun fetchGameSummaryStatsForVillan(summonerId: Long, role: String, lane: String): ArrayList<TeamSummaryStat>
 
     /**
      * Fetch an array of [FullGameStat] for a summoner in a specific role and lane.

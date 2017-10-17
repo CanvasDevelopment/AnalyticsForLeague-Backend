@@ -22,10 +22,7 @@ import db.summoner.SummonerDAOContractImpl
 import network.NetworkInterface
 import network.RateLimiter
 import network.RequestHandler
-import network.riotapi.ChampionService
-import network.riotapi.MatchServiceApi
-import network.riotapi.SummonerService
-import network.riotapi.SummonerServiceImpl
+import network.riotapi.*
 import network.riotapi.header.RiotApiResponseHeaderParser
 import retrofit.RestAdapter
 import retrofit.client.UrlConnectionClient
@@ -231,6 +228,12 @@ class KodeinManager {
 
         bind<SummonerControl>() with provider {
             SummonerControl(
+                    kodein.instance(),
+                    kodein.instance())
+        }
+
+        bind<MatchServiceApiImpl>() with provider {
+            MatchServiceApiImpl(
                     kodein.instance(),
                     kodein.instance())
         }

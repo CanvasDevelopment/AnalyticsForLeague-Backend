@@ -3,18 +3,18 @@ package db.refined_stats
 import model.refined_stats.FullGameStat
 import model.refined_stats.GameStageStat
 import model.refined_stats.RefinedGeneralGameStageColumnNames
-import model.refined_stats.HeroTeamSummaryStat
+import model.refined_stats.TeamSummaryStat
 
 /**
  * @author Josiah Kendall
  */
 interface GameSummaryDaoContract {
-    fun saveHeroTeamSummaryStats(summonerId : Long, summaryStatStats: ArrayList<HeroTeamSummaryStat>, tableName : String) : Boolean
-    fun insertHeroTeamSummaryStat(summaryStatStat: HeroTeamSummaryStat, tableName : String) : Long
-    fun saveVillanTeamSummaryStat(heroSummonerId: Long, summaryStatStat: HeroTeamSummaryStat, tableName : String) : Long
+    fun saveHeroTeamSummaryStats(summonerId : Long, summaryStatStats: ArrayList<TeamSummaryStat>, tableName : String) : Boolean
+    fun insertHeroTeamSummaryStat(summaryStatStat: TeamSummaryStat, tableName : String) : Long
+    fun saveVillanTeamSummaryStat(heroSummonerId: Long, summaryStatStat: TeamSummaryStat, tableName : String) : Long
     fun saveGameStageStatList(summonerId: Long, statList : ArrayList<GameStageStat>,
                               generalGameStageColumnNames: RefinedGeneralGameStageColumnNames, tableName : String) : Boolean
-    fun saveVillanTeamSummaryStats(summonerId: Long, summaryStatStats: ArrayList<HeroTeamSummaryStat>, tableName : String) : Boolean
+    fun saveVillanTeamSummaryStats(summonerId: Long, summaryStatStats: ArrayList<TeamSummaryStat>, tableName : String) : Boolean
     fun saveGameStageStat(summonerId: Long,
                           stat : GameStageStat,
                           columnNames: RefinedGeneralGameStageColumnNames, tableName : String) : Long

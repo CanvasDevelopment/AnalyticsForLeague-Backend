@@ -92,6 +92,27 @@ class RateLimitEndpointStatusTests {
     }
 
     @Test
+    fun `Make sure that we save app endpoint as well`() {
+        val endpoint = EndpointRateLimit(
+                endpointIds.V3_MATCHES,
+                random.nextInt(),
+                produceRandomArrayListOfRates())
+
+        val endPoint2 = EndpointRateLimit(
+                endpointIds.COMPLETE_APP,
+                random.nextInt(),
+                produceRandomArrayListOfRates())
+
+        rateLimitDao.saveEndpointRateLimitStatus(endpoint)
+        rateLimitDao.saveEndpointRateLimitStatus(endPoint2)
+        assert(rateLimitDao.doesEndpointExistInDb(endpoint.endpointId))
+        val result = rateLimitDao.getEndPointRateLimitStatus(endpointIds.V3_MATCHES)
+        assert(result == endpoint)
+        val result2 = rateLimitDao.getEndPointRateLimitStatus(endpointIds.COMPLETE_APP)
+        assert(result2 == endPoint2)
+    }
+
+    @Test
     fun `Make sure that we can save and retrieve buckets and rates`() {
 
     }

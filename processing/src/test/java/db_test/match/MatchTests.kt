@@ -95,16 +95,16 @@ class MatchTests {
         participants.add(participant9)
         participants.add(participant10)
 
-        val participantIdentity1 = getParticipantIdentity()
-        val participantIdentity2 = getParticipantIdentity()
-        val participantIdentity3 = getParticipantIdentity()
-        val participantIdentity4 = getParticipantIdentity()
-        val participantIdentity5 = getParticipantIdentity()
-        val participantIdentity6 = getParticipantIdentity()
-        val participantIdentity7 = getParticipantIdentity()
-        val participantIdentity8 = getParticipantIdentity()
-        val participantIdentity9 = getParticipantIdentity()
-        val participantIdentity10 = getParticipantIdentity()
+        val participantIdentity1 = getParticipantIdentity(1)
+        val participantIdentity2 = getParticipantIdentity(2)
+        val participantIdentity3 = getParticipantIdentity(3)
+        val participantIdentity4 = getParticipantIdentity(4)
+        val participantIdentity5 = getParticipantIdentity(5)
+        val participantIdentity6 = getParticipantIdentity(6)
+        val participantIdentity7 = getParticipantIdentity(7)
+        val participantIdentity8 = getParticipantIdentity(8)
+        val participantIdentity9 = getParticipantIdentity(9)
+        val participantIdentity10 = getParticipantIdentity(10)
 
         val participantIdentities = arrayListOf<ParticipantIdentity>()
         participantIdentities.add(participantIdentity1)
@@ -177,16 +177,16 @@ class MatchTests {
         participants.add(participant9)
         participants.add(participant10)
 
-        val participantIdentity1 = getParticipantIdentity()
-        val participantIdentity2 = getParticipantIdentity()
-        val participantIdentity3 = getParticipantIdentity()
-        val participantIdentity4 = getParticipantIdentity()
-        val participantIdentity5 = getParticipantIdentity()
-        val participantIdentity6 = getParticipantIdentity()
-        val participantIdentity7 = getParticipantIdentity()
-        val participantIdentity8 = getParticipantIdentity()
-        val participantIdentity9 = getParticipantIdentity()
-        val participantIdentity10 = getParticipantIdentity()
+        val participantIdentity1 = getParticipantIdentity(1)
+        val participantIdentity2 = getParticipantIdentity(2)
+        val participantIdentity3 = getParticipantIdentity(3)
+        val participantIdentity4 = getParticipantIdentity(4)
+        val participantIdentity5 = getParticipantIdentity(5)
+        val participantIdentity6 = getParticipantIdentity(6)
+        val participantIdentity7 = getParticipantIdentity(7)
+        val participantIdentity8 = getParticipantIdentity(8)
+        val participantIdentity9 = getParticipantIdentity(9)
+        val participantIdentity10 = getParticipantIdentity(10)
 
         val participantIdentities = arrayListOf<ParticipantIdentity>()
         participantIdentities.add(participantIdentity1)
@@ -361,7 +361,7 @@ class MatchTests {
 
         // our Participant
         val participant = Participant(
-                -1,
+                1,
                 -1,
                 -1,
                 -1,
@@ -373,12 +373,12 @@ class MatchTests {
                 timeline)
         return participant
     }
-    private fun getParticipantIdentity() : ParticipantIdentity {
+    private fun getParticipantIdentity(participantId: Int) : ParticipantIdentity {
         val player1 = produceRandomPlayer()
         val player2 = produceRandomPlayer()
         val player3 = produceRandomPlayer()
 
-        val pi1 = ParticipantIdentity(1, -1, player1)
+        val pi1 = ParticipantIdentity(participantId, -1, player1)
         return pi1
     }
     private fun getTeam() : Team {

@@ -5,7 +5,7 @@ import extensions.produceFullGameStat
 import extensions.produceGameStageRefinedStat
 import extensions.produceSummaryStat
 import model.refined_stats.GameStageStat
-import model.refined_stats.HeroTeamSummaryStat
+import model.refined_stats.TeamSummaryStat
 import util.Tables
 import model.positions.Jungle
 import model.refined_stats.FullGameStat
@@ -108,13 +108,13 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
 
 
     /**
-     * Fetch a list of [HeroTeamSummaryStat] for a specific role.
+     * Fetch a list of [TeamSummaryStat] for a specific role.
      *
      * @param summonerId    The riot given SummonerId of the hero
      * @param role          The role that we want to filter to.
      * @param lane          The Lane that we want to filter to.
      */
-    override fun fetchGameSummaryStatsForHero(summonerId: Long, role: String, lane: String): ArrayList<HeroTeamSummaryStat> {
+    override fun fetchGameSummaryStatsForHero(summonerId: Long, role: String, lane: String): ArrayList<TeamSummaryStat> {
         val sql = "SELECT\n" +
                 "  ${tables.PARTICIPANT}.SummonerId,\n" +
                 "  ${tables.PARTICIPANT}.GameId,\n" +
@@ -137,7 +137,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
                 "      AND matchtable.GameDuration > 300"
 
         val result = dbHelper.executeSqlQuery(sql)
-        val statList = ArrayList<HeroTeamSummaryStat>()
+        val statList = ArrayList<TeamSummaryStat>()
         while (result.next()) {
             statList.add(result.produceSummaryStat())
         }
@@ -145,7 +145,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
         return statList
     }
 
-    override fun fetchGameSummaryStatsForVillan(summonerId: Long, role: String, lane: String): ArrayList<HeroTeamSummaryStat> {
+    override fun fetchGameSummaryStatsForVillan(summonerId: Long, role: String, lane: String): ArrayList<TeamSummaryStat> {
        val sql = "SELECT\n" +
                "  participantidentity.SummonerId,\n" +
                "  participant.GameId,\n" +
@@ -169,7 +169,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
                "      AND participantidentity.role = '$role'\n" +
                "      AND matchtable.GameDuration > 300"
         val result = dbHelper.executeSqlQuery(sql)
-        val statList = ArrayList<HeroTeamSummaryStat>()
+        val statList = ArrayList<TeamSummaryStat>()
         while (result.next()) {
             statList.add(result.produceSummaryStat())
         }

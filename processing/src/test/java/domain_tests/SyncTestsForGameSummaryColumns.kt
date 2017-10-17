@@ -10,7 +10,9 @@ import di.KodeinManager
 import model.Summoner
 import model.match.Match
 import model.matchlist.MatchList
+import model.networking.NetworkResult
 import network.riotapi.MatchServiceApi
+import network.riotapi.MatchServiceApiImpl
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
@@ -35,7 +37,7 @@ class SyncTestsForGameSummaryColumns {
         private val km = KodeinManager()
         private val gson = Gson()
         lateinit var sync: Sync
-        private val matchServiceApi = mock(MatchServiceApi::class.java)
+        private val matchServiceApi = mock(MatchServiceApiImpl::class.java)
 
         private val match1Id: Long = 161340788
         private val match2Id: Long = 161342201
@@ -64,46 +66,46 @@ class SyncTestsForGameSummaryColumns {
             // need to mock the match service api, so that we just return results really fast.
             val matchList: MatchList = gson.fromJson(getMatchList(), MatchList::class.java)
             val match1 = gson.fromJson(getMatchString(match1Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match1Id))).thenReturn(match1)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match1Id))).thenReturn(NetworkResult(match1, 200))
             val match2 = gson.fromJson(getMatchString(match2Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match2Id))).thenReturn(match2)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match2Id))).thenReturn(NetworkResult(match2, 200))
             val match3 = gson.fromJson(getMatchString(match3Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match3Id))).thenReturn(match3)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match3Id))).thenReturn(NetworkResult(match3, 200))
             val match4 = gson.fromJson(getMatchString(match4Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match4Id))).thenReturn(match4)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match4Id))).thenReturn(NetworkResult(match4, 200))
             val match5 = gson.fromJson(getMatchString(match5Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match5Id))).thenReturn(match5)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match5Id))).thenReturn(NetworkResult(match5, 200))
             val match6 = gson.fromJson(getMatchString(match6Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match6Id))).thenReturn(match6)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match6Id))).thenReturn(NetworkResult(match6, 200))
             val match7 = gson.fromJson(getMatchString(match7Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match7Id))).thenReturn(match7)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match7Id))).thenReturn(NetworkResult(match7, 200))
             val match8 = gson.fromJson(getMatchString(match8Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match8Id))).thenReturn(match8)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match8Id))).thenReturn(NetworkResult(match8, 200))
             val match9 = gson.fromJson(getMatchString(match9Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match9Id))).thenReturn(match9)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match9Id))).thenReturn(NetworkResult(match9, 200))
             val match10 = gson.fromJson(getMatchString(match10Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match10Id))).thenReturn(match10)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match10Id))).thenReturn(NetworkResult(match10, 200))
             val match11 = gson.fromJson(getMatchString(match11Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match11Id))).thenReturn(match11)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match11Id))).thenReturn(NetworkResult(match11, 200))
             val match12 = gson.fromJson(getMatchString(match12Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match12Id))).thenReturn(match12)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match12Id))).thenReturn(NetworkResult(match12, 200))
             val match13 = gson.fromJson(getMatchString(match13Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match13Id))).thenReturn(match13)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match13Id))).thenReturn(NetworkResult(match13, 200))
             val match14 = gson.fromJson(getMatchString(match14Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match14Id))).thenReturn(match14)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match14Id))).thenReturn(NetworkResult(match14, 200))
             val match15 = gson.fromJson(getMatchString(match15Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match15Id))).thenReturn(match15)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match15Id))).thenReturn(NetworkResult(match15, 200))
             val match16 = gson.fromJson(getMatchString(match16Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match16Id))).thenReturn(match16)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match16Id))).thenReturn(NetworkResult(match16, 200))
             val match17 = gson.fromJson(getMatchString(match17Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match17Id))).thenReturn(match17)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match17Id))).thenReturn(NetworkResult(match17, 200))
             val match18 = gson.fromJson(getMatchString(match18Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match18Id))).thenReturn(match18)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match18Id))).thenReturn(NetworkResult(match18, 200))
             val match19 = gson.fromJson(getMatchString(match19Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match19Id))).thenReturn(match19)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match19Id))).thenReturn(NetworkResult(match19, 200))
             val match20 = gson.fromJson(getMatchString(match20Id), Match::class.java)
-            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match20Id))).thenReturn(match20)
-            `when`(matchServiceApi.getMatchListForAccount(anyString(), anyLong())).thenReturn(matchList)
+            `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match20Id))).thenReturn(NetworkResult(match20, 200))
+            `when`(matchServiceApi.getMatchListForAccount(anyString(), anyLong())).thenReturn(NetworkResult(matchList, 200))
 
             val summoner = Summoner()
             summoner.accountId = 1234567
