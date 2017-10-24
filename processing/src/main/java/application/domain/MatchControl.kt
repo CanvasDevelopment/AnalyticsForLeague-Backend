@@ -135,7 +135,7 @@ class MatchControl(private val matchDAO: MatchDAO,
         val heroSummaryStats = refinedStatDAOContract.fetchGameSummaryStatsForHero(summonerId,role,lane)
         var saved = gameSummaryDaoContract.saveHeroTeamSummaryStats(summonerId, heroSummaryStats, tableName)
         if (!saved) {
-            return
+            throw IllegalStateException("Failed to save hero team stats")
         }
         val villanSummaryStats = refinedStatDAOContract.fetchGameSummaryStatsForVillan(summonerId, role, lane)
         saved = gameSummaryDaoContract.saveVillanTeamSummaryStats(summonerId,villanSummaryStats, tableName)

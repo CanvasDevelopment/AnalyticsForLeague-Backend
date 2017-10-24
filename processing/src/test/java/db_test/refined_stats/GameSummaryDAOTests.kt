@@ -134,7 +134,7 @@ class GameSummaryDAOTests {
                 "villanTeamBaronKills " +
                 "From $GAME_SUMMARY_TABLE " +
                 "Where heroSummonerId = ${refinedSummaryStat.summonerId}"
-        val retrievedSummaryStats = dbHelper.executeSqlQuery(sql)
+        val retrievedSummaryStats : ResultSet = dbHelper.executeSqlQuery(sql)
 //        Assert.assertEquals(retrievedSummaryStats.fetchSize, 1)
         var count = 0
         while (retrievedSummaryStats.next()) {

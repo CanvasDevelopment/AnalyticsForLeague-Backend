@@ -7,9 +7,7 @@ import db.requests.DBHelper
 import di.KodeinManager
 import org.junit.Before
 import org.junit.Test
-import util.JUNGLE
-import util.NONE
-import util.Tables
+import util.*
 
 /**
  * @author Josiah Kendall
@@ -62,7 +60,7 @@ class RateLimitingLiveTests {
         val preFetchMatchTime = System.currentTimeMillis()
         matchControl.fetchAndSaveMatchesForASummoner(summonerId, 20)
 
-        matchControl.refineMatchData(summonerId, NONE, JUNGLE)
+        matchControl.refineMatchData(summonerId, SOLO, TOP)
         // by the time we finish, we should have all matches saved and it should have taken us
     }
 

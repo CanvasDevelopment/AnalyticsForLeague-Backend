@@ -5,6 +5,8 @@ import model.refined_stats.FullGameStat
 import model.refined_stats.GameStageStat
 import model.refined_stats.TeamSummaryStat
 import model.refined_stats.RefinedGeneralGameStageColumnNames
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * @author Josiah Kendall
@@ -21,6 +23,8 @@ import model.refined_stats.RefinedGeneralGameStageColumnNames
  * together, and what data we want.
  */
 class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
+
+    private val log = Logger.getLogger(this::class.java.toString())
 
     override fun doesGameSummaryForSummonerExist(gameId: Long, summonerId: Long): Boolean {
         val top = "Select * from top_summarystats where gameId = $gameId AND heroSummonerId = $summonerId"
@@ -61,9 +65,10 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
     override fun saveHeroTeamSummaryStats(summonerId: Long, summaryStatStats: ArrayList<TeamSummaryStat>, tableName: String): Boolean {
         // for every item in the list, we want to create a new list item.
         var success = true
-        summaryStatStats
-                .map { insertHeroTeamSummaryStat(it, tableName) }
-                .forEach { success = it != (-1).toLong() }
+        for(summarystat in summaryStatStats) {
+            val result = insertHeroTeamSummaryStat(summarystat, tableName)
+            success = result != (-1).toLong()  && success
+        }
 
         return success
     }
@@ -92,7 +97,7 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
                 "${summaryStatStat.teamDragonKills}," +
                 "${summaryStatStat.teamRiftHeraldKills}," +
                 "${summaryStatStat.teamBaronKills})"
-
+        log.log(Level.SEVERE,"SAVING HERO TEAM SUMMARY STAT")
         return dbHelper.executeSQLScript(sql)
     }
 
@@ -105,7 +110,9 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
     override fun saveVillanTeamSummaryStats(summonerId: Long, summaryStatStats: ArrayList<TeamSummaryStat>, tableName: String): Boolean {
         var success = true
         summaryStatStats.map { saveVillanTeamSummaryStat(summonerId,it, tableName) }
-                .forEach { success = it != (-1).toLong() }
+                .forEach {
+                    success = it != (-1).toLong() && success
+                }
         return success
     }
 
@@ -124,7 +131,7 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
                 "villanTeamRiftHeraldKills = ${summaryStatStat.teamRiftHeraldKills},\n" +
                 "villanTeamBaronKills = ${summaryStatStat.teamBaronKills} " +
                 "where gameId = ${summaryStatStat.gameId} and heroSummonerId = $heroSummonerId"
-
+        log.log(Level.SEVERE,"SAVING VILLAN TEAM SUMMARY STAT")
         return dbHelper.executeSQLScript(sql)
     }
 
@@ -142,7 +149,7 @@ class GameSummaryDAO(val dbHelper: DBHelper) : GameSummaryDaoContract {
         var success = true
         statList
                 .map { saveGameStageStat(summonerId, it, generalGameStageColumnNames, tableName) }
-                .forEach { success = it != (-1).toLong() }
+                .forEach { success = it != (-1).toLong() && success }
         return success
     }
 

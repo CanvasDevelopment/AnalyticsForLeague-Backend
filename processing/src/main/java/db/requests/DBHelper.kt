@@ -42,6 +42,7 @@ class DBHelper {
     private var connection: Connection? = null
     private var currentlyConnected = false
 
+    private val log =  Logger.getLogger(this::class.java.name)
     /**
      * Creates a default localhost connection;
      */
@@ -137,6 +138,9 @@ class DBHelper {
             connect()
 //            throw IllegalStateException("No Current database connection. Use DbConnect() to connect to a database")
         }
+
+        log.log(Level.INFO, "Running sql query")
+        log.log(Level.INFO, query)
         val statement = connection!!.createStatement()
         val resultSet = statement.executeQuery(query)
         return resultSet
@@ -144,7 +148,7 @@ class DBHelper {
 
     /**
      * Execute a statement that updates the database
-     * @param query The query to run against the database.
+     * @param script The script to run against the database.
      * *
      * @return 0 if nothing, or the number of rows effected (i think).
      * *
@@ -153,18 +157,22 @@ class DBHelper {
      * @throws IllegalStateException
      */
     @Throws(SQLException::class, IllegalStateException::class)
-    fun executeSQLScript(query: String): Long { // TODO change this return type to LONG
+    fun executeSQLScript(script: String): Long { // TODO change this return type to LONG
         if (connection == null || !currentlyConnected) {
             throw IllegalStateException("No Current database connection. Use DbConnect() to connect to a database")
         }
 
-        val statement = connection!!.prepareStatement(query)
-        statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS)
-        val generatedKeys = statement.generatedKeys
+
+        log.log(Level.INFO, "Running sql script")
+        log.log(Level.INFO, script)
+        val statement = connection!!.prepareStatement(script)
+        statement.executeUpdate(script, Statement.RETURN_GENERATED_KEYS)
+        val generatedKeys : ResultSet = statement.generatedKeys
         var id : Long = 0
         if (generatedKeys.next()) {
             id = generatedKeys.getLong(1)
         }
+
         return id
     }
 }
