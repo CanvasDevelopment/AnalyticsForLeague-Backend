@@ -71,7 +71,7 @@ class EndpointRateLimitParsingTests {
         val buckets = parser.parseRateLimit(rateLimitDef, rateLimitCount)
         assert(buckets[0].firstRequestTime == (-1).toLong())
         assert(buckets[1].firstRequestTime < System.currentTimeMillis()
-                && buckets[1].firstRequestTime > System.currentTimeMillis()-300) // 200 ms should be plenty for this method to run
+                && buckets[1].firstRequestTime > System.currentTimeMillis()-2000) // 200 ms should be plenty for this method to run
         assert(buckets[2].firstRequestTime == (-1).toLong())
         assert(buckets[3].firstRequestTime == (-1).toLong())
     }

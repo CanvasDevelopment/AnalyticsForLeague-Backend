@@ -28,7 +28,7 @@ class MatchServiceApiTests {
     fun testThatWeCanFetchMatchList() {
         val matchList = matchServiceApi.getMatchListForAccount(RIOT_API_KEY, 200774483)
         Assert.assertTrue(matchList.startIndex == 0)
-        Assert.assertTrue(matchList.endIndex == 732) // todo update to correct value
+        Assert.assertTrue(matchList.endIndex == 100) // todo update to correct value
         Assert.assertTrue(matchList.matches[0].lane == "JUNGLE")
         Assert.assertEquals(matchList.matches[0].gameId, 161736353)
     }

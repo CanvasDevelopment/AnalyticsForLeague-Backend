@@ -11,12 +11,15 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Matchers
 import org.mockito.Mockito.*
+import java.util.*
 import kotlin.test.assertTrue
 
 /**
  * @author Josiah Kendall
  */
 class SummonerControlTests {
+
+    val random = Random()
 
     lateinit var summonerService : SummonerServiceImpl
     lateinit var summonerDao : SummonerDAOContractImpl
@@ -53,37 +56,46 @@ class SummonerControlTests {
 
     @Test
     fun `test we try save summoner when we get result`() {
-        val networkResult = NetworkResult<Summoner>(Summoner(), 200)
+        val summoner = Summoner()
+        summoner.id = random.nextLong()
+        val networkResult = NetworkResult(summoner, 200)
         `when`(summonerService.fetchSummonerBySummonerName(Matchers.anyString(), Matchers.anyString())).thenReturn(networkResult)
+        `when`(summonerDao.getSummoner(summoner.id)).thenReturn(null)
         val registerdSuccessfully = summonerControl.registerSummoner("")
-        verify(summonerDao, times(1)).saveSummoner(any(Summoner::class.java))
+        verify(summonerDao, times(1)).saveSummoner(summoner)
     }
 
     @Test
     fun `test we dont save summoner that already exists`() {
-        val networkResult = NetworkResult<Summoner>(Summoner(), 200)
+        val summoner = Summoner()
+        summoner.id = random.nextLong()
+        val networkResult = NetworkResult(summoner, 200)
         `when`(summonerService.fetchSummonerBySummonerName(Matchers.anyString(), Matchers.anyString())).thenReturn(networkResult)
-        `when`(summonerDao.getSummoner(Matchers.anyLong())).thenReturn(Summoner())
+        `when`(summonerDao.getSummoner(Matchers.anyLong())).thenReturn(summoner)
         val registerdSuccessfully = summonerControl.registerSummoner("")
-        verify(summonerDao, times(0)).saveSummoner(Matchers.any(Summoner::class.java))
+        verify(summonerDao, times(0)).saveSummoner(summoner)
     }
 
     @Test
     fun `test we can return true if we successfully save summoner`() {
-        val networkResult = NetworkResult<Summoner>(Summoner(), 200)
+        val summoner = Summoner()
+        summoner.id = random.nextLong()
+        val networkResult = NetworkResult(summoner, 200)
         `when`(summonerService.fetchSummonerBySummonerName(Matchers.anyString(), Matchers.anyString())).thenReturn(networkResult)
-        `when`(summonerDao.getSummoner(Matchers.anyLong())).thenReturn(null)
-        `when`(summonerDao.saveSummoner(Matchers.any(Summoner::class.java))).thenReturn(2)
+        `when`(summonerDao.getSummoner(Matchers.anyLong())).thenReturn(summoner)
+        `when`(summonerDao.saveSummoner(summoner)).thenReturn(2)
         val registerdSuccessfully = summonerControl.registerSummoner("")
         assertTrue(registerdSuccessfully)
     }
 
     @Test
     fun `test we return false when we fail to save summoner`() {
-        val networkResult = NetworkResult<Summoner>(Summoner(), 200)
+        val summoner = Summoner()
+        summoner.id = random.nextLong()
+        val networkResult = NetworkResult(summoner, 200)
         `when`(summonerService.fetchSummonerBySummonerName(Matchers.anyString(), Matchers.anyString())).thenReturn(networkResult)
         `when`(summonerDao.getSummoner(Matchers.anyLong())).thenReturn(null)
-        `when`(summonerDao.saveSummoner(Matchers.any(Summoner::class.java))).thenReturn(-1)
+        `when`(summonerDao.saveSummoner(summoner)).thenReturn(-1)
         val registerdSuccessfully = summonerControl.registerSummoner("")
         assertTrue(!registerdSuccessfully)
     }

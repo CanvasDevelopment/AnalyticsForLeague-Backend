@@ -8,12 +8,14 @@ import network.RateLimiter
 import network.RequestHandler
 import network.riotapi.MatchServiceApi
 import network.riotapi.header.RateLimitBucket
+import network.riotapi.header.RateLimitsWrapper
 import network.riotapi.header.RiotApiResponseHeaderParser
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import util.RIOT_API_KEY
+import java.net.HttpURLConnection
 import java.net.URL
 
 /**
@@ -129,6 +131,10 @@ class RequestHandlerTests {
         `when`(requestDao.requestsSinceLastClearedRates()).thenReturn(3)
         `when`(requestDao.timeSinceLastClearedRates()).thenReturn(40000)
         val url = URL("https://oc1.api.riotgames.com/lol/summoner/v3/summoners/by-name/kloinfdsfdsfdsfds?api_key=$RIOT_API_KEY")
+        val conn = mock(HttpURLConnection::class.java)
+        `when`(parser.parseRateLimitsForAppAndEndpoint(conn, 1)).thenReturn(mock(RateLimitsWrapper::class.java))
+
+        `when`(url.openConnection()).thenReturn(conn)
         val networkResult = requestHandler.requestDataWithRateLimiting (
                 { requestHandler.sendHttpGetRequest(Summoner::class.java,url,1) },
                 1)

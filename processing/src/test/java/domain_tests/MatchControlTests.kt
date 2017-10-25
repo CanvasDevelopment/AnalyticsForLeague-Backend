@@ -361,6 +361,7 @@ class MatchControlTests {
         val heroSummaryList = ArrayList<TeamSummaryStat>()
         heroSummaryList.add(mock(TeamSummaryStat::class.java))
         `when`(refinedStatDaoContract.fetchGameSummaryStatsForHero(1, role, lane)).thenReturn(heroSummaryList)
+        `when`(gameSummaryDaoContract.saveHeroTeamSummaryStats(1, heroSummaryList, "top")).thenReturn(true)
         matchControl.refineMatchData(1,role, lane)
         verify(gameSummaryDaoContract, times(1)).saveHeroTeamSummaryStats(1, heroSummaryList, matchControl.getTableName(lane,role))
     }
