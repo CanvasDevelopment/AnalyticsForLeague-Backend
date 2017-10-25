@@ -65,7 +65,6 @@ class RiotApiResponseHeaderParser(private val rateLimitStatusDao: EndpointRateLi
         }
 
         val bucketsArrayList = ArrayList<RateLimitBucket>()
-        val currentTime = System.currentTimeMillis()
 
         // split along the commas
         val bucketStringArray = rateLimitBucketsString.split(",")
@@ -82,7 +81,7 @@ class RiotApiResponseHeaderParser(private val rateLimitStatusDao: EndpointRateLi
 
             var requestTime : Long = -1
             if (requestCount == 1) {
-                requestTime = currentTime
+                requestTime = System.currentTimeMillis()
             }
 
             val rateDuration = bucketCountParts[1].toInt()

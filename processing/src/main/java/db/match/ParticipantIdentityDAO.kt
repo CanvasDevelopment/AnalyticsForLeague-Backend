@@ -3,6 +3,7 @@ package db.match
 import db.requests.DBHelper
 import extensions.produceParticipantIdentity
 import model.match.ParticipantIdentity
+import util.MID
 import util.columnnames.ParticipantIdentityColumns
 import java.sql.ResultSet
 
@@ -31,11 +32,21 @@ class ParticipantIdentityDAO(val dbHelper: DBHelper, val playerDAO: PlayerDAO) {
                 "$gameId," +
                 "$teamId," +
                 "'$role'," +
-                "'$lane')"
+                "'${getLane(lane)}')"
 
         val result = dbHelper.executeSQLScript(insertSQL)
         playerDAO.savePlayer(participantIdentity.player, result)
         return result
+    }
+
+    /**
+     * Riot returns MID and MIDDLE
+     */
+    private fun getLane(lane:String) : String {
+        if (lane == "MIDDLE") {
+            return MID
+        }
+        return lane
     }
 
     fun getParticipantIdentity(gameId : Long, summonerId : Long) : ParticipantIdentity  {

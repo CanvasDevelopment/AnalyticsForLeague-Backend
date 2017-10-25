@@ -6,6 +6,7 @@ import extensions.produceParticipant
 import model.match.Mastery
 import model.match.Participant
 import model.match.Rune
+import util.MID
 import util.columnnames.ParticipantColumns
 
 /**
@@ -45,7 +46,7 @@ class ParticipantDAO(val dbHelper : DBHelper,
                 "'${participant.highestAchievedSeasonTier}'," +
                 "$gameId," +
                 "'${participant.timeline.role}'," +
-                "'${participant.timeline.lane}')"
+                "'${getLane(participant.timeline.lane)}')"
 
         val particpantRowId = dbHelper.executeSQLScript(sql)
         // save timeline
@@ -60,6 +61,15 @@ class ParticipantDAO(val dbHelper : DBHelper,
         return particpantRowId
     }
 
+    /**
+     * Riot returns MID and MIDDLE
+     */
+    private fun getLane(lane:String) : String {
+        if (lane == "MIDDLE") {
+            return MID
+        }
+        return lane
+    }
     /**
      * Get all [Participant] instances that are saved for a [Match]
      * @param gameId The id of the match we want the participants for.

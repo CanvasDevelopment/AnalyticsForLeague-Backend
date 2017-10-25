@@ -30,6 +30,12 @@ class RateLimitingLiveTests {
         val tables = Tables()
         dbHelper.connect()
         dbHelper.executeSQLScript("DELETE FROM matchtable")
+        dbHelper.executeSQLScript("DELETE FROM matchsummary2")
+
+        dbHelper.executeSQLScript("DELETE FROM jungle_summarystats")
+        dbHelper.executeSQLScript("DELETE FROM top_summarystats")
+        dbHelper.executeSQLScript("DELETE FROM mid_summarystats")
+        dbHelper.executeSQLScript("DELETE FROM adc_summarystats")
         dbHelper.executeSQLScript("DELETE FROM mastery")
         dbHelper.executeSQLScript("DELETE FROM participantIdentity")
         dbHelper.executeSQLScript("DELETE FROM participant")
@@ -58,9 +64,9 @@ class RateLimitingLiveTests {
         // fetch match summaries for me
         matchControl.downloadAndSaveMatchSummaries(summonerId)
         val preFetchMatchTime = System.currentTimeMillis()
-        matchControl.fetchAndSaveMatchesForASummoner(summonerId, 20)
+        matchControl.fetchAndSaveMatchesForASummoner(summonerId, 30)
 
-        matchControl.refineMatchData(summonerId, SOLO, TOP)
+        matchControl.refineMatchData(summonerId, SOLO, MID)
         // by the time we finish, we should have all matches saved and it should have taken us
     }
 

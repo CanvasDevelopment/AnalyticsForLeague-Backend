@@ -6,7 +6,7 @@ package util
  * Just easier access for our roles and lanes so that we dont have to keep typing them
  */
 val TOP = "top"
-val MID = "mid"
+val MID = "MID"
 val BOT = "BOTTOM"
 val JUNGLE = "jungle"
 val SUPPORT = "support"

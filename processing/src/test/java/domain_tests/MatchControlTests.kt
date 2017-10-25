@@ -167,7 +167,7 @@ class MatchControlTests {
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(1, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(2, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(3, -1)).thenReturn(false)
-        matchControl.fetchAndSaveMatchesUsingGivenMatchSummaries(-1, matchSummaries)
+        matchControl.fetchAndSaveMatchSummaries(-1, matchSummaries)
         verify(gameSummaryDaoContract, times(1)).doesGameSummaryForSummonerExist(1, -1)
         verify(gameSummaryDaoContract, times(1)).doesGameSummaryForSummonerExist(2, -1)
         verify(gameSummaryDaoContract, times(1)).doesGameSummaryForSummonerExist(3, -1)
@@ -217,7 +217,7 @@ class MatchControlTests {
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(1, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(2, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(3, -1)).thenReturn(true)
-        matchControl.fetchAndSaveMatchesUsingGivenMatchSummaries(-1, matchSummaries)
+        matchControl.fetchAndSaveMatchSummaries(-1, matchSummaries)
         verify(matchServiceApi, times(1)).getMatchByMatchId(RIOT_API_KEY, 1)
         verify(matchServiceApi, times(1)).getMatchByMatchId(RIOT_API_KEY, 2)
         verify(matchServiceApi, times(0)).getMatchByMatchId(RIOT_API_KEY, 3)
@@ -378,7 +378,7 @@ class MatchControlTests {
         verify(gameSummaryDaoContract, times(1)).saveVillanTeamSummaryStats(1, villanSummaryList, matchControl.getTableName(lane,role))
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Make sure that we exit if we fail to save initial summary stats`() {
         val villanSummaryList = ArrayList<TeamSummaryStat>()
         villanSummaryList.add(mock(TeamSummaryStat::class.java))

@@ -5,12 +5,10 @@ import db.matchlist.MatchSummaryDAO
 import db.refined_stats.GameSummaryDaoContract
 import db.refined_stats.RefinedStatDAOContract
 import db.summoner.SummonerDAOContract
-import model.match.Match
 import model.matchlist.MatchList
 import model.matchlist.MatchSummary
 import model.networking.NetworkResult
 import model.refined_stats.RefinedGeneralGameStageColumnNames
-import network.riotapi.MatchServiceApi
 import network.riotapi.MatchServiceApiImpl
 import util.*
 import util.columnnames.StaticColumnNames
@@ -33,21 +31,23 @@ class MatchControl(private val matchDAO: MatchDAO,
 
     /**
      * Pulls down the latest matches for a summoner, and stores them in the match database.
+     *
      * @param summonerId
      */
-    fun downloadAndSaveMatchSummaries(summonerId : Long) {
+    fun downloadAndSaveMatchSummaries(summonerId : Long) : Boolean {
 
         // if we don't get a summoner, return
-        val summoner = summonerDAOContract.getSummoner(summonerId) ?: return
+        val summoner = summonerDAOContract.getSummoner(summonerId) ?: return false
         val networkResult : NetworkResult<MatchList> = matchServiceApi.getMatchListForAccount(RIOT_API_KEY, summoner.accountId)
         if (networkResult.code != 200) {
             // issues
-            return
+            return false
         }
+
         val matchList = networkResult.data
-        matchList ?: return
+        matchList ?: return false
         // If we have not match summaries, no point doing anything here.
-        matchList.matches ?: return
+        matchList.matches ?: return false
 
         // For each match summary
         matchList.matches.forEach { matchSummary ->
@@ -59,6 +59,7 @@ class MatchControl(private val matchDAO: MatchDAO,
                 log.info("Match summary with id : ${matchSummary.gameId} already exists. Skipping to next")
             }
         }
+        return true
     }
 
     /**
@@ -75,7 +76,7 @@ class MatchControl(private val matchDAO: MatchDAO,
         if (numberOfMatchesToFetchForEachRole <= 0) {
             log.info("No limit of matches given. Fetching all match summaries.")
             val matchSummaries = matchSummaryDAO.getAllMatchesBySummonerId(summonerId)
-            fetchAndSaveMatchesUsingGivenMatchSummaries(summonerId, matchSummaries)
+            fetchAndSaveMatchSummaries(summonerId, matchSummaries)
         } else {
             log.info("Limit given of $numberOfMatchesToFetchForEachRole")
 
@@ -93,11 +94,11 @@ class MatchControl(private val matchDAO: MatchDAO,
             allMatchSummaries.addAll(matchSummariesADC)
             allMatchSummaries.addAll(matchSummariesSupport)
 
-            fetchAndSaveMatchesUsingGivenMatchSummaries(summonerId,allMatchSummaries)
+            fetchAndSaveMatchSummaries(summonerId,allMatchSummaries)
         }
     }
 
-    fun fetchAndSaveMatchesUsingGivenMatchSummaries(summonerId: Long, matchSummaries : ArrayList<MatchSummary>) {
+    fun fetchAndSaveMatchSummaries(summonerId: Long, matchSummaries : ArrayList<MatchSummary>) {
         matchSummaries.forEach { matchSummary ->
             val alreadySaved = gameSummaryDaoContract.doesGameSummaryForSummonerExist(matchSummary.gameId, summonerId)
             if (!alreadySaved) {
@@ -107,7 +108,8 @@ class MatchControl(private val matchDAO: MatchDAO,
                     // The ide says it cannot be null, but it can when testing.
                     if (matchDetails != null) {
                         // TODO handle this better?
-                        if (matchDetails.code == 429) log.log(Level.WARNING,"Exceeded rate limits when fetching match")
+                        if (matchDetails.code == 429)
+                            log.log(Level.WARNING,"Exceeded rate limits when fetching match")
                         val match = matchDetails.data
 
                         // If null, exit
@@ -137,6 +139,7 @@ class MatchControl(private val matchDAO: MatchDAO,
         if (!saved) {
             throw IllegalStateException("Failed to save hero team stats")
         }
+        // Fetch
         val villanSummaryStats = refinedStatDAOContract.fetchGameSummaryStatsForVillan(summonerId, role, lane)
         saved = gameSummaryDaoContract.saveVillanTeamSummaryStats(summonerId,villanSummaryStats, tableName)
         // todo figure out a way to handle failed saves.
