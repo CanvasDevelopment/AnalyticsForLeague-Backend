@@ -13,10 +13,11 @@ class AnalysisInteractor (private val processingApi : ProcessingImpl,
     fun creepsPerMinuteDeltasCard(summonerId : Long, games : Int) : String{
        // get creeps per minute early, mid and late for hero, for the enemy, for the villan
         // return them
+        return ""
     }
 
     fun creepsPerMinuteDeltasDetail(summonerId : Long, games: Int) : String {
-
+        return ""
     }
 
 

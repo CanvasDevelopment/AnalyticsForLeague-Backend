@@ -12,8 +12,7 @@ import java.sql.ResultSet
 class AnalysisDao (private val dbHelper: DbHelper){
 
 
-
-    fun fetchAvgCreepsPerMinStatCard(summonerId : Long, statName : String, numberOfGames : Int, lane : String) : CreepsPerMinuteDeltasCard {
+    fun fetchAvgCreepsPerMinStatCard(summonerId : Long, numberOfGames : Int, lane : String) : CreepsPerMinuteDeltasCard {
 
         val sql = Builder().stat(
                 "avg(heroCreepsEarlyGame)," +
@@ -21,9 +20,9 @@ class AnalysisDao (private val dbHelper: DbHelper){
                 "avg(heroCreepsLateGame)," +
                 "avg(villanCreepsEarlyGame)," +
                 "avg(villanCreepsMidGame)," +
-                "avg(villanCreepsLateGame),")
-                .tableName("{$lane}_summarystats")
-                .where("summonerId = $summonerId")
+                "avg(villanCreepsLateGame)")
+                .tableName(lane + "_summarystats")
+                .where("heroSummonerId = $summonerId")
                 .games(numberOfGames)
                 .toSql()
 

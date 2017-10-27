@@ -6,6 +6,7 @@ package database.sql_builder
 class Builder() {
 
     private var selector = "*"
+    private var orderBy = "id"
     private var where = ""
     private var default = selector
     private var limit = ""
@@ -50,6 +51,11 @@ class Builder() {
         return this
     }
 
+    fun orderBy(orderBy : String) : Builder {
+        this.orderBy =orderBy
+        return this
+    }
+
     fun games(games : Int) : Builder {
         limit = "LIMIT $games"
         return this
@@ -62,7 +68,8 @@ class Builder() {
 
     fun toSql() : String {
         return "SELECT $selector FROM $tableName " +
-                "$where " +
+                "where $where " +
+                "Order By $orderBy DESC " +
                 limit
 
     }

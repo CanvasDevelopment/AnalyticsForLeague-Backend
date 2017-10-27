@@ -26,7 +26,7 @@ class KodeinManager {
         }
 
         bind<AnalysisDao>() with provider {
-            AnalysisDao()
+            AnalysisDao(kodein.instance())
         }
 
         bind<AnalysisInteractor>() with provider {
