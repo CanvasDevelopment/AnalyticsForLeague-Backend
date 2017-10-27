@@ -1,4 +1,4 @@
-package api.stat.Analysis.model
+package api.stat.analysis.model
 
 /**
  * @author Josiah Kendall

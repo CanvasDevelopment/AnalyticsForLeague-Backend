@@ -8,6 +8,10 @@
             <param-name>services</param-name>
             <param-value>api.Summoner</param-value>
         </init-param>
+        <init-param>
+            <param-name>analysis</param-name>
+            <param-value>api.stat.analysis.AnalysisApi</param-value>
+        </init-param>
     </servlet>
     <!-- Route API method requests to the backend. -->
     <servlet-mapping>

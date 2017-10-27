@@ -1,7 +1,7 @@
 package di
 
-import api.stat.Analysis.AnalysisDao
-import api.stat.Analysis.AnalysisInteractor
+import api.stat.analysis.AnalysisDao
+import api.stat.analysis.AnalysisPresenter
 import com.github.salomonbrys.kodein.*
 import database.DbHelper
 import service_contracts.ProcessingImpl
@@ -29,8 +29,8 @@ class KodeinManager {
             AnalysisDao(kodein.instance())
         }
 
-        bind<AnalysisInteractor>() with provider {
-            AnalysisInteractor(
+        bind<AnalysisPresenter>() with provider {
+            AnalysisPresenter(
                     kodein.instance<ProcessingImpl>() ,
                     kodein.instance<AnalysisDao>())
         }

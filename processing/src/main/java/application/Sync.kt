@@ -12,7 +12,7 @@ class Sync (val matchControl: MatchControl) {
      * Sync our summoner. This method triggers a 'sync' which pulls down all the matches that a summoner has not saved
      * previously
      */
-    fun syncMatches(summonerId : Long) {
+    fun syncMatches(summonerId : Long) : Int {
 
         // download all the matches that have not been processed.
         matchControl.downloadAndSaveMatchSummaries(summonerId)
@@ -26,5 +26,7 @@ class Sync (val matchControl: MatchControl) {
 
         // clear the raw database
         matchControl.clearRawDatabasesOfSummoner(summonerId)
+
+        return 200 // TODO make this handle / notify of failures.
     }
 }
