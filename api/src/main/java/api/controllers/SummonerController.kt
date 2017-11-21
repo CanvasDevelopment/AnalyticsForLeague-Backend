@@ -21,11 +21,11 @@ class SummonerController(private val summonerDao: SummonerDao,
      * @return              True if the summoner exists, false if not.
      */
     fun isSummonerRegistered(summonerName: String) : Response {
-        val existence = SummonerExistence(summonerDao.getSummoner(summonerName) != null)
-        if (existence.exists) {
-            return Response(200, gson.toJson(existence))
+        val exists = summonerDao.getSummoner(summonerName) != null
+        if (exists) {
+            return Response(200, gson.toJson(exists))
         }
-        return Response(404, gson.toJson(existence))
+        return Response(404, gson.toJson(exists))
     }
 
     /**

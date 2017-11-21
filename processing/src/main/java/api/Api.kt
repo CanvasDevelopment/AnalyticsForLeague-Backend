@@ -2,6 +2,7 @@ package api
 
 import application.Sync
 import application.domain.MatchControl
+import application.domain.SummonerControl
 import com.github.salomonbrys.kodein.instance
 import com.google.api.server.spi.config.Api
 import com.google.api.server.spi.config.ApiMethod
@@ -22,24 +23,35 @@ import model.beans.Response
 class Api  {
 
     private val km = KodeinManager()
+    private val sync = km.kodein.instance<Sync>()
+    private val summonerControl = km.kodein.instance<SummonerControl>()
 
-    val sync = km.kodein.instance<Sync>()
-
-    @ApiMethod(name = "damagePerMinuteDeltasDetail",
+    @ApiMethod(name = "syncUser",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "syncUser/{summonerId}")
-    fun syncUser(@Named("summonerId")summonerId : Long): Int {
-        return sync.syncMatches(summonerId)
+    fun syncUser(@Named("summonerId")summonerId : Long): Response {
+        val responseCode = sync.syncMatches(summonerId)
+        return Response(responseCode, "")
     }
 
-    fun createNewUser(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    @ApiMethod(name = "createNewUser",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "createNewUser/{name}")
+    fun createNewUser(@Named("name") name : String): Response {
+        val summonerExists = summonerControl.checkSummonerExists(name)
+        if (summonerExists) {
+            return Response(349, "")
+        }
+
+        val registerSummoner = summonerControl.registerSummoner(name)
+        if (!registerSummoner) {
+            return Response(404, "Not Found")
+        }
+
+        return return Response(200, "ok")
     }
 
 
-    @ApiMethod(name = "sayHi")
-    fun sayHi() : Response {
-        return Response(200, "HI!")
-    }
+
 
 }

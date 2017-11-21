@@ -16,7 +16,6 @@ import service_contracts.ProcessingImpl
                 ownerName = "com.analyticsforleague",
                 packagePath = "")
 )
-
 class Summoner {
 
     private val dbHelper = DbHelper()
@@ -39,7 +38,7 @@ class Summoner {
      */
     @ApiMethod(name = "isSummonerRegistered",
             httpMethod = ApiMethod.HttpMethod.GET,
-            path = "exists/{name}")
+            path = "isRegistered/{name}")
     fun isSummonerRegistered(@Named("name") summonerName: String) : Response {
         return summonerController.isSummonerRegistered(summonerName)
     }

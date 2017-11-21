@@ -11,7 +11,6 @@ import java.sql.ResultSet
  */
 class AnalysisDao (private val dbHelper: DbHelper){
 
-
     fun fetchAvgCreepsPerMinStatCard(summonerId : Long, numberOfGames : Int, lane : String) : CreepsPerMinuteDeltasCard {
 
         val sql = Builder().stat(

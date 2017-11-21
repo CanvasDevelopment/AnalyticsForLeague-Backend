@@ -80,18 +80,4 @@ class RequestHandler(private val requestDAOContract: RequestDAOContract,
         // return our error
         return NetworkResult(null, respCode)
     }
-
-
-
-    /**
-     * Set the rate limit for our requests
-     * @param requests The number of requests in a given time frame
-     * @param timeFrameInSeconds The given time frame in seconds.
-     */
-    fun setApiKeyRate(requests : Int, timeFrameInSeconds : Int) {
-        // set the time frame
-        // set the number of requests
-        this.timeFrameInSeconds = timeFrameInSeconds
-        requestDAOContract.setRequestRateLimit(requests)
-    }
 }

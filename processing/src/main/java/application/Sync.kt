@@ -27,6 +27,6 @@ class Sync (val matchControl: MatchControl) {
         // clear the raw database
         matchControl.clearRawDatabasesOfSummoner(summonerId)
 
-        return 200 // TODO make this handle / notify of failures.
+        return 200 // TODO make this return a json object with the results for each role.
     }
 }

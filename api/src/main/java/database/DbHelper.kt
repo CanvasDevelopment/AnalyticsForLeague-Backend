@@ -66,16 +66,16 @@ class DbHelper {
                 val url = System.getProperty("ae-cloudsql.cloudsql-database-url")
                 // App engine sql driver
                 Class.forName("com.mysql.jdbc.GoogleDriver")
-                try {
+                return try {
                     connection = DriverManager.getConnection(url)
                     currentlyConnected = connection!!.isValid(1000)
-                    return currentlyConnected
+                    currentlyConnected
                 } catch (sqlException: SQLException) {
                     println("An error occured whist getting a connection to the database.\n"
                             + "host: " + host + "\n"
                             + "username: " + username)
                     println(sqlException.message)
-                    return false
+                    false
                 }
 
             } else {
