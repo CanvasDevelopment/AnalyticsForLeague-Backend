@@ -3,5 +3,5 @@ package model.match
 /**
  * @author Josiah Kendall
  */
-data class Mastery(val masteryId : Int,
-                   val rank : Int)
+data class Mastery(var masteryId : Int,
+                   var rank : Int)

@@ -4,10 +4,10 @@ package model.match
  * @author Josiah Kendall
  */
 
-data class Player(val platformId : String,
-                  val accountId : Long,
-                  val summonerName : String,
-                  val summonerId : Long,
-                  val currentPlatformId : String,
-                  val matchHistoryUri : String,
-                  val profileIcon : Int)
+data class Player(var platformId : String,
+                  var accountId : Long,
+                  var summonerName : String,
+                  var summonerId : Long,
+                  var currentPlatformId : String,
+                  var matchHistoryUri : String,
+                  var profileIcon : Int)

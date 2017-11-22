@@ -8,6 +8,8 @@ import network.riotapi.header.RateLimitBucket
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import java.util.*
+
 /**
  * @author Josiah Kendall
  */

@@ -13,7 +13,6 @@ import org.junit.Test
 import util.columnnames.StaticColumnNames
 import java.sql.ResultSet
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.test.assert
 
 /**

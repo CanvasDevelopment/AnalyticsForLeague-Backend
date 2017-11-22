@@ -3,6 +3,6 @@ package model.match
 /**
  * @author Josiah Kendall
  */
-data class ParticipantIdentity(val participantId : Int,
-                               val gameId : Long,
-                               val player : Player?)
+data class ParticipantIdentity(var participantId : Int,
+                               var gameId : Long,
+                               var player : Player?)

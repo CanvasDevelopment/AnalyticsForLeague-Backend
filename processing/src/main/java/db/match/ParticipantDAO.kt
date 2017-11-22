@@ -8,6 +8,7 @@ import model.match.Participant
 import model.match.Rune
 import util.MID
 import util.columnnames.ParticipantColumns
+import java.util.*
 
 /**
  * @author Josiah Kendall
@@ -74,7 +75,7 @@ class ParticipantDAO(val dbHelper : DBHelper,
      * Get all [Participant] instances that are saved for a [Match]
      * @param gameId The id of the match we want the participants for.
      */
-    fun getAllParticipantsForMatch(gameId: Long) :ArrayList<Participant> {
+    fun getAllParticipantsForMatch(gameId: Long) : ArrayList<Participant> {
         val sql = "SELECT * FROM $PARTICIPANT_TABLE " +
                 "WHERE ${participantColumns.GAME_ID} = $gameId"
         val result = dbHelper.executeSqlQuery(sql)

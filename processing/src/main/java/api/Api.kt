@@ -48,7 +48,7 @@ class Api  {
             return Response(404, "Not Found")
         }
 
-        return return Response(200, "ok")
+        return Response(200, "ok")
     }
 
 

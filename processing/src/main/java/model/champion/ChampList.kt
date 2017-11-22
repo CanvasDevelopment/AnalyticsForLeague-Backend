@@ -1,5 +1,7 @@
 package model.champion
 
+import java.util.*
+
 /**
  * @author Josiah Kendall
  */

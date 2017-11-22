@@ -17,6 +17,7 @@ import org.mockito.Mockito.*
 import util.RIOT_API_KEY
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.*
 
 /**
  * @author Josiah Kendall

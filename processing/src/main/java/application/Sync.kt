@@ -15,7 +15,7 @@ class Sync (val matchControl: MatchControl) {
     fun syncMatches(summonerId : Long) : Int {
 
         // download all the matches that have not been processed.
-        val syncMatchData = matchControl.downloadAndSaveMatchSummaries(summonerId)
+        matchControl.downloadAndSaveMatchSummaries(summonerId)
         matchControl.fetchAndSaveMatchesForASummoner(summonerId, 20)
         // refine all our match data
         val savedTop = matchControl.refineMatchData(summonerId, SOLO, TOP)
