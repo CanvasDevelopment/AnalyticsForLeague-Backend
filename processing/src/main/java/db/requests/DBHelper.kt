@@ -42,7 +42,6 @@ class DBHelper {
     private var connection: Connection? = null
     private var currentlyConnected = false
 
-    private val log =  Logger.getLogger(this::class.java.name)
     /**
      * Creates a default localhost connection;
      */
@@ -72,32 +71,32 @@ class DBHelper {
                 val url = System.getProperty("ae-cloudsql.cloudsql-database-url")
                 // App engine sql driver
                 Class.forName("com.mysql.jdbc.GoogleDriver")
-                try {
+                return try {
                     connection = DriverManager.getConnection(url)
                     currentlyConnected = connection!!.isValid(1000)
-                    return currentlyConnected
+                    currentlyConnected
                 } catch (sqlException: SQLException) {
-                    println("An error occured whist getting a connection to the database.\n"
+                    println("An error occurred whist getting a connection to the database.\n"
                             + "host: " + host + "\n"
                             + "username: " + username)
                     println(sqlException.message)
-                    return false
+                    false
                 }
 
             } else {
                 // Local MySQL instance to use during development.
                 Class.forName("com.mysql.jdbc.Driver")
                 // For some reason the local connection variable doesnt work, even though it seems to be correct. Therefore i use this connection method.
-                try {
+                return try {
                     connection = DriverManager.getConnection(host!!, username, password)
                     currentlyConnected = connection!!.isValid(1000)
-                    return currentlyConnected
+                    currentlyConnected
                 } catch (sqlException: SQLException) {
-                    println("An error occured whist getting a connection to the database.\n"
+                    println("An error occurred whist getting a connection to the database.\n"
                             + "host: " + host + "\n"
                             + "username: " + username)
                     println(sqlException.message)
-                    return false
+                    false
                 }
 
             }
@@ -136,14 +135,11 @@ class DBHelper {
     fun executeSqlQuery(query: String): ResultSet {
         if (connection == null || !currentlyConnected) {
             connect()
-//            throw IllegalStateException("No Current database connection. Use DbConnect() to connect to a database")
         }
 
-        log.log(Level.INFO, "Running sql query")
-        log.log(Level.INFO, query)
+
         val statement = connection!!.createStatement()
-        val resultSet = statement.executeQuery(query)
-        return resultSet
+        return statement.executeQuery(query)
     }
 
     /**
@@ -157,14 +153,11 @@ class DBHelper {
      * @throws IllegalStateException
      */
     @Throws(SQLException::class, IllegalStateException::class)
-    fun executeSQLScript(script: String): Long { // TODO change this return type to LONG
+    fun executeSQLScript(script: String): Long {
         if (connection == null || !currentlyConnected) {
             throw IllegalStateException("No Current database connection. Use DbConnect() to connect to a database")
         }
 
-
-        log.log(Level.INFO, "Running sql script")
-        log.log(Level.INFO, script)
         val statement = connection!!.prepareStatement(script)
         statement.executeUpdate(script, Statement.RETURN_GENERATED_KEYS)
         val generatedKeys : ResultSet = statement.generatedKeys

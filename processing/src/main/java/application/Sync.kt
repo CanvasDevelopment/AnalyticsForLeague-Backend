@@ -15,18 +15,24 @@ class Sync (val matchControl: MatchControl) {
     fun syncMatches(summonerId : Long) : Int {
 
         // download all the matches that have not been processed.
-        matchControl.downloadAndSaveMatchSummaries(summonerId)
-
+        val syncMatchData = matchControl.downloadAndSaveMatchSummaries(summonerId)
+        matchControl.fetchAndSaveMatchesForASummoner(summonerId, 20)
         // refine all our match data
-        matchControl.refineMatchData(summonerId, SOLO, TOP)
-        matchControl.refineMatchData(summonerId, SOLO, MID)
-        matchControl.refineMatchData(summonerId, NONE, JUNGLE)
-        matchControl.refineMatchData(summonerId, DUO_SUPPORT, BOT)
-        matchControl.refineMatchData(summonerId, DUO_CARRY, BOT)
+        val savedTop = matchControl.refineMatchData(summonerId, SOLO, TOP)
+        val savedMid = matchControl.refineMatchData(summonerId, SOLO, MID)
+        val savedJungle = matchControl.refineMatchData(summonerId, NONE, JUNGLE)
+        val savedSup = matchControl.refineMatchData(summonerId, DUO_SUPPORT, BOT)
+        val savedAdc = matchControl.refineMatchData(summonerId, DUO_CARRY, BOT)
+
+
+        // Record the sync result here.
 
         // clear the raw database
         matchControl.clearRawDatabasesOfSummoner(summonerId)
 
-        return 200 // TODO make this return a json object with the results for each role.
+        if (savedJungle &&  savedAdc && savedMid && savedSup && savedTop) {
+            return 200
+        }
+        return 500 // we failed something
     }
 }
