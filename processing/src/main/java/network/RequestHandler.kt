@@ -13,6 +13,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
+import model.match.Match
 
 /**
  * @author Josiah Kendall
@@ -24,13 +25,12 @@ class RequestHandler(private val requestDAOContract: RequestDAOContract,
                      private val rateLimiter: RateLimiter,
                      private val riotApiResponseHeaderParser: RiotApiResponseHeaderParser) {
 
-    private val gson = Gson()
 
     /**
      * This is the duration on which we limit to a certain number of requests
      */
     private var timeFrameInSeconds = 60 // default to a minute
-
+    private val gson = Gson()
     /**
      * Requests data from the server. Allows us to pass an Api/network call as a higher order function and return its result.
      * This method handles the rate limiting of our requests
@@ -75,7 +75,8 @@ class RequestHandler(private val requestDAOContract: RequestDAOContract,
                 response.append(line)
             }
             reader.close()
-            val result = gson.fromJson(response.toString(), type)
+
+            val result : T = gson.fromJson(response.toString(), type)
             return NetworkResult(result, 200)
         }
         // return our error

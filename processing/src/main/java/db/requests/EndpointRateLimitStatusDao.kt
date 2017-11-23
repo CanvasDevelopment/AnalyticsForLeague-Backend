@@ -23,7 +23,7 @@ class EndpointRateLimitStatusDao(val dbHelper: DBHelper,
      * @param endpointRateLimit Holds data about the current ratelimits for that status
      * @return true of saved successfully, false if not.
      */
-    fun saveEndpointRateLimitStatus(endpointRateLimit: EndpointRateLimit) : Boolean {
+    public fun saveEndpointRateLimitStatus(endpointRateLimit: EndpointRateLimit) : Boolean {
         return if (doesEndpointExistInDb(endpointRateLimit.endpointId)) {
             updateEndpointRLStatus(endpointRateLimit)
         } else {

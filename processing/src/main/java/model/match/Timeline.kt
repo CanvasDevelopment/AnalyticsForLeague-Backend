@@ -5,13 +5,32 @@ import model.stats.GameStageDelta
 /**
  * @author Josiah Kendall
  */
-data class Timeline(val participantId : Int,
-                    val creepsPerMinDeltas: GameStageDelta,
-                    val xpPerMinDeltas: GameStageDelta,
-                    val goldPerMinDeltas: GameStageDelta,
-                    val csDiffPerMinDeltas: GameStageDelta,
-                    val xpDiffPerMinDeltas: GameStageDelta,
-                    val damageTakenPerMinDeltas: GameStageDelta,
-                    val damageTakenDiffPerMinDeltas: GameStageDelta,
-                    val role : String,
-                    val lane : String)
+class Timeline {
+    var participantId: Int = 0
+    var creepsPerMinDeltas: GameStageDelta = GameStageDelta()
+    var xpPerMinDeltas: GameStageDelta  = GameStageDelta()
+    var goldPerMinDeltas: GameStageDelta  = GameStageDelta()
+    var csDiffPerMinDeltas: GameStageDelta  = GameStageDelta()
+    var xpDiffPerMinDeltas: GameStageDelta  = GameStageDelta()
+    var damageTakenPerMinDeltas: GameStageDelta  = GameStageDelta()
+    var damageTakenDiffPerMinDeltas: GameStageDelta  = GameStageDelta()
+    var role: String = ""
+    var lane: String = ""
+
+    constructor(participantId: Int, creepsPerMinDeltas: GameStageDelta, xpPerMinDeltas: GameStageDelta, goldPerMinDeltas: GameStageDelta, csDiffPerMinDeltas: GameStageDelta, xpDiffPerMinDeltas: GameStageDelta, damageTakenPerMinDeltas: GameStageDelta, damageTakenDiffPerMinDeltas: GameStageDelta, role: String, lane: String) {
+        this.participantId = participantId
+        this.creepsPerMinDeltas = creepsPerMinDeltas
+        this.xpPerMinDeltas = xpPerMinDeltas
+        this.goldPerMinDeltas = goldPerMinDeltas
+        this.csDiffPerMinDeltas = csDiffPerMinDeltas
+        this.xpDiffPerMinDeltas = xpDiffPerMinDeltas
+        this.damageTakenPerMinDeltas = damageTakenPerMinDeltas
+        this.damageTakenDiffPerMinDeltas = damageTakenDiffPerMinDeltas
+        this.role = role
+        this.lane = lane
+    }
+
+    constructor() {
+
+    }
+}
