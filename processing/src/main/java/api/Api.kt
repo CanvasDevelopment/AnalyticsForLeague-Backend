@@ -22,7 +22,7 @@ import model.beans.Response
 )
 class Api  {
 
-    private val km = KodeinManager()
+    val km = KodeinManager()
     private val sync = km.kodein.instance<Sync>()
     private val summonerControl = km.kodein.instance<SummonerControl>()
 
@@ -30,7 +30,8 @@ class Api  {
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "syncUser/{summonerId}")
     fun syncUser(@Named("summonerId")summonerId : Long): Response {
-        val responseCode = sync.syncMatches(summonerId)
+        val responseCode =  sync.syncMatches(summonerId)
+
         return Response(responseCode, "")
     }
 

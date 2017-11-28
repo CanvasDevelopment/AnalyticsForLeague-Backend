@@ -11,4 +11,5 @@ class Mastery {
         this.masteryId = masteryId
         this.rank = rank
     }
+    constructor()
 }

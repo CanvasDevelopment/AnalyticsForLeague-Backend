@@ -31,8 +31,8 @@ class KodeinManager {
 
         bind<AnalysisPresenter>() with provider {
             AnalysisPresenter(
-                    kodein.instance<ProcessingImpl>() ,
-                    kodein.instance<AnalysisDao>())
+                    kodein.instance() ,
+                    kodein.instance())
         }
 
 

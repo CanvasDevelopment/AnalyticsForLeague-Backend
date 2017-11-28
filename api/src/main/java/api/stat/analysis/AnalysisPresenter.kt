@@ -9,6 +9,9 @@ import service_contracts.ProcessingImpl
 class AnalysisPresenter(private val processingApi : ProcessingImpl,
                         private val analysisDao: AnalysisDao){
 
+
+    fun sayHi() : String = "hi"
+
     /**
      * The fetch for getting the information for the creeps
      */

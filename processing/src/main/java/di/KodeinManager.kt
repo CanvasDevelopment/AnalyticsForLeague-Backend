@@ -43,8 +43,7 @@ class KodeinManager {
         }
 
         bind<ChampionDAO>() with provider {
-            ChampionDAO(
-                    kodein)
+            ChampionDAO(kodein.instance())
         }
 
         bind<BanDAO>() with provider {
@@ -53,8 +52,7 @@ class KodeinManager {
         }
 
         bind<MasteryDAO>() with provider {
-            MasteryDAO(
-                    kodein.instance())
+            MasteryDAO(kodein.instance())
         }
 
         bind<PlayerDAO>() with provider {
@@ -112,11 +110,6 @@ class KodeinManager {
                     kodein.instance())
         }
 
-        bind<RefinedStatsDAO>() with provider {
-            RefinedStatsDAO(
-                    kodein.instance())
-        }
-
         bind<RegionController>() with provider {
             RegionController()
         }
@@ -139,16 +132,8 @@ class KodeinManager {
                     kodein.instance())
         }
 
-        bind<SummonerDAOContract>() with provider {
-            SummonerDAOContractImpl(kodein.instance())
-        }
-
         bind<RefinedStatDAOContract>() with provider {
             RefinedStatsDAO(kodein.instance())
-        }
-
-        bind<GameSummaryDAO>() with provider {
-            GameSummaryDAO(kodein.instance())
         }
 
         bind<GameSummaryDaoContract>() with provider {
@@ -220,6 +205,11 @@ class KodeinManager {
             SummonerServiceImpl(
                     kodein.instance(),
                     kodein.instance())
+        }
+
+        // TODO fix this
+        bind<SummonerDAOContract>() with provider {
+            SummonerDAOContractImpl(kodein.instance())
         }
 
         bind<SummonerDAOContractImpl>() with provider {

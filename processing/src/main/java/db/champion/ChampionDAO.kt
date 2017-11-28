@@ -4,6 +4,7 @@ import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.KodeinAware
 import com.github.salomonbrys.kodein.instance
 import db.requests.DBHelper
+import di.KodeinManager
 import extensions.*
 import model.champion.Champion
 import model.champion.ChampionImage
@@ -11,9 +12,7 @@ import model.champion.ChampionImage
 /**
  * @author Josiah Kendall
  */
-class ChampionDAO(override val kodein : Kodein) : KodeinAware {
-
-    val dbHelper : DBHelper = instance()
+class ChampionDAO(val dbHelper : DBHelper) {
 
     private val CHAMPION_TABLE = "champion"
     private val CHAMPION_IMAGE_TABLE = "championimage"

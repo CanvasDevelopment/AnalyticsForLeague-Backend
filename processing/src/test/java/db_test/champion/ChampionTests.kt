@@ -1,5 +1,6 @@
 package db_test.champion
 
+import com.github.salomonbrys.kodein.instance
 import db.champion.ChampionDAO
 import di.KodeinManager
 import junit.framework.Assert.assertTrue
@@ -20,7 +21,7 @@ class ChampionTests {
         val championImage = ChampionImage("test", "test", "test", 1, 1, 1, 1)
         val champion = Champion(23,"jax","jax", "Grandmaster", championImage)
 
-        val championDAO = ChampionDAO(kodeinManager.kodein)
+        val championDAO = ChampionDAO(kodeinManager.kodein.instance())
         championDAO.saveChampion(champion)
 
         val c2 = championDAO.getChampion(23)

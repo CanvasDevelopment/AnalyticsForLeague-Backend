@@ -20,6 +20,7 @@ class MatchDAO(val dbHelper : DBHelper,
      */
     override fun deleteAllMatchesFromRawDBForASummoner(summonerId: Long) {
         val tables = Tables()
+        dbHelper.connect()
         dbHelper.executeSQLScript("DELETE FROM matchtable")
         dbHelper.executeSQLScript("DELETE FROM mastery")
         dbHelper.executeSQLScript("DELETE FROM participantIdentity")

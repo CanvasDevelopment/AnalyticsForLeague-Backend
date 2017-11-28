@@ -1,6 +1,5 @@
 package network
 
-import com.github.salomonbrys.kotson.*
 import com.google.gson.Gson
 import db.requests.EndpointRateLimitStatusDao
 import db.requests.RateLimitDao
