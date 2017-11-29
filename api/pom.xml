@@ -10,7 +10,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
         <endpoints.framework.version>2.0.8</endpoints.framework.version>
         <endpoints.management.version>1.0.5</endpoints.management.version>
         <endpoints.project.id>analytics-for-league</endpoints.project.id>

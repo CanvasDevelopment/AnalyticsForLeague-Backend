@@ -4,13 +4,13 @@
     <servlet>
         <servlet-name>EndpointsServlet</servlet-name>
         <servlet-class>com.google.api.server.spi.EndpointsServlet</servlet-class>
+        <!--<init-param>-->
+            <!--<param-name>services</param-name>-->
+            <!--<param-value>api.Summoner</param-value>-->
+        <!--</init-param>-->
         <init-param>
             <param-name>services</param-name>
-            <param-value>api.Summoner</param-value>
-        </init-param>
-        <init-param>
-            <param-name>analysis</param-name>
-            <param-value>api.stat.analysis.AnalysisApi</param-value>
+            <param-value>api.Analysis, api.Summoner</param-value>
         </init-param>
     </servlet>
     <!-- Route API method requests to the backend. -->
