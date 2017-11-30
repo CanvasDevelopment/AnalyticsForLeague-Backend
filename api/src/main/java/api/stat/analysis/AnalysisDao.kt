@@ -94,18 +94,43 @@ class AnalysisDao (private val dbHelper: DbHelper){
      * @throws              IllegalStateException if we fail to find any data.
      */
     fun fetchMinDeltas(summonerId: Long, numberOfGames: Int, lane: String, deltaType : String) : RawDelta {
-        val sql = Builder()
-                .stat("min(${deltaType}EarlyGame) as EarlyGame," +
-                        "min(${deltaType}MidGame) as MidGame," +
-                        "min(${deltaType}LateGame) as LateGame").tableName("${lane}_summarystats")
-                .where("heroSummonerId = $summonerId")
+        val gameStages = ArrayList<String>()
+        gameStages.add("EarlyGame")
+        gameStages.add("MidGame")
+        gameStages.add("LateGame")
+
+        val sqlEarlyGame = Builder()
+                .stat("min(${deltaType}EarlyGame) as EarlyGame")
+                .tableName("${lane}_summarystats")
+                .where("heroSummonerId = $summonerId And ${deltaType}EarlyGame Is Not Null and ${deltaType}EarlyGame > 0")
+                .games(numberOfGames)
+                .toSql()
+        val resultEarlyGame = dbHelper.executeSqlQuery(sqlEarlyGame)
+
+        val sqlMidGame = Builder()
+                .stat("min(${deltaType}MidGame) as MidGame")
+                .tableName("${lane}_summarystats")
+                .where("heroSummonerId = $summonerId And ${deltaType}MidGame Is Not Null and ${deltaType}MidGame > 0")
                 .games(numberOfGames)
                 .toSql()
 
-        val result = dbHelper.executeSqlQuery(sql)
-        if (result.next()) {
-            return result.produceRawDelta()
+        val resultMidGame = dbHelper.executeSqlQuery(sqlMidGame)
+
+        val sqlLateGame = Builder()
+                .stat("min(${deltaType}LateGame) as LateGame")
+                .tableName("${lane}_summarystats")
+                .where("heroSummonerId = $summonerId And ${deltaType}LateGame Is Not Null and ${deltaType}LateGame > 0")
+                .games(numberOfGames)
+                .toSql()
+
+        val resultLateGame = dbHelper.executeSqlQuery(sqlLateGame)
+
+        if (resultEarlyGame.next() && resultMidGame.next() && resultLateGame.next()) {
+            return RawDelta(resultEarlyGame.getFloat("EarlyGame"),
+                    resultMidGame.getFloat("MidGame"),
+                    resultLateGame.getFloat("LateGame"))
         }
+
         throw IllegalStateException("Failed to find stats, Please fix this query")
     }
 
@@ -134,7 +159,6 @@ class AnalysisDao (private val dbHelper: DbHelper){
         throw IllegalStateException("Failed to find stats, Please fix this query")
     }
 
-
     private fun ResultSet.produceRawDelta() : RawDelta {
         return RawDelta(getFloat("EarlyGame"),
                 getFloat("MidGame"),
@@ -151,4 +175,6 @@ class AnalysisDao (private val dbHelper: DbHelper){
                 getFloat("avg(villanCreepsLateGame)")
         )
     }
+
+    private fun ResultSet.produceFloat(floatName : String) : Float = getFloat(floatName)
 }
