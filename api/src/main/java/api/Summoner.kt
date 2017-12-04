@@ -71,7 +71,5 @@ class Summoner {
     @ApiMethod(name = "sync",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "sync/{summonerId}")
-    fun sync(@Named("summonerId") summonerId : Long) : Response {
-        summonerController.syncSummoner(summonerId)
-    }
+    fun sync(@Named("summonerId") summonerId : Long) : Response = summonerController.syncSummoner(summonerId)
 }
