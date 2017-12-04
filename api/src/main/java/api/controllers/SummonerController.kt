@@ -60,4 +60,12 @@ class SummonerController(private val summonerDao: SummonerDao,
                 ?: return Response(404, "{}")
         return Response(200, gson.toJson(summonerDetails))
     }
+
+    fun syncSummoner(summonerId: Long) : Response {
+        val syncResult = processingInterface.syncUser(summonerId)
+        if (syncResult) {
+            return Response(200, "ok")
+        }
+        return Response(500, "Error occurred - sync interface returned false")
+    }
 }

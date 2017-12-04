@@ -15,18 +15,14 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
     /**
      * The fetch for getting the information for the creeps
      */
-    fun creepsPerMinuteDeltasCard(summonerId : Long, games : Int, lane : String) : CreepsPerMinuteDeltasCard{
-       // get creeps per minute early, mid and late for hero, for the enemy, for the villan
-        return analysisDao.fetchAvgCreepsPerMinStatCard(summonerId, games, lane)
-    }
+    fun creepsPerMinuteDeltasCard(summonerId : Long, games : Int, lane : String) : CreepsPerMinuteDeltasCard =// get creeps per minute early, mid and late for hero, for the enemy, for the villan
+            analysisDao.fetchAvgCreepsPerMinStatCard(summonerId, games, lane)
 
     /**
      * The fetch for getting the information for the creeps
      */
-    fun damagePerMinuteDeltasCard(summonerId : Long, games : Int, lane : String) : CreepsPerMinuteDeltasCard{
-        // get creeps per minute early, mid and late for hero, for the enemy, for the villan
-        return analysisDao.fetchAvgCreepsPerMinStatCard(summonerId, games, lane)
-    }
+    fun damagePerMinuteDeltasCard(summonerId : Long, games : Int, lane : String) : CreepsPerMinuteDeltasCard =// get creeps per minute early, mid and late for hero, for the enemy, for the villan
+            analysisDao.fetchAvgCreepsPerMinStatCard(summonerId, games, lane)
 
     /**
      * The fetch for getting the information for the creeps per minute card detail page.

@@ -11,8 +11,8 @@ import kotlin.test.assertEquals
  */
 
 class AnalysisDaoTests {
-    val dbHelper = DbHelper()
-    val ad = AnalysisDao(dbHelper)
+    private val dbHelper = DbHelper()
+    private val ad = AnalysisDao(dbHelper)
 
     @Before
     fun setUp () {
@@ -23,11 +23,11 @@ class AnalysisDaoTests {
     fun `Test That We Can Get Creeps Card Correctly`() {
         val card =  ad.fetchAvgCreepsPerMinStatCard(1542360,20,"MID")
         assert(card.heroCreepsEarlyGame == 62f)
-        assert(card.heroCreepsMidGame == 65.33333587646484f)
-        assert(card.heroCreepsLateGame == 50.666664123535156f)
+        assert(card.heroCreepsMidGame == 65.333336f)
+        assert(card.heroCreepsLateGame == 75.99999f)
         assert(card.villanCreepsEarlyGame == 36.5f)
-        assert(card.villanCreepsMidGame == 29f) // TODO make this fail. It should not have nulls saved.
-        assert(card.villanCreepsLateGame == 21f)
+        assert(card.villanCreepsMidGame == 29.0f)
+        assert(card.villanCreepsLateGame == 42.0f)
     }
 
     @Test
@@ -35,7 +35,7 @@ class AnalysisDaoTests {
         val deltas = ad.fetchAvgDeltas(1542360, 20, "mid","heroCreeps")
         assert(deltas.earlyGame == 62f)
         assert(deltas.midGame == 65.33333587646484f)
-        assert(deltas.lateGame == 50.666664123535156f)
+        assert(deltas.lateGame == 75.99999f)
     }
 
     @Test
@@ -51,6 +51,6 @@ class AnalysisDaoTests {
         val deltas = ad.fetchMinDeltas(1542360, 20, "mid","heroDamage")
         assert(deltas.earlyGame == 2232f)
         assertEquals(deltas.midGame , 3601f)
-        assert(deltas.lateGame == 0f)
+        assert(deltas.lateGame == 4090.0f)
     }
 }

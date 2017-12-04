@@ -67,4 +67,11 @@ class Summoner {
             path = "summonerDetails/{summonerId}")
     fun getSummonerDetails(@Named("summonerId") summonerId : Long) : Response =
             summonerController.fetchSummonerDetails(summonerId)
+
+    @ApiMethod(name = "sync",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "sync/{summonerId}")
+    fun sync(@Named("summonerId") summonerId : Long) : Response {
+        summonerController.syncSummoner(summonerId)
+    }
 }

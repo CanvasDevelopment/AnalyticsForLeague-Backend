@@ -10,7 +10,7 @@
         <!--</init-param>-->
         <init-param>
             <param-name>services</param-name>
-            <param-value>api.Analysis, api.Summoner</param-value>
+            <param-value>api.stat.analysis.Analysis, api.Summoner</param-value>
         </init-param>
     </servlet>
     <!-- Route API method requests to the backend. -->

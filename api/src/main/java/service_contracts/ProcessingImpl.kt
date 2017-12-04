@@ -27,7 +27,7 @@ class ProcessingImpl : ProcessingContract {
             LOCAL_URL
         }
     }
-    override fun syncUser(accountId: Long): Boolean {
+    override fun syncUser(summonerId: Long): Boolean {
 
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

@@ -20,5 +20,5 @@ interface ProcessingContract {
      *
      * @return True if the sync was successful, false if not.
      */
-    fun syncUser(accountId : Long) : Boolean
+    fun syncUser(summonerId: Long) : Boolean
 }
