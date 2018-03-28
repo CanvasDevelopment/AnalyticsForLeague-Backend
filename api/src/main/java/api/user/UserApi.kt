@@ -40,7 +40,7 @@ class UserApi {
     @ApiMethod(name = "sayHello",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "sayHello/{name}")
-    fun sayHello(@Named("name") name : String) : Response {
+    fun sayHello(@Named("name") name : String) : Response<String> {
         return Response(200, "Hello $name")
     }
 }

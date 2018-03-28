@@ -32,13 +32,12 @@ class SummonerUnitTests {
         `when`(processor.createNewUser(ArgumentMatchers.anyString())).thenReturn(200)
         `when`(summonerDao.getSummoner(ArgumentMatchers.anyString())).thenReturn(summonerDetails)
         val savedSummonerResponse = summonerController.registerSummoner("bob_the_feeder")
-        val result = gson.fromJson<SummonerDetails>(savedSummonerResponse.data, SummonerDetails::class.java)
-        assert(result.id == summonerDetails.id)
-        assert(result.accountId == summonerDetails.accountId)
-        assert(result.revisionDate == summonerDetails.revisionDate)
-        assert(result.name == summonerDetails.name)
-        assert(result.profileIconId== summonerDetails.profileIconId)
-        assert(result.summonerLevel== summonerDetails.summonerLevel)
+        assert(savedSummonerResponse.data.id == summonerDetails.id)
+        assert(savedSummonerResponse.data.accountId == summonerDetails.accountId)
+        assert(savedSummonerResponse.data.revisionDate == summonerDetails.revisionDate)
+        assert(savedSummonerResponse.data.name == summonerDetails.name)
+        assert(savedSummonerResponse.data.profileIconId== summonerDetails.profileIconId)
+        assert(savedSummonerResponse.data.summonerLevel== summonerDetails.summonerLevel)
     }
 
     @Test
@@ -55,7 +54,7 @@ class SummonerUnitTests {
         `when`(summonerDao.getSummoner(summonerName)).thenReturn(null)
         val summonerExistence = summonerController.isSummonerRegistered(summonerName)
         assert(summonerExistence.resultCode == 404)
-        assert(!gson.fromJson(summonerExistence.data, SummonerExistence::class.java).exists)
+        assert(!summonerExistence.data)
     }
 
     @Test

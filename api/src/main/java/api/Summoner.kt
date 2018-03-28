@@ -7,6 +7,7 @@ import database.DbHelper
 import db.summoner.SummonerDao
 import di.KodeinManager
 import model.Response
+import model.response_beans.SummonerDetails
 import service_contracts.ProcessingImpl
 
 /**
@@ -20,7 +21,7 @@ import service_contracts.ProcessingImpl
 )
 class Summoner {
 
-    val km = KodeinManager()
+    private val km = KodeinManager()
     private val dbHelper = km.kodein.instance<DbHelper>()
     private val summonerDao = SummonerDao(dbHelper)
     private val processingInterface = ProcessingImpl()
@@ -29,7 +30,7 @@ class Summoner {
     @ApiMethod(name = "sayHello",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "sayHello/{name}")
-    fun sayHello(@Named("name") name : String) : Response = Response(200, "Hello $name, dbhelper is null : ${dbHelper == null}")
+    fun sayHello(@Named("name") name : String) : Response<String> = Response(200, "Hello $name, dbhelper is null : ${dbHelper == null}")
 
     /**
      * Find out if a summoner is registered with our database.
@@ -40,7 +41,7 @@ class Summoner {
     @ApiMethod(name = "isSummonerRegistered",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "isRegistered/{name}")
-    fun isSummonerRegistered(@Named("name") summonerName: String) : Response =
+    fun isSummonerRegistered(@Named("name") summonerName: String) : Response<Boolean> =
             summonerController.isSummonerRegistered(summonerName)
 
     /**
@@ -53,7 +54,7 @@ class Summoner {
     @ApiMethod(name = "registerSummoner",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "register/{name}")
-    fun registerSummoner(@Named("name") summonerName: String) : Response =
+    fun registerSummoner(@Named("name") summonerName: String) : Response<SummonerDetails> =
             summonerController.registerSummoner(summonerName)
 
     /**
@@ -65,11 +66,11 @@ class Summoner {
     @ApiMethod(name = "summonerDetails",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "summonerDetails/{summonerId}")
-    fun getSummonerDetails(@Named("summonerId") summonerId : Long) : Response =
+    fun getSummonerDetails(@Named("summonerId") summonerId : Long) : Response<SummonerDetails> =
             summonerController.fetchSummonerDetails(summonerId)
 
     @ApiMethod(name = "sync",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "sync/{summonerId}")
-    fun sync(@Named("summonerId") summonerId : Long) : Response = summonerController.syncSummoner(summonerId)
+    fun sync(@Named("summonerId") summonerId : Long) : Response<String> = summonerController.syncSummoner(summonerId)
 }

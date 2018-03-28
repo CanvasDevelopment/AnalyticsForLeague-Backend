@@ -16,20 +16,21 @@ class ProcessingImpl : ProcessingContract {
 
     private val gson = Gson()
     private val PRODUCTION_URL = "https://processing-dot-analytics-for-league.appspot.com/"
-    private val LOCAL_URL = "http://localhost:43210"
+    private val LOCAL_URL = "http://192.168.1.3:43210"
     private val url : String
 
-    constructor() {
-
+    init {
         url = if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
             PRODUCTION_URL
-        }else {
+        } else {
             LOCAL_URL
         }
     }
-    override fun syncUser(summonerId: Long): Boolean {
 
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun syncUser(summonerId: Long): Boolean {
+        val syncUrl = url + "/_ah/processing/api/v1/syncUser/$summonerId"
+        val result = sendHttpGetRequest(Response::class.java, URL(syncUrl))
+        return result.code == 200
     }
 
     override fun createNewUser(accountName: String): Int {

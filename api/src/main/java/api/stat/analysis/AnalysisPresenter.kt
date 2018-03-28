@@ -12,6 +12,9 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
 
     fun sayHi() : String = "hi"
 
+
+    // fetch card - and just pass forward the params. Then when we fetch
+
     /**
      * The fetch for getting the information for the creeps
      */

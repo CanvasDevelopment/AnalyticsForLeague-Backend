@@ -22,16 +22,15 @@ import model.beans.Response
 )
 class Api  {
 
-    val km = KodeinManager()
+    private val km = KodeinManager()
     private val sync = km.kodein.instance<Sync>()
     private val summonerControl = km.kodein.instance<SummonerControl>()
 
     @ApiMethod(name = "syncUser",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "syncUser/{summonerId}")
-    fun syncUser(@Named("summonerId")summonerId : Long): Response {
-        val responseCode =  sync.syncMatches(summonerId)
-
+    fun syncUser(@Named("summonerId") summonerId : Long): Response {
+        val responseCode = sync.syncMatches(summonerId)
         return Response(responseCode, "")
     }
 

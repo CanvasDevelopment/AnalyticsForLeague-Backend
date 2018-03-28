@@ -1,15 +1,35 @@
 package api.stat.analysis
 
 import api.stat.analysis.model.CreepsPerMinuteDeltasCard
+import api.stat.analysis.model.HeadToHeadStat
 import api.stat.analysis.model.RawDelta
 import database.DbHelper
 import database.sql_builder.Builder
 import java.sql.ResultSet
+import util.GameStages
 
 /**
  * @author Josiah Kendall
  */
 class AnalysisDao (private val dbHelper: DbHelper){
+
+    /**
+     * Fetch a stat value for the hero and the equivalent value for the villan. This is intended for the delta type stats
+     * that have three game stages - e.g Creeps, damage etc.
+     *
+     * @param summonerId    Our hero summoner id
+     * @param numberOfGames The number of games to calculate this stat from. Goes from most recent first, so a numberOfGames = 20
+     *                      would mean that we only fetch from the most recent 20 games.
+     * @param lane          The lane to get the results for
+     * @param accumulatorType   The stat accumulator type. This can be average, max or min
+     * @param gameStage         The game stage we want this stat for - see [GameStages]
+     * @param statName          The statName that we want to
+     */ // todo TEST me for all
+    fun fetchHeadToHeadStat(summonerId: Long, numberOfGames: Int, lane: String, accumulatorType: String, gameStage: String, statName: String) : HeadToHeadStat {
+        val hero = fetchStat(numberOfGames, "hero$statName", lane, summonerId, gameStage, accumulatorType)
+        val villan = fetchStat(numberOfGames, "villan$statName", lane, summonerId, gameStage, accumulatorType)
+        return HeadToHeadStat(villan, hero)
+    }
 
     fun fetchAvgCreepsPerMinStatCard(summonerId : Long, numberOfGames : Int, lane : String) : CreepsPerMinuteDeltasCard {
 
@@ -100,11 +120,23 @@ class AnalysisDao (private val dbHelper: DbHelper){
         throw IllegalStateException("Failed to find stats, Please fix this query")
     }
 
-    private fun fetchStat(numberOfGames : Int, deltaType: String, lane: String, summonerId: Long, gameStage: String, statAccumulator: String) : Float {
+    /**
+     * A flexible fetch method used to build sql queries and return a given stat.
+     *
+     * @param numberOfGames     The number of recent games to limit the filter to.
+     * @param statType          The type of stat that we are fetching.
+     * @param lane              The lane that we want the results for.
+     * @param summonerId        The summoner id for whom the results are for.
+     * @param gameStage         The stage of the game that this specific stat was for.
+     * @param statAccumulator   The type of stat presentation- average, max min etc
+     *
+     * @return A [Float] value, based on the given parameters.
+     */
+    private fun fetchStat(numberOfGames : Int, statType: String, lane: String, summonerId: Long, gameStage: String, statAccumulator: String) : Float {
         val sqlEarlyGame = Builder()
-                .stat("$statAccumulator(${deltaType+gameStage}) as $gameStage")
+                .stat("$statAccumulator(${statType+gameStage}) as $gameStage")
                 .tableName("${lane}_summarystats")
-                .where("heroSummonerId = $summonerId And ${deltaType+gameStage} Is Not Null and ${deltaType+gameStage} > 0")
+                .where("heroSummonerId = $summonerId And ${statType+gameStage} Is Not Null and ${statType+gameStage} > 0")
                 .games(numberOfGames)
                 .toSql()
         val result = dbHelper.executeSqlQuery(sqlEarlyGame)
