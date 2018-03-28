@@ -1,0 +1,15 @@
+{
+  "image": {
+    "full": "MonkeyKing.png",
+    "group": "champion",
+    "sprite": "champion2.png",
+    "h": 48,
+    "w": 48,
+    "y": 48,
+    "x": 48
+  },
+  "title": "the Monkey King",
+  "name": "Wukong",
+  "key": "MonkeyKing",
+  "id": 62
+}
