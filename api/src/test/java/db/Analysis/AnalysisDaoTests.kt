@@ -22,12 +22,12 @@ class AnalysisDaoTests {
     @Test
     fun `Test That We Can Get Creeps Card Correctly`() {
         val card =  ad.fetchAvgCreepsPerMinStatCard(1542360,20,"MID")
-        assert(card.heroCreepsEarlyGame == 62f)
-        assert(card.heroCreepsMidGame == 65.333336f)
-        assert(card.heroCreepsLateGame == 75.99999f)
-        assert(card.villanCreepsEarlyGame == 36.5f)
-        assert(card.villanCreepsMidGame == 29.0f)
-        assert(card.villanCreepsLateGame == 42.0f)
+        assert(card.heroEarlyGame == 62f)
+        assert(card.heroMidGame == 65.333336f)
+        assert(card.heroLateGame == 75.99999f)
+        assert(card.villanEarlyGame == 36.5f)
+        assert(card.villanMidGame == 29.0f)
+        assert(card.villanLateGame == 42.0f)
     }
 
     @Test
