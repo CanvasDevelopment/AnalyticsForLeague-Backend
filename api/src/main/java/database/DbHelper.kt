@@ -40,9 +40,9 @@ class DbHelper {
      */
     constructor() {
 
-        this.host = Constant.DEFAULT_HOST
-        this.username = Constant.DEFAULT_USERNAME
-        this.password = Constant.DEFAULT_PASSWORD
+        this.host = Constant.Database.DEFAULT_HOST
+        this.username = Constant.Database.DEFAULT_USERNAME
+        this.password = Constant.Database.DEFAULT_PASSWORD
         connect()
     }
 
@@ -82,16 +82,16 @@ class DbHelper {
                 // Local MySQL instance to use during development.
                 Class.forName("com.mysql.jdbc.Driver")
                 // For some reason the local connection variable doesnt work, even though it seems to be correct. Therefore i use this connection method.
-                try {
+                return try {
                     connection = DriverManager.getConnection(host!!, username, password)
                     currentlyConnected = connection!!.isValid(1000)
-                    return currentlyConnected
+                    currentlyConnected
                 } catch (sqlException: SQLException) {
                     println("An error occured whist getting a connection to the database.\n"
                             + "host: " + host + "\n"
                             + "username: " + username)
                     println(sqlException.message)
-                    return false
+                    false
                 }
 
             }

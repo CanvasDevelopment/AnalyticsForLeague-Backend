@@ -4,9 +4,12 @@ package util
  * @author Josiah Kendall
  */
 class Constant {
-    val DEFAULT_HOST = "jdbc:mysql://localhost:3306/local_lolanlaytics"
-    val DEFAULT_USERNAME = "root"
-    val DEFAULT_PASSWORD = "Idnw2bh2"
+    object Database {
+        val DEFAULT_HOST = "jdbc:mysql://localhost:3306/local_lolanlaytics"
+        val DEFAULT_USERNAME = "root"
+        val DEFAULT_PASSWORD = "Idnw2bh2"
+    }
+
 
     /**
      * Our different cardUrl types
@@ -40,6 +43,33 @@ class Constant {
         const val EARLY_GAME = "EarlyGame"
         const val MID_GAME = "MidGame"
         const val LATE_GAME = "LateGame"
+    }
+
+    object StatTypes {
+        const val CREEPS = "Creeps"
+        const val DAMAGE_DEALT = "Damage"
+        const val GOLD = "Gold"
+        const val XP = "Xp"
+        const val WARDS_PLACED = "WardsPlaced"
+        const val WARDS_KILLED = "WardsKilled"
+        const val TEAM_BARON_KILLS = "TeamBaronKills"
+        const val TEAM_DRAGON_KILLS = "TeamDragonKills"
+        const val RIFT_HERALD_KILLS = "TeamRiftHeraldKills"
+    }
+
+    object StatAccumulators {
+        const val AVG = "avg"
+        const val MAX = "max"
+        const val MIN = "min"
+        const val SUM = "sum"
+    }
+
+    object LANE {
+        const val TOP = "top"
+        const val MID = "mid"
+        const val JUNGLE = "jungle"
+        const val ADC = "adc"
+        const val SUPPORT = "support"
     }
 
 }

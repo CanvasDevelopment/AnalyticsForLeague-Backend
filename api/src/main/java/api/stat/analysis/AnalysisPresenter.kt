@@ -5,6 +5,7 @@ import service_contracts.ProcessingImpl
 import util.Constant.GameStage.EARLY_GAME
 import util.Constant.GameStage.LATE_GAME
 import util.Constant.GameStage.MID_GAME
+import util.Constant.StatAccumulators.AVG
 
 /**
  * @author Josiah Kendall
@@ -12,9 +13,9 @@ import util.Constant.GameStage.MID_GAME
 class AnalysisPresenter(private val processingApi : ProcessingImpl,
                         private val analysisDao: AnalysisDao){
 
+    private val defaultStatTypes = DefaultStatTypes()
 
     fun sayHi() : String = "hi"
-
 
     /**
      * Fetch an [ArrayList] of [AnalysisStatCardSkeleton]. Each one of these represents a card on the analysis/stats tab.
@@ -32,7 +33,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
         // return the list for stats for the given role.
         // switch
         // For each role, this will be a different type of stat
-        TODO()
+        return defaultStatTypes.getDefaultStats(summonerId, lane)
     }
 
     /**
@@ -48,7 +49,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @return An ArrayList of card summaries which allow use to build cards and fetch the details for them in the app.
      */
     fun fetchStatList(summonerId: Long, lane: String, champId : Int) : ArrayList<AnalysisStatCardSkeleton> {
-        TODO()
+        return defaultStatTypes.getDefaultStats(summonerId, champId, lane)
     }
 
 
@@ -63,18 +64,9 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @param statName          The name of that stat that we are interested in.
      * @param statAccumulatorType   The accumulation type. For instance, max, min or average.
      */
-    fun fetchStatsForCard(summonerId: Long, games: Int, lane: String, champId: Int, statName : String, statAccumulatorType : String) : ArrayList<HeadToHeadStat> {
+    fun fetchStatsForFullCard(summonerId: Long, games: Int, lane: String, champId: Int, statName : String, statAccumulatorType : String) : ArrayList<HeadToHeadStat> {
+        return analysisDao.fetchDeltas(summonerId,games,lane,statName,statAccumulatorType,champId)
 
-        val earlyGame = analysisDao.fetchHeadToHeadStat(summonerId,games,lane,statAccumulatorType, EARLY_GAME,statName, champId)
-        val midGame = analysisDao.fetchHeadToHeadStat(summonerId,games,lane,statAccumulatorType, MID_GAME,statName, champId)
-        val lateGame = analysisDao.fetchHeadToHeadStat(summonerId,games,lane,statAccumulatorType, LATE_GAME,statName, champId)
-
-        val result = ArrayList<HeadToHeadStat>()
-        result.add(earlyGame)
-        result.add(midGame)
-        result.add(lateGame)
-
-        return result
     }
 
 
@@ -87,20 +79,9 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @param statName          The name of that stat that we are interested in.
      * @param statAccumulatorType   The accumulation type. For instance, max, min or average.
      */
-    fun fetchStatsForCard(summonerId: Long, games: Int, lane: String, statName : String, statAccumulatorType : String) : ArrayList<HeadToHeadStat> {
-
-        val earlyGame = analysisDao.fetchHeadToHeadStat(summonerId,games,lane,statAccumulatorType, EARLY_GAME,statName)
-        val midGame = analysisDao.fetchHeadToHeadStat(summonerId,games,lane,statAccumulatorType, MID_GAME,statName)
-        val lateGame = analysisDao.fetchHeadToHeadStat(summonerId,games,lane,statAccumulatorType, LATE_GAME,statName)
-
-        val result = ArrayList<HeadToHeadStat>()
-        result.add(earlyGame)
-        result.add(midGame)
-        result.add(lateGame)
-
-        return result
+    fun fetchStatsForFullCard(summonerId: Long, games: Int, lane: String, statName : String, statAccumulatorType : String) : ArrayList<HeadToHeadStat> {
+        return analysisDao.fetchDeltas(summonerId,games,lane,statName,statAccumulatorType)
     }
-
 
     /**
      * The fetch for getting the information for the creeps
@@ -108,11 +89,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
     fun creepsPerMinuteDeltasCard(summonerId : Long, games : Int, lane : String) : FullStatCard =// get creeps per minute early, mid and late for hero, for the enemy, for the villan
             analysisDao.fetchAvgCreepsPerMinStatCard(summonerId, games, lane)
 
-    /**
-     * The fetch for getting the information for the creeps
-     */
-    fun damagePerMinuteDeltasCard(summonerId : Long, games : Int, lane : String) : FullStatCard =// get creeps per minute early, mid and late for hero, for the enemy, for the villan
-            analysisDao.fetchAvgCreepsPerMinStatCard(summonerId, games, lane)
+    fun fetchStatDetails()
 
     /**
      * The fetch for getting the information for the creeps per minute cardUrl detailUrl page.
@@ -154,6 +131,32 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
                 minHero,
                 minVillan)
     }
+
+    /**
+     * Return a single stat for a "Half card" on the app.
+     *
+     * @param summonerId
+     * @param numberOfGames
+     * @param lane
+     * @param champId
+     * @param statName
+     */
+    fun fetchStatsForHalfCard(summonerId: Long, numberOfGames: Int, lane: String, champId: Int, statName: String): HeadToHeadStat {
+        return analysisDao.fetchHeadToHeadStat(summonerId, numberOfGames,lane,AVG,statName,champId)
+    }
+
+    /**
+     * Return a single stat for a "Half card" on the app.
+     *
+     * @param summonerId
+     * @param numberOfGames
+     * @param lane
+     * @param statName
+     */
+    fun fetchStatsForHalfCard(summonerId: Long, numberOfGames: Int, lane: String, statName: String): HeadToHeadStat {
+        return analysisDao.fetchHeadToHeadStat(summonerId, numberOfGames,lane,AVG,statName)
+    }
+
 
 
 }

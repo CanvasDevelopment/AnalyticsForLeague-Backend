@@ -16,11 +16,11 @@ import java.util.*
  */
 class AnalysisPresenterTests {
 
-    val random = Random()
+    private val random = Random()
 
-    val processingApi = mock(ProcessingImpl::class.java)
-    val analysisDao = mock(AnalysisDao::class.java)
-    val analysisPresenter = AnalysisPresenter(processingApi, analysisDao)
+    private val processingApi = mock(ProcessingImpl::class.java)
+    private val analysisDao = mock(AnalysisDao::class.java)
+    private val analysisPresenter = AnalysisPresenter(processingApi, analysisDao)
 
 
     @Test
