@@ -42,10 +42,10 @@ class Analysis {
      * @param champId       The champion to filter the results to
      * @param games         The number of games
      */
-    @ApiMethod(name = "getStatList",
+    @ApiMethod(name = "getStatListWithChamp",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "getStatList/{summonerId}/{lane}/{champ}/{games}")
-    fun getStatList(@Named("summonerId") summonerId: Long,
+    fun getStatListWithChamp(@Named("summonerId") summonerId: Long,
                     @Named("lane") lane : String,
                     @Named("champ")champId: Int,
                     @Named("games")games: Int) : ArrayList<AnalysisStatCardSkeleton> {
@@ -62,60 +62,6 @@ class Analysis {
         return presenter.fetchStatList(summonerId,lane)
     }
 
-    @ApiMethod(name = "creepsPerMinuteDeltasCard",
-            httpMethod = ApiMethod.HttpMethod.GET,
-            path = "creepsPerMinute/cardUrl/{summonerId}/{games}/{lane}")
-    fun creepsPerMinuteDeltasCard(@Named("summonerId")summonerId : Long,
-                                  @Named("games") games : Int,
-                                  @Named("lane") lane : String) : FullStatCard {
-        return presenter.creepsPerMinuteDeltasCard(summonerId, games, lane)
-    }
-
-    /**
-     * The fetch for getting the information for the creeps per minute cardUrl detailUrl page.
-     *
-     * @param summonerId    The hero summoner id.
-     * @param games         The number of recent games to limit our filter to.
-     * @param lane          The lane we want the info for.
-     * @return A [CreepsPerMinuteDeltasDetail] object with the stats on it.
-     */
-    @ApiMethod(name = "creepsPerMinuteDeltasDetail",
-            httpMethod = ApiMethod.HttpMethod.GET,
-            path = "creepsPerMinute/details/{summonerId}/{games}/{lane}")
-    fun creepsPerMinuteDeltasDetail(@Named("summonerId")summonerId : Long,
-                                    @Named("games") games : Int,
-                                    @Named("lane") lane : String) : CreepsPerMinuteDeltasDetail {
-
-        return presenter.creepsPerMinuteDeltasDetail(summonerId,games, lane)
-    }
-
-    /**
-     * The fetch for getting the information for the damage per minute cardUrl detailUrl page.
-     *
-     * @param summonerId    The hero summoner id.
-     * @param games         The number of recent games to limit our filter to.
-     * @param lane          The lane we want the info for.
-     * @return A [CreepsPerMinuteDeltasDetail] object with the stats on it.
-     */
-    @ApiMethod(name = "damagePerMinuteDeltasDetail",
-            httpMethod = ApiMethod.HttpMethod.GET,
-            path = "damagePerMinute/details/{summonerId}/{games}/{lane}")
-    fun damagePerMinuteDeltasDetail(@Named("summonerId")summonerId : Long,
-                                    @Named("games") games : Int,
-                                    @Named("lane") lane : String) : CreepsPerMinuteDeltasDetail {
-        return presenter.damagePerMinuteDeltasDetail(summonerId,games, lane)
-    }
-
-    @ApiMethod(name = "damagePerMinuteDeltasCard",
-            httpMethod = ApiMethod.HttpMethod.GET,
-            path = "damagePerMinute/cardUrl/{summonerId}/{games}/{lane}")
-    fun damagePerMinuteDeltasCard(@Named("summonerId")summonerId : Long,
-                                  @Named("games") games : Int,
-                                  @Named("lane") lane : String) : FullStatCard {
-
-        return presenter.creepsPerMinuteDeltasCard(summonerId, games, lane)
-    }
-
     /**
      * Fetch a [AnalysisStatCardSkeleton] array for loading data on a card.
      *
@@ -126,10 +72,10 @@ class Analysis {
      * @param champId       The id of the champion that the user wants to filter the results to.
      * @param statName      The name of the statistics that are required. See [StatTypes].
      */
-    @ApiMethod(name = "fetchFullStatCardValues",
+    @ApiMethod(name = "fetchFullStatCardWithChamp",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "fullStatCard/{summonerId}/{games}/{lane}/{champ}/{statName}")
-    fun fetchFullStatCardValues(@Named("summonerId") summonerId: Long,
+    fun fetchFullStatCardValuesWithChamp(@Named("summonerId") summonerId: Long,
                                 @Named("games") numberOfGames : Int,
                                 @Named("lane") lane: String,
                                 @Named("champ") champId : Int,
@@ -147,7 +93,7 @@ class Analysis {
      */
     @ApiMethod(name = "fetchFullStatCardValues",
             httpMethod = ApiMethod.HttpMethod.GET,
-            path = "fullStatCard/{summonerId}/{games}/{lane}/{champ}/{statName}")
+            path = "fullStatCard/{summonerId}/{games}/{lane}/{statName}")
     fun fetchFullStatCardValues(@Named("summonerId") summonerId: Long,
                                 @Named("games") numberOfGames : Int,
                                 @Named("lane") lane: String,
@@ -155,20 +101,33 @@ class Analysis {
         return presenter.fetchStatsForFullCard(summonerId,numberOfGames,lane,statName,AVG)
     }
 
-
     /**
-     * Fetch a half stat - a stat that covers only half the screen. This usually represents a single stat - such as wards
+     * Fetch a half select - a select that covers only half the screen. This usually represents a single select - such as wards
      * killed, or wards placed, or barons killed etc..
      */
-    fun fetchHalfStatCard(@Named("summonerId") summonerId: Long,
-                          @Named("games") numberOfGames : Int,
-                          @Named("lane") lane: String,
-                          @Named("champ") champId : Int,
-                          @Named("statName") statName : String) : HeadToHeadStat {
+    @ApiMethod(name = "fetchHalfStatCardWithChamp",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "halfStatCard/{summonerId}/{games}/{lane}/{champ}/{statName}")
+    fun fetchHalfStatCardWithChamp( @Named("summonerId") summonerId: Long,
+                                    @Named("games") numberOfGames : Int,
+                                    @Named("lane") lane: String,
+                                    @Named("champ") champId : Int,
+                                    @Named("statName") statName : String) : HeadToHeadStat {
+
         return presenter.fetchStatsForHalfCard(summonerId, numberOfGames, lane, champId, statName)
     }
 
-
-
-
+    /**
+     * Fetch a half select - a select that covers only half the screen. This usually represents a single select - such as wards
+     * killed, or wards placed, or barons killed etc..
+     */
+    @ApiMethod(name = "fetchHalfStatCard",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "halfStatCard/{summonerId}/{games}/{lane}/{statName}")
+    fun fetchHalfStatCard( @Named("summonerId") summonerId: Long,
+                           @Named("games") numberOfGames : Int,
+                           @Named("lane") lane: String,
+                           @Named("statName") statName : String) : HeadToHeadStat {
+        return presenter.fetchStatsForHalfCard(summonerId, numberOfGames, lane, statName)
+    }
 }

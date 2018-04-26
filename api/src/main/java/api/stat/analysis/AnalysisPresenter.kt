@@ -6,6 +6,7 @@ import util.Constant.GameStage.EARLY_GAME
 import util.Constant.GameStage.LATE_GAME
 import util.Constant.GameStage.MID_GAME
 import util.Constant.StatAccumulators.AVG
+import util.Constant.StatAccumulators.MAX
 
 /**
  * @author Josiah Kendall
@@ -32,7 +33,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
 
         // return the list for stats for the given role.
         // switch
-        // For each role, this will be a different type of stat
+        // For each role, this will be a different type of select
         return defaultStatTypes.getDefaultStats(summonerId, lane)
     }
 
@@ -61,7 +62,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @param lane              The lane to filter our results to.
      * @param champId           The id of the champion that we want to filter/limit our results to. This means that we will
      *                          only be fetching games that the user played the champ specified by this id.
-     * @param statName          The name of that stat that we are interested in.
+     * @param statName          The name of that select that we are interested in.
      * @param statAccumulatorType   The accumulation type. For instance, max, min or average.
      */
     fun fetchStatsForFullCard(summonerId: Long, games: Int, lane: String, champId: Int, statName : String, statAccumulatorType : String) : ArrayList<HeadToHeadStat> {
@@ -76,7 +77,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @param summonerId        The summoner id of the user
      * @param games             The number of recent games to limit this fetch to.
      * @param lane              The lane to filter our results to.
-     * @param statName          The name of that stat that we are interested in.
+     * @param statName          The name of that select that we are interested in.
      * @param statAccumulatorType   The accumulation type. For instance, max, min or average.
      */
     fun fetchStatsForFullCard(summonerId: Long, games: Int, lane: String, statName : String, statAccumulatorType : String) : ArrayList<HeadToHeadStat> {
@@ -89,7 +90,104 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
     fun creepsPerMinuteDeltasCard(summonerId : Long, games : Int, lane : String) : FullStatCard =// get creeps per minute early, mid and late for hero, for the enemy, for the villan
             analysisDao.fetchAvgCreepsPerMinStatCard(summonerId, games, lane)
 
-    fun fetchStatDetails()
+    /**
+     * Stat details are the details page for a select, for instance when we click on the "DETAILS" button on a select such
+     * as creeps per minute.
+     *
+     * This page contains the history for that page as well as the max, the min and the total average for that select.
+     *
+     * Note that this page does not include a game stage, so it will be a total select. This is currently just for stats
+     * like kills or assists, but will be expanded to include delta / game stage stats too, such as damage and creeps.
+     *
+     * @param summonerId    The id of our hero.
+     * @param games         The number of games to fetch this data for. For example, to fetch data for the last 20, you
+     *                      would use 20 as a parameter. To get the data for all games, use 10000, or something stupid.
+     * @param lane          The lane that the summoner was playing.
+     * @param statName      The name of the select that we want to fetch.
+     */
+    fun fetchStatDetails(summonerId: Long, games : Int, lane: String, statName: String) : StatDetails {
+        val history = analysisDao.fetchPerformanceHistory(summonerId,games,lane, statName)
+        val max = analysisDao.fetchStat(games,statName,lane,summonerId, MAX)
+        val min = analysisDao.fetchStat(games,statName,lane,summonerId, MAX)
+        val avg = analysisDao.fetchStat(games,statName,lane,summonerId, MAX)
+
+        return StatDetails(history,max,min,avg)
+    }
+
+    /**
+     * Stat details are the details page for a select, for instance when we click on the "DETAILS" button on a select such
+     * as creeps per minute.
+     *
+     * This page contains the history for that page as well as the max, the min and the total average for that select.
+     *
+     * Note that this page does not include a game stage, so it will be a total select. This is currently just for stats
+     * like kills or assists, but will be expanded to include delta / game stage stats too, such as damage and creeps.
+     * @param summonerId    The id of our hero.
+     * @param games         The number of games to fetch this data for. For example, to fetch data for the last 20, you
+     *                      would use 20 as a parameter. To get the data for all games, use 10000, or something stupid.
+     * @param lane          The lane that the summoner was playing.
+     * @param statName      The name of the select that we want to fetch.
+     * @param heroChampId   Filter to just results where the hero used this champion.
+     */
+    fun fetchStatDetails(summonerId: Long, games : Int, lane: String, statName: String, heroChampId : Int) : StatDetails {
+        val history = analysisDao.fetchPerformanceHistory(summonerId,games,lane, statName,heroChampId)
+        val max = analysisDao.fetchStat(games,statName,lane,summonerId, MAX,heroChampId)
+        val min = analysisDao.fetchStat(games,statName,lane,summonerId, MAX, heroChampId)
+        val avg = analysisDao.fetchStat(games,statName,lane,summonerId, MAX, heroChampId)
+
+        return StatDetails(history,max,min,avg)
+    }
+
+    /**
+     * Stat details are the details page for a select, for instance when we click on the "DETAILS" button on a select such
+     * as creeps per minute.
+     *
+     * This page contains the history for that page as well as the max, the min and the total average for that select.
+     *
+     * Note that this page does not include a game stage, so it will be a total select. This is currently just for stats
+     * like kills or assists, but will be expanded to include delta / game stage stats too, such as damage and creeps.
+     * @param summonerId    The id of our hero.
+     * @param games         The number of games to fetch this data for. For example, to fetch data for the last 20, you
+     *                      would use 20 as a parameter. To get the data for all games, use 10000, or something stupid.
+     * @param lane          The lane that the summoner was playing.
+     * @param statName      The name of the select that we want to fetch.
+     * @param heroChampId   Filter to just results where the hero used this champion.
+     * @param gameStage     Indicate that only a certain game stage is required - either [EARLY_GAME], [MID_GAME] or [LATE_GAME]
+     */
+    fun fetchStatDetails(summonerId: Long, games : Int, lane: String, statName: String, heroChampId: Int, gameStage : String) : StatDetails {
+        val history = analysisDao.fetchPerformanceHistory(summonerId,games,lane, statName, heroChampId, gameStage)
+        val max = analysisDao.fetchStat(games,statName,lane,summonerId, gameStage, MAX,heroChampId)
+        val min = analysisDao.fetchStat(games,statName,lane,summonerId, gameStage, MAX,heroChampId)
+        val avg = analysisDao.fetchStat(games,statName,lane,summonerId, gameStage, MAX,heroChampId)
+
+        return StatDetails(history,max,min,avg)
+    }
+
+    /**
+     * Stat details are the details page for a select, for instance when we click on the "DETAILS" button on a select such
+     * as creeps per minute.
+     *
+     * This page contains the history for that page as well as the max, the min and the total average for that select.
+     *
+     * Note that this page does not include a game stage, so it will be a total select. This is currently just for stats
+     * like kills or assists, but will be expanded to include delta / game stage stats too, such as damage and creeps.
+     * @param summonerId    The id of our hero.
+     * @param games         The number of games to fetch this data for. For example, to fetch data for the last 20, you
+     *                      would use 20 as a parameter. To get the data for all games, use 10000, or something stupid.
+     * @param lane          The lane that the summoner was playing.
+     * @param statName      The name of the select that we want to fetch.
+     * @param gameStage     Indicate that only a certain game stage is required - either [EARLY_GAME], [MID_GAME] or [LATE_GAME]
+     */
+    fun fetchStatDetails(summonerId: Long, games : Int, lane: String, statName: String, gameStage : String) : StatDetails {
+        val history = analysisDao.fetchPerformanceHistory(summonerId,games,lane, statName, gameStage)
+        val max = analysisDao.fetchStat(games,statName,lane,summonerId, gameStage, MAX)
+        val min = analysisDao.fetchStat(games,statName,lane,summonerId, gameStage, MAX)
+        val avg = analysisDao.fetchStat(games,statName,lane,summonerId, gameStage, MAX)
+
+        return StatDetails(history,max,min,avg)
+    }
+
+
 
     /**
      * The fetch for getting the information for the creeps per minute cardUrl detailUrl page.
@@ -133,7 +231,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
     }
 
     /**
-     * Return a single stat for a "Half card" on the app.
+     * Return a single select for a "Half card" on the app.
      *
      * @param summonerId
      * @param numberOfGames
@@ -146,7 +244,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
     }
 
     /**
-     * Return a single stat for a "Half card" on the app.
+     * Return a single select for a "Half card" on the app.
      *
      * @param summonerId
      * @param numberOfGames

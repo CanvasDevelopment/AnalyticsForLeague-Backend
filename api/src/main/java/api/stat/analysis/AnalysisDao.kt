@@ -24,20 +24,20 @@ class AnalysisDao (private val dbHelper: DbHelper){
     private val heroLateGame = "heroLateGame"
     private val villanLateGame = "villanLateGame"
     /**
-     * Fetch a stat value for the hero and the equivalent value for the villan. This is intended for the delta type stats
+     * Fetch a select value for the hero and the equivalent value for the villan. This is intended for the delta type stats
      * that have three game stages - e.g Creeps, damage etc.
      *
      * @param summonerId    Our hero summoner id
-     * @param numberOfGames The number of games to calculate this stat from. Goes from most recent first, so a numberOfGames = 20
+     * @param numberOfGames The number of games to calculate this select from. Goes from most recent first, so a numberOfGames = 20
      *                      would mean that we only fetch from the most recent 20 games.
      * @param lane          The lane to get the results for
-     * @param accumulatorType   The stat accumulator type. This can be average, max or min
-     * @param gameStage         The game stage we want this stat for - see [GameStages]
+     * @param accumulatorType   The select accumulator type. This can be average, max or min
+     * @param gameStage         The game stage we want this select for - see [GameStages]
      * @param statName          The statName that we want to
      */
     fun fetchHeadToHeadStat(summonerId: Long, numberOfGames: Int, lane: String, accumulatorType: String, gameStage: String, statName: String) : HeadToHeadStat {
         val sqlEarlyGame = Builder()
-                .stat("$accumulatorType(${hero+statName+gameStage}) as ${hero+statName+ gameStage}, " +
+                .select("$accumulatorType(${hero+statName+gameStage}) as ${hero+statName+ gameStage}, " +
                         "$accumulatorType(${villan + statName + gameStage}) as ${villan+statName+ gameStage}")
                 .tableName("${lane}_summarystats")
                 .where("heroSummonerId = $summonerId And ${hero+statName+gameStage} Is Not Null and ${hero+statName+gameStage} > 0")
@@ -53,14 +53,14 @@ class AnalysisDao (private val dbHelper: DbHelper){
     }
 
     /**
-     * Fetch a stat value for the hero and the equivalent value for the villan. This is intended for the delta type stats
+     * Fetch a select value for the hero and the equivalent value for the villan. This is intended for the delta type stats
      * that have three game stages - e.g Creeps, damage etc.
      *
      * @param summonerId        Our hero summoner id
-     * @param numberOfGames     The number of games to calculate this stat from. Goes from most recent first, so a numberOfGames = 20
+     * @param numberOfGames     The number of games to calculate this select from. Goes from most recent first, so a numberOfGames = 20
      *                          would mean that we only fetch from the most recent 20 games.
-     * @param accumulatorType   The stat accumulator type. This can be average, max or min
-     * @param gameStage         The game stage we want this stat for - see [GameStages]
+     * @param accumulatorType   The select accumulator type. This can be average, max or min
+     * @param gameStage         The game stage we want this select for - see [GameStages]
      * @param statName          The statName that we want to
      * @param champId           The champ we want to filter our results to.
      *
@@ -69,10 +69,10 @@ class AnalysisDao (private val dbHelper: DbHelper){
     fun fetchHeadToHeadStat(summonerId: Long, numberOfGames: Int, lane: String, accumulatorType: String, gameStage: String, statName: String, champId: Int) : HeadToHeadStat {
 
          val sqlEarlyGame = Builder()
-                .stat("$accumulatorType(${hero+statName+gameStage}) as ${hero+statName+ gameStage}, " +
+                .select("$accumulatorType(${hero+statName+gameStage}) as ${hero+statName+ gameStage}, " +
                         "$accumulatorType(${villan + statName + gameStage}) as ${villan+statName+ gameStage}")
                 .tableName("${lane}_summarystats")
-                // note that we put > 0 for the stat type - that is because the number of delta should never be 0
+                // note that we put > 0 for the select type - that is because the number of delta should never be 0
                 .where("heroSummonerId = $summonerId And ${hero+statName+gameStage} Is Not Null and ${hero+statName+gameStage} > 0 AND heroChampId = $champId")
                 .games(numberOfGames)
                 .toSql()
@@ -85,12 +85,12 @@ class AnalysisDao (private val dbHelper: DbHelper){
     }
 
     /**
-     * Fetch a stat value for the hero and the equivalent value for the villan.
+     * Fetch a select value for the hero and the equivalent value for the villan.
      *
      * @param summonerId        Our hero summoner id
-     * @param numberOfGames     The number of games to calculate this stat from. Goes from most recent first, so a numberOfGames = 20
+     * @param numberOfGames     The number of games to calculate this select from. Goes from most recent first, so a numberOfGames = 20
      *                          would mean that we only fetch from the most recent 20 games.
-     * @param accumulatorType   The stat accumulator type. This can be average, max or min
+     * @param accumulatorType   The select accumulator type. This can be average, max or min
      * @param statName          The statName that we want to
      * @param champId           The champ we want to filter our results to.
      *
@@ -98,7 +98,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
      */
     fun fetchHeadToHeadStat(summonerId: Long, numberOfGames: Int, lane : String, accumulatorType: String, statName: String, champId: Int) : HeadToHeadStat {
         val sqlEarlyGame = Builder()
-                .stat("$accumulatorType(hero$statName) as hero$statName,$accumulatorType(villan$statName) as villan$statName")
+                .select("$accumulatorType(hero$statName) as hero$statName,$accumulatorType(villan$statName) as villan$statName")
                 .tableName("${lane}_summarystats")
                 .where("heroSummonerId = $summonerId And hero$statName Is Not Null and hero$statName > 0 AND heroChampId = $champId")
                 .games(numberOfGames)
@@ -120,16 +120,16 @@ class AnalysisDao (private val dbHelper: DbHelper){
      * @param summonerId    The hero summonerID
      * @param numberOfGames The number of games to limit the results to. Ordered from most recent to oldest.
      * @param lane          Filter results to games where the hero (and their opponent) played this lane
-     * @param statName      The name of the stat we want to get data about
+     * @param statName      The name of the select we want to get data about
      *
-     * @return an array of [HeadToHeadStat]'s where each head to head stat represents one game performance.
+     * @return an array of [HeadToHeadStat]'s where each head to head select represents one game performance.
      */
     fun fetchPerformanceHistory(summonerId: Long, numberOfGames: Int, lane: String, statName: String) : ArrayList<HeadToHeadStat> {
 
         val sqlEarlyGame = Builder()
-                .stat("${hero+statName} , ${villan+statName}")
+                .select("${hero+statName} , ${villan+statName}")
                 .tableName("${lane}_summarystats")
-                .where("heroSummonerId = $summonerId And ${hero + statName} Is Not Null") // we do not put > 0 here, as it is not a delta stat
+                .where("heroSummonerId = $summonerId And ${hero + statName} Is Not Null") // we do not put > 0 here, as it is not a delta select
                 .games(numberOfGames)
                 .toSql()
 
@@ -150,17 +150,17 @@ class AnalysisDao (private val dbHelper: DbHelper){
      * @param summonerId    The hero summonerID
      * @param numberOfGames The number of games to limit the results to. Ordered from most recent to oldest.
      * @param lane          Filter results to games where the hero (and their opponent) played this lane
-     * @param statName      The name of the stat we want to get data about
+     * @param statName      The name of the select we want to get data about
      * @param heroChampId   Filter results to just games where the hero played a specific champ.
      *
-     * @return an array of [HeadToHeadStat]'s where each head to head stat represents one game performance.
+     * @return an array of [HeadToHeadStat]'s where each head to head select represents one game performance.
      */
     fun fetchPerformanceHistory(summonerId: Long, numberOfGames: Int, lane: String, statName: String, heroChampId: Int) : ArrayList<HeadToHeadStat> {
 
         val sqlEarlyGame = Builder()
-                .stat("${hero+statName} , ${villan+statName}")
+                .select("${hero+statName} , ${villan+statName}")
                 .tableName("${lane}_summarystats")
-                .where("heroSummonerId = $summonerId And ${hero + statName} Is Not Null And heroChampId = $heroChampId") // we do not put > 0 here, as it is not a delta stat
+                .where("heroSummonerId = $summonerId And ${hero + statName} Is Not Null And heroChampId = $heroChampId") // we do not put > 0 here, as it is not a delta select
                 .games(numberOfGames)
                 .toSql()
 
@@ -181,23 +181,23 @@ class AnalysisDao (private val dbHelper: DbHelper){
      * @param summonerId    The hero summonerID
      * @param numberOfGames The number of games to limit the results to. Ordered from most recent to oldest.
      * @param lane          Filter results to games where the hero (and their opponent) played this lane
-     * @param statName      The name of the stat we want to get data about
+     * @param statName      The name of the select we want to get data about
      * @param heroChampId   Filter results to just games where the hero played a specific champ.
      * @param gameStage     Filter results to just this game stage
      *
-     * @return an array of [HeadToHeadStat]'s where each head to head stat represents one game performance.
+     * @return an array of [HeadToHeadStat]'s where each head to head select represents one game performance.
      */
     fun fetchPerformanceHistory(summonerId: Long, numberOfGames: Int, lane: String, statName: String, heroChampId: Int, gameStage: String) : ArrayList<HeadToHeadStat> {
 
         val sql = Builder()
-                .stat("${hero+statName+gameStage} , ${villan+statName + gameStage}")
+                .select("${hero+statName+gameStage} , ${villan+statName + gameStage}")
                 .tableName("${lane}_summarystats")
                 .where("heroSummonerId = $summonerId " +
                         "And ${hero + statName + gameStage} Is Not Null " +
                         "And ${hero+statName+gameStage} > 0 " +
                         "And ${villan + statName + gameStage} Is Not Null " +
                         "And ${villan + statName + gameStage} > 0 " +
-                        "And heroChampId = $heroChampId") // we do not put > 0 here, as it is not a delta stat
+                        "And heroChampId = $heroChampId") // we do not put > 0 here, as it is not a delta select
                 .games(numberOfGames)
                 .toSql()
 
@@ -217,21 +217,21 @@ class AnalysisDao (private val dbHelper: DbHelper){
      * @param summonerId    The hero summonerID
      * @param numberOfGames The number of games to limit the results to. Ordered from most recent to oldest.
      * @param lane          Filter results to games where the hero (and their opponent) played this lane
-     * @param statName      The name of the stat we want to get data about
+     * @param statName      The name of the select we want to get data about
      * @param gameStage     Filter results to just this game stage
      *
-     * @return an array of [HeadToHeadStat]'s where each head to head stat represents one game performance.
+     * @return an array of [HeadToHeadStat]'s where each head to head select represents one game performance.
      */
     fun fetchPerformanceHistory(summonerId: Long, numberOfGames: Int, lane: String, statName: String, gameStage: String) : ArrayList<HeadToHeadStat> {
 
         val sql = Builder()
-                .stat("${hero+statName+gameStage} , ${villan+statName + gameStage}")
+                .select("${hero+statName+gameStage} , ${villan+statName + gameStage}")
                 .tableName("${lane}_summarystats")
                 .where("heroSummonerId = $summonerId " +
                         "And ${hero + statName + gameStage} Is Not Null " +
                         "And ${hero+statName+gameStage} > 0 " +
                         "And ${villan + statName + gameStage} Is Not Null " +
-                        "And ${villan + statName + gameStage} > 0 ") // we do not put > 0 here, as it is not a delta stat
+                        "And ${villan + statName + gameStage} > 0 ") // we do not put > 0 here, as it is not a delta select
                 .games(numberOfGames)
                 .toSql()
 
@@ -245,22 +245,22 @@ class AnalysisDao (private val dbHelper: DbHelper){
     }
 
     /**
-     * Fetch a stat value for the hero and the equivalent value for the villan.
+     * Fetch a select value for the hero and the equivalent value for the villan.
      *
      * @param summonerId        Our hero summoner id
-     * @param numberOfGames     The number of games to calculate this stat from. Goes from most recent first, so a numberOfGames = 20
+     * @param numberOfGames     The number of games to calculate this select from. Goes from most recent first, so a numberOfGames = 20
      *                          would mean that we only fetch from the most recent 20 games.
-     * @param accumulatorType   The stat accumulator type. This can be average, max or min
+     * @param accumulatorType   The select accumulator type. This can be average, max or min
      * @param statName          The statName that we want to
      *
      * @return a [HeadToHeadStat] representing the results of the filter.
      */
     fun fetchHeadToHeadStat(summonerId: Long, numberOfGames: Int, lane: String, accumulatorType: String, statName: String) : HeadToHeadStat {
         val sqlEarlyGame = Builder()
-                .stat("$accumulatorType(${hero+statName}) as ${hero+statName}, " +
+                .select("$accumulatorType(${hero+statName}) as ${hero+statName}, " +
                         "$accumulatorType(${villan + statName}) as ${villan+statName}")
                 .tableName("${lane}_summarystats")
-                .where("heroSummonerId = $summonerId And ${hero+statName} Is Not Null") // we do not put > 0 here, as it is not a delta stat
+                .where("heroSummonerId = $summonerId And ${hero+statName} Is Not Null") // we do not put > 0 here, as it is not a delta select
                 .games(numberOfGames)
                 .toSql()
         val result = dbHelper.executeSqlQuery(sqlEarlyGame)
@@ -348,7 +348,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
     fun fetchDeltas(summonerId: Long, numberOfGames: Int, lane: String, deltaType : String, statAccumulator: String) : ArrayList<HeadToHeadStat> {
 
         val sql = Builder()
-                .stat("$statAccumulator(${hero+deltaType}EarlyGame) as $heroEarlyGame," +
+                .select("$statAccumulator(${hero+deltaType}EarlyGame) as $heroEarlyGame," +
                         "$statAccumulator(${villan+deltaType}EarlyGame) as $villanEarlyGame," +
                         "$statAccumulator(${hero+deltaType}MidGame) as $heroMidGame," +
                         "$statAccumulator(${villan+deltaType}MidGame) as $villanMidGame," +
@@ -377,7 +377,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
     fun fetchDeltas(summonerId: Long, numberOfGames: Int, lane: String, deltaType : String, statAccumulator: String, champId : Int) : ArrayList<HeadToHeadStat> {
 
         val sql = Builder()
-                .stat("$statAccumulator(${hero+deltaType}EarlyGame) as $heroEarlyGame," +
+                .select("$statAccumulator(${hero+deltaType}EarlyGame) as $heroEarlyGame," +
                         "$statAccumulator(${villan+deltaType}EarlyGame) as $villanEarlyGame," +
                         "$statAccumulator(${hero+deltaType}MidGame) as $heroMidGame," +
                         "$statAccumulator(${villan+deltaType}MidGame) as $villanMidGame," +
@@ -397,21 +397,21 @@ class AnalysisDao (private val dbHelper: DbHelper){
 
 
     /**
-     * A flexible fetch method used to build sql queries and return a given stat.
+     * A flexible fetch method used to build sql queries and return a given select.
      *
      * @param numberOfGames     The number of recent games to limit the filter to.
-     * @param statType          The type of stat that we are fetching.
+     * @param statType          The type of select that we are fetching.
      * @param lane              The lane that we want the results for.
      * @param summonerId        The summoner id for whom the results are for.
-     * @param gameStage         The stage of the game that this specific stat was for.
-     * @param statAccumulator   The type of stat presentation- average, max min etc
+     * @param gameStage         The stage of the game that this specific select was for.
+     * @param statAccumulator   The type of select presentation- average, max min etc
      *
      * @return A [Float] value, based on the given parameters.
      */
     fun fetchStat(numberOfGames : Int, statType: String, lane: String, summonerId: Long, gameStage: String, statAccumulator: String) : Float {
         val statName = hero + statType+gameStage
         val sqlEarlyGame = Builder()
-                .stat("$statAccumulator($statName) as $gameStage")
+                .select("$statAccumulator($statName) as $gameStage")
                 .tableName("${lane}_summarystats")
                 .where("heroSummonerId = $summonerId And $statName Is Not Null and $statName > 0")
                 .games(numberOfGames)
@@ -426,23 +426,23 @@ class AnalysisDao (private val dbHelper: DbHelper){
     }
 
     /**
-     * A flexible fetch method used to build sql queries and return a given stat.
+     * A flexible fetch method used to build sql queries and return a given select.
      *
      * @param numberOfGames     The number of recent games to limit the filter to.
-     * @param statType          The type of stat that we are fetching.
+     * @param statType          The type of select that we are fetching.
      * @param lane              The lane that we want the results for.
      * @param summonerId        The summoner id for whom the results are for.
-     * @param gameStage         The stage of the game that this specific stat was for.
-     * @param statAccumulator   The type of stat presentation- average, max min etc
+     * @param gameStage         The stage of the game that this specific select was for.
+     * @param statAccumulator   The type of select presentation- average, max min etc
      * @param champId           The id of the champ that we want to limit the filter to.
      *
      * @return A [Float] value, based on the given parameters.
      */
     fun fetchStat(numberOfGames : Int, statType: String, lane: String, summonerId: Long, gameStage: String, statAccumulator: String, champId: Int) : Float {
         val sqlEarlyGame = Builder()
-                .stat("$statAccumulator(${statType+gameStage}) as $gameStage")
+                .select("$statAccumulator(${statType+gameStage}) as $gameStage")
                 .tableName("${lane}_summarystats")
-                // note that we put > 0 for the stat type - that is because the number of delta should never be 0
+                // note that we put > 0 for the select type - that is because the number of delta should never be 0
                 .where("heroSummonerId = $summonerId And ${statType+gameStage} Is Not Null and ${statType+gameStage} > 0 AND heroChampId = $champId")
                 .games(numberOfGames)
                 .toSql()
@@ -455,20 +455,20 @@ class AnalysisDao (private val dbHelper: DbHelper){
     }
 
     /**
-     * A flexible fetch method used to build sql queries and return a given stat.
+     * A flexible fetch method used to build sql queries and return a given select.
      *
      * @param numberOfGames     The number of recent games to limit the filter to.
-     * @param statType          The type of stat that we are fetching.
+     * @param statType          The type of select that we are fetching.
      * @param lane              The lane that we want the results for.
      * @param summonerId        The summoner id for whom the results are for.
-     * @param statAccumulator   The type of stat presentation- average, max min etc
+     * @param statAccumulator   The type of select presentation- average, max min etc
      * @param champId           The id of the champ that we want to limit the filter to.
      *
      * @return A [Float] value, based on the given parameters.
      */
     fun fetchStat(numberOfGames : Int, statType: String, lane: String, summonerId: Long, statAccumulator: String, champId: Int) : Float {
         val sqlEarlyGame = Builder()
-                .stat("$statAccumulator(${hero+statType}) as ${hero+statType}")
+                .select("$statAccumulator(${hero+statType}) as ${hero+statType}")
                 .tableName("${lane}_summarystats")
                 .where("heroSummonerId = $summonerId And ${hero+statType} Is Not Null AND heroChampId = $champId")
                 .games(numberOfGames)
@@ -482,21 +482,21 @@ class AnalysisDao (private val dbHelper: DbHelper){
     }
 
     /**
-     * A flexible fetch method used to build sql queries and return a given stat.
+     * A flexible fetch method used to build sql queries and return a given select.
      *
      * @param numberOfGames     The number of recent games to limit the filter to.
-     * @param statType          The type of stat that we are fetching.
+     * @param statType          The type of select that we are fetching.
      * @param lane              The lane that we want the results for.
      * @param summonerId        The summoner id for whom the results are for.
-     * @param statAccumulator   The type of stat presentation- average, max min etc
+     * @param statAccumulator   The type of select presentation- average, max min etc
      *
      * @return A [Float] value, based on the given parameters.
      */
     fun fetchStat(numberOfGames : Int, statType: String, lane: String, summonerId: Long, statAccumulator: String) : Float {
         val sqlEarlyGame = Builder()
-                .stat("$statAccumulator(${hero+statType}) as ${hero+statType}")
+                .select("$statAccumulator(${hero+statType}) as ${hero+statType}")
                 .tableName("${lane}_summarystats")
-                .where("heroSummonerId = $summonerId And ${hero+statType} Is Not Null") // we do not put > 0 here, as it is not a delta stat
+                .where("heroSummonerId = $summonerId And ${hero+statType} Is Not Null") // we do not put > 0 here, as it is not a delta select
                 .games(numberOfGames)
                 .toSql()
         val result = dbHelper.executeSqlQuery(sqlEarlyGame)
@@ -508,10 +508,10 @@ class AnalysisDao (private val dbHelper: DbHelper){
     }
 
     /**
-     * A flexible fetch method used to build sql queries and return a given stat.
+     * A flexible fetch method used to build sql queries and return a given select.
      *
      * @param numberOfGames     The number of recent games to limit the filter to.
-     * @param statType          The type of stat that we are fetching.
+     * @param statType          The type of select that we are fetching.
      * @param lane              The lane that we want the results for.
      * @param summonerId        The summoner id for whom the results are for.
      * @param heroChampId       Only fetch matches in which the hero was using this champ.
@@ -521,9 +521,9 @@ class AnalysisDao (private val dbHelper: DbHelper){
     fun fetchStatList(numberOfGames : Int, statType: String, lane: String, summonerId: Long, heroChampId: Int) : ArrayList<Float> {
 
         val sqlEarlyGame = Builder()
-                .stat(statType)
+                .select(statType)
                 .tableName("${lane}_summarystats")
-                .where("heroSummonerId = $summonerId And $statType Is Not Null And heroChampId = $heroChampId") // we do not put > 0 here, as it is not a delta stat
+                .where("heroSummonerId = $summonerId And $statType Is Not Null And heroChampId = $heroChampId") // we do not put > 0 here, as it is not a delta select
                 .games(numberOfGames)
                 .toSql()
 
@@ -538,10 +538,10 @@ class AnalysisDao (private val dbHelper: DbHelper){
     }
 
     /**
-     * A flexible fetch method used to build sql queries and return a given stat.
+     * A flexible fetch method used to build sql queries and return a given select.
      *
      * @param numberOfGames     The number of recent games to limit the filter to.
-     * @param statType          The type of stat that we are fetching.
+     * @param statType          The type of select that we are fetching.
      * @param lane              The lane that we want the results for.
      * @param summonerId        The summoner id for whom the results are for.
      *
@@ -550,9 +550,9 @@ class AnalysisDao (private val dbHelper: DbHelper){
     fun fetchStatList(numberOfGames : Int, statType: String, lane: String, summonerId: Long) : ArrayList<Float> {
 
         val sqlEarlyGame = Builder()
-                .stat(statType)
+                .select(statType)
                 .tableName("${lane}_summarystats")
-                .where("heroSummonerId = $summonerId And $statType Is Not Null") // we do not put > 0 here, as it is not a delta stat
+                .where("heroSummonerId = $summonerId And $statType Is Not Null") // we do not put > 0 here, as it is not a delta select
                 .games(numberOfGames)
                 .toSql()
 

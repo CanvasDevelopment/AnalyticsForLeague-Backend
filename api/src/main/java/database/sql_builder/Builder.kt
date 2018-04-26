@@ -13,11 +13,11 @@ class Builder() {
     private var tableName = ""
 
     /**
-     * The stat that we want to retrieve from the database.
-     * @param stat The name of the stat column as it appears in the database
-     * @return an instance of the builder that it was called upon, with the stat set.
+     * The select that we want to retrieve from the database.
+     * @param stat The name of the select column as it appears in the database
+     * @return an instance of the builder that it was called upon, with the select set.
      */
-    fun stat(stat : String) : Builder {
+    fun select(stat : String) : Builder {
         this.selector = stat
         return this
     }
@@ -28,8 +28,8 @@ class Builder() {
     }
 
     /**
-     * Return the max for the given stat.
-     * @return an instance of the builder that it was called upon, with the stat set.
+     * Return the max for the given select.
+     * @return an instance of the builder that it was called upon, with the select set.
      */
     fun max() : Builder {
         default = "max($selector)"

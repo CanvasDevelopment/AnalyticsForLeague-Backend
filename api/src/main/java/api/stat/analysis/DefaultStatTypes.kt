@@ -94,7 +94,7 @@ class DefaultStatTypes {
         val kda = AnalysisStatCardSkeleton(
                 FULL_STAT,
                 "kda/$summonerId/$defaultNumberOfGames/$role/$champId",
-                "",
+                "", // detail url can probably be done dynamically
                 "Kills / Deaths / Assists"
         )
 
