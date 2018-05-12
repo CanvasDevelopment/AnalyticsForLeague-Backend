@@ -59,7 +59,7 @@ class MatchControl(private val matchDAO: MatchDAO,
                 val result = matchSummaryDAO.saveMatchSummary(matchSummary)
                 log.info("Saving match summary with a match id of ${matchSummary.gameId}. Saved with id: $result")
             } else {
-                log.info("Match summary with id : ${matchSummary.gameId} already exists. Skipping to next")
+                log.info("Match.sql summary with id : ${matchSummary.gameId} already exists. Skipping to next")
             }
         }
         return true
@@ -116,7 +116,7 @@ class MatchControl(private val matchDAO: MatchDAO,
                         val match = matchDetails.data
 
                         // If null, exit
-                        log.log(Level.WARNING,"Request was 200 - OK, but the data was null (Match save)")
+                        log.log(Level.WARNING,"Request was 200 - OK, but the data was null (Match.sql save)")
                         if (match!= null) {
                             matchDAO.saveMatch(match)
                         }

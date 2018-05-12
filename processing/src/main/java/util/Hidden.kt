@@ -4,4 +4,4 @@ package util
  * @author Josiah Kendall
  */
 
-val RIOT_API_KEY = "RGAPI-67d463ad-8c01-4621-85a0-ec67492f806d"
+val RIOT_API_KEY = "RGAPI-a6aa56e6-7147-42bd-a56c-0959141934e1"

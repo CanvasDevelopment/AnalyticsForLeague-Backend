@@ -168,4 +168,11 @@ class DBHelper {
 
         return id
     }
+
+    /**
+     * This function creates all the database tables that we need.
+     */
+    fun initialiseDatabase() {
+
+    }
 }

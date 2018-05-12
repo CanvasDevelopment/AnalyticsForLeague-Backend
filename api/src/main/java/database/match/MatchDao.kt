@@ -14,14 +14,15 @@ class MatchDao(private val dbHelper: DbHelper) : MatchDaoContract {
     private val matchSummaryTable = "matchsummary2"
     private val summonerIdColumn = "summonerId"
     override fun loadTwentyIds(table: String, offset: Int, summonerId: Long): ArrayList<Long> {
-        val sql = Builder()
-                .select(gameIdColumn)
-                .tableName(matchSummaryTable)
-                .where("$summonerIdColumn = $summonerId")
-                .orderBy(gameIdColumn)
-                .
+//        val sql = Builder()
+//                .select(gameIdColumn)
+//                .tableName(matchSummaryTable)
+//                .where("$summonerIdColumn = $summonerId")
+//                .orderBy(gameIdColumn)
+//                .
         // going to be along the lines of select * from $role_summarystats
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return ArrayList()
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun loadTwentyIds(table: String, startingPoint: Int, summonerId: Long, heroChampId: Int): ArrayList<Long> {

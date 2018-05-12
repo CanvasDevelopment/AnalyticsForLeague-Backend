@@ -14,6 +14,25 @@ class MatchDAO(val dbHelper : DBHelper,
                val participantDAO: ParticipantDAO,
                val participantIdentityDAO: ParticipantIdentityDAO) : MatchDAOContracts.MatchDAOContract {
 
+
+    fun doesMatchTableExist() : Boolean {
+        return false
+    }
+
+//    fun createMatchTable() : Boolean {
+//        val createTableSql = "Create table $MATCH_TABLE(" +
+//                "${matchColumns.GAME_ID} BIGINT, " +
+//                "${matchColumns.PLATFORM_ID} VARCHAR(32), " +
+//                "${matchColumns.GAME_CREATION} BIGINT," +
+//                "${matchColumns.GAME_DURATION}, " +
+//                "${matchColumns.QUEUE_ID}, " +
+//                "${matchColumns.MAP_ID}, " +
+//                "${matchColumns.SEASON_ID}, " +
+//                "${matchColumns.GAME_VERSION}, " +
+//                "${matchColumns.GAME_MODE}, " +
+//                "${matchColumns.GAME_TYPE})"
+//    }
+
     /**
      * Delete alll the matches from our raw database for a specific summoner.
      * This is basically the clean up task that we do after processing
@@ -43,6 +62,8 @@ class MatchDAO(val dbHelper : DBHelper,
 
     val MATCH_TABLE = "MatchTable"
     val matchColumns = MatchColumns()
+
+
 
     /**
      * Save a [Match] (buy a farm). This saves a match, and also saves (through their DAO's) all the children of this

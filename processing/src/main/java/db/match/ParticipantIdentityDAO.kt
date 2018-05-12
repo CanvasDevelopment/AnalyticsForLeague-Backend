@@ -15,6 +15,7 @@ class ParticipantIdentityDAO(val dbHelper: DBHelper, val playerDAO: PlayerDAO) {
 
     private val PARTICIPANT_IDENTITY_TABLE = "participantidentity"
     private val participantIdentityColumns = ParticipantIdentityColumns()
+
     fun saveParticipantIdentity(participantIdentity: ParticipantIdentity,
                                 gameId: Long,
                                 summonerId: Long,

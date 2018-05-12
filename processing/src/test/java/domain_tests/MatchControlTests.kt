@@ -113,8 +113,7 @@ class MatchControlTests {
         matchSummaries.add(matchSummary1)
         matchSummaries.add(matchSummary2)
         matchSummaries.add(matchSummary3)
-        val matchList = MatchList()
-        matchList.matches = matchSummaries
+        val matchList = MatchList(matchSummaries, 0, 10, 10)
         `when`(matchServiceApi.getMatchListForAccount(RIOT_API_KEY, 1)).thenReturn(NetworkResult(matchList, 200))
         matchControl.downloadAndSaveMatchSummaries(1)
         verify(summonerDaoContract, times(1)).getSummoner(1)
@@ -162,8 +161,6 @@ class MatchControlTests {
         matchSummaries.add(matchSummary1)
         matchSummaries.add(matchSummary2)
         matchSummaries.add(matchSummary3)
-        val matchList = MatchList()
-        matchList.matches = matchSummaries
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(1, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(2, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(3, -1)).thenReturn(false)
@@ -264,8 +261,7 @@ class MatchControlTests {
         matchSummaries.add(matchSummary1)
         matchSummaries.add(matchSummary2)
         matchSummaries.add(matchSummary3)
-        val matchList = MatchList()
-        matchList.matches = matchSummaries
+        val matchList = MatchList(matchSummaries, 0, 10, 10)
         `when`(matchServiceApi.getMatchListForAccount(RIOT_API_KEY, -1)).thenReturn(NetworkResult(matchList, 200))
         `when`(matchSummaryDao.exists(1)).thenReturn(false)
         `when`(matchSummaryDao.exists(2)).thenReturn(false)

@@ -10,10 +10,10 @@ import java.sql.ResultSet
  */
 class PlayerDAO(val dbHelper: DBHelper) {
 
-    val PLAYER_TABLE_NAME : String = "player"
+    private val PLAYER_TABLE_NAME : String = "player"
 
     fun savePlayer(player: Player?, participantIdentityRowId: Long) : Long {
-        // todo find a better situation for this player?.shit
+        // todo find a better situation for this player?
         val insertSQL = "insert into $PLAYER_TABLE_NAME (" +
                 "${dbHelper.PARTICIPANT_IDENTITY_ROW_COLUMN}," +
                 "${dbHelper.PLATFORM_ID_COLUMN}, " +

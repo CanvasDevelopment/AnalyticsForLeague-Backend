@@ -1,0 +1,6 @@
+Create Table Ban(
+  Id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  ChampionId INTEGER,
+  TeamId INTEGER,
+  PickTurn INTEGER
+)
