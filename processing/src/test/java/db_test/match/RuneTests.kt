@@ -38,6 +38,33 @@ class RuneTests {
     }
 
     @Test
+    fun `Ensure that we can save a bunch of runes with the save all runes method`() {
+        val rune1 = Rune(1, 5)
+        val rune2 = Rune(2, 5)
+        val rune3 = Rune(3, 5)
+        val rune4 = Rune(4, 5)
+        val rune5 = Rune(5, 5)
+
+        val runes = ArrayList<Rune>()
+        runes.add(rune1)
+        runes.add(rune2)
+        runes.add(rune3)
+        runes.add(rune4)
+        runes.add(rune5)
+
+        runeDAO.saveAllRunes(runes, -1)
+
+        val runesReturned = runeDAO.getAllRunesForAParticipantRowId(-1)
+        Assert.assertTrue(runesReturned.size == 5)
+
+        Assert.assertTrue(runesReturned.get(0).runeId == rune1.runeId)
+        Assert.assertTrue(runesReturned.get(1).runeId == rune2.runeId)
+        Assert.assertTrue(runesReturned.get(2).runeId == rune3.runeId)
+        Assert.assertTrue(runesReturned.get(3).runeId == rune4.runeId)
+        Assert.assertTrue(runesReturned.get(4).runeId == rune5.runeId)
+    }
+
+    @Test
     fun ensureThatWeCanFetchAllRunesForAParticipantRow() {
         val rune1 = Rune(1, 5)
         val rune2 = Rune(2, 5)

@@ -21,4 +21,13 @@ interface ProcessingContract {
      * @return True if the sync was successful, false if not.
      */
     fun syncUser(summonerId: Long) : Boolean
+
+    /**
+     * Ask the server to sync the match list for a user. This will trigger the processing service to fetch
+     * and save the match summary list, and  return whether the result was successful or not.
+     *
+     * @param summonerId The id of the summoner for whom we are fetching the match list.
+     * @return True if successfully saved, false if not.
+     */
+    fun syncUserMatchList(summonerId: Long) : Boolean
 }

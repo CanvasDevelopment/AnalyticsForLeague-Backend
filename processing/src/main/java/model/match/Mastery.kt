@@ -12,4 +12,14 @@ class Mastery {
         this.rank = rank
     }
     constructor()
+
+    /**
+     * Create the value part of a sql insert string
+     *
+     * @param participantRowId The particpant row id. Needed in each rune row.
+     */
+    fun insertString(participantRowId: Long): String {
+        return "($masteryId, $participantRowId, $rank)"
+    }
+
 }

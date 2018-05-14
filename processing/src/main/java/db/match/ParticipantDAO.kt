@@ -8,7 +8,9 @@ import model.match.Participant
 import model.match.Rune
 import util.MID
 import util.columnnames.ParticipantColumns
+import util.logToConsole
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * @author Josiah Kendall
@@ -51,13 +53,23 @@ class ParticipantDAO(val dbHelper : DBHelper,
 
         val particpantRowId = dbHelper.executeSQLScript(sql)
         // save timeline
+        val startTimelineSave = System.currentTimeMillis()
         timelineDAO.saveTimeline(participant.timeline, particpantRowId)
+        logToConsole("Saved timeline. Took ${System.currentTimeMillis() - startTimelineSave}")
         // save runes
+
+        val startRuneSaveTime = System.currentTimeMillis()
         saveRunes(participant.runes, particpantRowId)
+        logToConsole("Saved runes. Took ${System.currentTimeMillis() - startRuneSaveTime}")
+
         // save stats
+        val saveStatStartTime = System.currentTimeMillis()
         statDAO.saveStats(participant.stats, particpantRowId)
+        logToConsole("Saved stats. Took ${System.currentTimeMillis() - saveStatStartTime}")
         //save masteries
+        val startTimeMasterySave = System.currentTimeMillis()
         saveMasteries(participant.masteries, particpantRowId)
+        logToConsole("Saved masteries. Took ${System.currentTimeMillis() - startTimeMasterySave}")
 
         return particpantRowId
     }
@@ -109,23 +121,13 @@ class ParticipantDAO(val dbHelper : DBHelper,
 
     private fun saveRunes(runes : ArrayList<Rune>?, participantRowId : Long) {
         if (runes != null) {
-            val runesIterator = runes.iterator()
-            while (runesIterator.hasNext()) {
-                val rune = runesIterator.next()
-                runeDAO.saveRune(rune, participantRowId)
-            }
+            runeDAO.saveAllRunes(runes, participantRowId)
         }
-
     }
 
     private fun saveMasteries(masteries : ArrayList<Mastery>?, participantRowId: Long) {
         if (masteries != null) {
-            val masteriesIterator = masteries.iterator()
-            while (masteriesIterator.hasNext()) {
-                val mastery = masteriesIterator.next()
-                masteryDAO.saveMastery(mastery, participantRowId)
-            }
+            masteryDAO.saveMasteries(masteries, participantRowId)
         }
-
     }
 }

@@ -16,6 +16,7 @@ import java.lang.IllegalStateException
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
+import kotlin.collections.ArrayList
 
 /**
  * @author Josiah Kendall
@@ -105,25 +106,36 @@ class MatchControl(private val matchDAO: MatchDAO,
         matchSummaries.forEach { matchSummary ->
             val alreadySaved = gameSummaryDaoContract.doesGameSummaryForSummonerExist(matchSummary.gameId, summonerId)
             if (!alreadySaved) {
-                log.info("Fetching match from server. MatchId: ${matchSummary.gameId}")
-                if (!matchDAO.exists(matchSummary.gameId)) {
-                    val matchDetails = matchServiceApi.getMatchByMatchId(RIOT_API_KEY, matchSummary.gameId)
-                    // The ide says it cannot be null, but it can when testing.
-                    if (matchDetails != null) {
-                        // TODO handle this better?
-                        if (matchDetails.code == 429)
-                            log.log(Level.WARNING,"Exceeded rate limits when fetching match")
-                        val match = matchDetails.data
-
-                        // If null, exit
-                        log.log(Level.WARNING,"Request was 200 - OK, but the data was null (Match.sql save)")
-                        if (match!= null) {
-                            matchDAO.saveMatch(match)
-                        }
-                    }
-                }
+                fetchAndSaveMatch(matchSummary.gameId)
             }
         }
+    }
+
+    /**
+     * Fetch and save a match. Pretty fucken self explanatory.
+     *
+     * @param gameId
+     *
+     * @return a boolean. Probably doesn't need this but its there for now.
+     */
+    fun fetchAndSaveMatch(gameId : Long) : Boolean {
+        log.info("Fetching match from server. MatchId: $gameId")
+        if (!matchDAO.exists(gameId)) {
+            val matchDetails = matchServiceApi.getMatchByMatchId(RIOT_API_KEY, gameId)
+            // The ide says it cannot be null, but it can when testing.
+            // TODO handle this better?
+            if (matchDetails.code == 429)
+                log.log(Level.WARNING,"Exceeded rate limits when fetching match")
+            val match = matchDetails.data
+
+            // If null, exit
+            log.log(Level.WARNING,"Request was 200 - OK, but the data was null (Match.sql save)")
+            if (match!= null) {
+                matchDAO.saveMatch(match)
+            }
+        }
+
+        return true
     }
 
     /**

@@ -23,14 +23,6 @@ Create TABLE ChampionImage(
   H INTEGER
 );
 
-Create TABLE CreepsPerMin(
-  Id INTEGER PRIMARY KEY AUTO_INCREMENT,
-  TimelineId DOUBLE,
-  ZeroToTen DOUBLE,
-  TenToTwenty DOUBLE,
-  TwentyToThirty DOUBLE,
-  ThirtyToEnd DOUBLE
-);
 
 Create TABLE creepspermin(
   Id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -95,9 +87,10 @@ Create TABLE damagetakendiffpermin(
 );
 
 CREATE TABLE Mastery(
+  Id INTEGER AUTO_INCREMENT,
   MasteryId INTEGER,
   ParticipantRowId BIGINT,
-  Rank INTEGER
+  _Rank INTEGER
 );
 
 Create TABLE MatchTable(
@@ -114,6 +107,7 @@ Create TABLE MatchTable(
 );
 
 CREATE TABLE MatchSummary(
+  Id BIGINT AUTO_INCREMENT PRIMARY KEY,
   PlatformId VARCHAR(64),
   GameId BIGINT,
   Champion INTEGER,
@@ -126,7 +120,8 @@ CREATE TABLE MatchSummary(
 );
 
 Create TABLE Participant(
-  ParticipantId INTEGER PRIMARY KEY,
+  Id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  ParticipantId INTEGER,
   TeamId INTEGER,
   ChampionId INTEGER,
   Spell1Id INTEGER,
@@ -137,9 +132,9 @@ Create TABLE Participant(
   Role VARCHAR(16),
   Lane VARCHAR(16)
 );
-
 CREATE TABLE ParticipantIdentity(
-  ParticipantId INTEGER PRIMARY KEY,
+  Id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  ParticipantId INTEGER,
   SummonerId BIGINT,
   GameId BIGINT,
   TeamId INTEGER,
@@ -162,17 +157,18 @@ CREATE TABLE Rune(
   Id INTEGER AUTO_INCREMENT PRIMARY KEY,
   ParticipantRowId INTEGER,
   RuneId INTEGER,
-  Rank INTEGER
+  _Rank INTEGER
 );
 
 Create TABLE Stats(
   Id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  ParticipantRowId INTEGER,
   ParticipantId BIGINT,
   Win BOOLEAN,
   Item0 INTEGER,
   Item1 INTEGER,
   Item2 INTEGER,
-  Item2 INTEGER,
+  Item3 INTEGER,
   Item4 INTEGER,
   Item5 INTEGER,
   Item6 INTEGER,
@@ -182,7 +178,7 @@ Create TABLE Stats(
   LargestKillingSpree INTEGER,
   LargestMultiKill INTEGER,
   KillingSprees INTEGER,
-  LongestTimeSpentLivingAlive INTEGER,
+  LongestTimeSpentLiving INTEGER,
   DoubleKills INTEGER,
   TripleKills INTEGER,
   QuadraKills INTEGER,
@@ -237,7 +233,7 @@ Create TABLE Stats(
 Create TABLE Team(
   Id INTEGER PRIMARY KEY AUTO_INCREMENT,
   TeamId INTEGER,
-  Win BOOLEAN,
+  Win VARCHAR(5),
   FirstBlood BOOLEAN,
   FirstTower BOOLEAN,
   FirstInhibitor BOOLEAN,
@@ -558,4 +554,18 @@ Create TABLE Summoner(
   ProfileIconId INTEGER,
   SummonerLevel INTEGER,
   RevisionDate BIGINT
+);
+
+CREATE TABLE RiotApiEndpointRateLimitStatus(
+  Id INTEGER PRIMARY KEY,
+  retryAfter INTEGER
+);
+
+Create Table RateLimitBucket(
+  Id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  EndPointId INTEGER,
+  MaxRequests INTEGER,
+  RequestCount INTEGER,
+  FirstRequestTime BIGINT,
+  RateDuration INTEGER
 );

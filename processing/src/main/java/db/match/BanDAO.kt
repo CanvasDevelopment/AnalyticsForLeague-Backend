@@ -11,7 +11,7 @@ import java.util.*
  */
 class BanDAO(val dbHelper: DBHelper) {
 
-    val BAN_TABLE = "Ban.sql"
+    val BAN_TABLE = "Ban"
     val banColumns = BanColumns()
     fun saveBan(ban: Ban, teamRowId: Long) : Long {
         dbHelper.connect()

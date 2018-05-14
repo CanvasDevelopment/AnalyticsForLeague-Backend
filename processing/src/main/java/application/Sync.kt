@@ -8,6 +8,7 @@ import util.*
  */
 class Sync (val matchControl: MatchControl) {
 
+
     /**
      * Sync our summoner. This method triggers a 'sync' which pulls down all the matches that a summoner has not saved
      * previously
@@ -33,6 +34,16 @@ class Sync (val matchControl: MatchControl) {
         if (savedJungle &&  savedAdc && savedMid && savedSup && savedTop) {
             return 200
         }
+
         return 500 // we failed something
+    }
+
+    /**
+     * Sync just our match summaries. This means that we can save time by just fetching the summaries, and then
+     * trigger the save of
+     */
+    fun syncMatchSummaries(summonerId: Long): Int {
+        matchControl.downloadAndSaveMatchSummaries(summonerId)
+        return 200
     }
 }

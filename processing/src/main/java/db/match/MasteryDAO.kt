@@ -5,6 +5,7 @@ import extensions.produceMastery
 import model.match.Mastery
 import util.ColumnNames
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * @author Josiah Kendall
@@ -13,6 +14,29 @@ class MasteryDAO(val dbHelper : DBHelper) {
     val MASTERY_TABLE = "mastery"
     val columnNames = ColumnNames()
     val DEFAULT_PARTICIPANT_ID = -1
+
+    /**
+     * Save a bunch of masteries. Faster than using [saveMastery] individually a bunch of times.
+     *
+     * @param masteries         The masteries to save
+     * @param participantRowId  The participant row id. Needed for each row of mastery that we save to
+     *                          the database
+     */
+    fun saveMasteries(masteries : ArrayList<Mastery>, participantRowId: Long) {
+        var sql = "Insert into $MASTERY_TABLE(" +
+                "${dbHelper.MASTERY_ID_COLUMN}, " +
+                "${dbHelper.PARTICIPANT_ROW_ID_COLUMN}, " +
+                "${dbHelper.RANK_COLUMN}) VALUES "
+        val iterator = masteries.iterator()
+        while (iterator.hasNext()) {
+            sql = sql.plus(iterator.next().insertString(participantRowId))
+            if (iterator.hasNext()) {
+                sql = sql.plus(",")
+            }
+        }
+
+        dbHelper.executeSQLScript(sql)
+    }
 
     fun saveMastery(mastery: Mastery, participantRowId : Long) : Long {
         val insertString = "insert into $MASTERY_TABLE (" +

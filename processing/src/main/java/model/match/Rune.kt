@@ -13,4 +13,20 @@ class Rune {
         this.runeId = runeId
         this.rank = rank
     }
+
+    /**
+     *
+     */
+    fun produceInsertStatement() : String {
+       return "Insert "
+    }
+
+    /**
+     * Create the value part of a sql insert string
+     *
+     * @param participantRowId The particpant row id. Needed in each rune row.
+     */
+    fun insertString(participantRowId: Long): String {
+        return "($participantRowId, $runeId, $rank)"
+    }
 }

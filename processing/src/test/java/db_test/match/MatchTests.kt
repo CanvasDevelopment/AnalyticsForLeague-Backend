@@ -134,7 +134,10 @@ class MatchTests {
                 participantIdentities
         )
 
+        val startTime = System.currentTimeMillis()
+        System.out.println("Starting save match at " + startTime)
         matchDAO.saveMatch(match)
+        System.out.println("Finished saving match. Total time taken : " + (System.currentTimeMillis() - startTime))
         val matchRecovered = matchDAO.getMatch(-1)
         Assert.assertTrue(match.gameType == matchRecovered.gameType)
         Assert.assertTrue(match.gameMode == matchRecovered.gameMode)

@@ -30,7 +30,7 @@ class RateLimitingLiveTests {
         val tables = Tables()
         dbHelper.connect()
         dbHelper.executeSQLScript("DELETE FROM matchtable")
-        dbHelper.executeSQLScript("DELETE FROM matchsummary2")
+        dbHelper.executeSQLScript("DELETE FROM matchsummary")
 
         dbHelper.executeSQLScript("DELETE FROM jungle_summarystats")
         dbHelper.executeSQLScript("DELETE FROM top_summarystats")

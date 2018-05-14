@@ -51,7 +51,23 @@ class Api  {
         return Response(200, "ok")
     }
 
+    @ApiMethod(name = "syncMatchList",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "syncMatchList/{summonerId}")
+    fun syncMatchList(@Named("summonerId") summonerId: Long) : Response {
+        val responseCode = sync.syncMatchSummaries(summonerId)
+        return Response(responseCode, "")
+    }
 
+    @ApiMethod(name = "syncMatch",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "syncMatch/{gameId}")
+    fun syncMatch(@Named("gameId") gameId : Long) : Response {
+        val result = sync.matchControl.fetchAndSaveMatch(gameId);
+        if (result) {
+            return Response(200, "")
+        }
 
-
+        return Response(500, "")
+    }
 }

@@ -62,5 +62,12 @@ class ProcessingImpl : ProcessingContract {
         // return our error
         return NetworkResult(null, respCode)
     }
+    override fun syncUserMatchList(summonerId: Long): Boolean {
+        // todo add the correct url here once it has been added to the processing module.
+        val syncUrl = url + "/_ah/processing/api/v1/syncUser/$summonerId"k
+        val result = sendHttpGetRequest(Response::class.java, URL(syncUrl))
+        return result.code == 200
+
+    }
 
 }

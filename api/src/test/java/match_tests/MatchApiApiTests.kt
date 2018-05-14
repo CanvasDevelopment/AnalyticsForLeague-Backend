@@ -25,7 +25,7 @@ class MatchApiApiTests {
 
     @Test
     fun `Make sure that we can fetch match ids from 0 to 20`() {
-        matchDao.
+//        matchDao.
     }
 
     @Test

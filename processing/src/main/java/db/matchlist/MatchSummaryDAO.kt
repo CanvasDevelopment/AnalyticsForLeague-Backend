@@ -11,7 +11,7 @@ import java.util.*
  */
 class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
 
-    private val MATCH_SUMMARY = "matchsummary2"
+    private val MATCH_SUMMARY = "matchsummary"
     private val PLATFORM_ID = "PlatformId"
     private val GAME_ID = "GameId"
     private val CHAMPION = "Champion"
@@ -127,7 +127,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
     fun getRecentMatchesBySummonerIdForRole(summonerId: Long, numberOfMatches : Int, role : String, lane : String) : ArrayList<MatchSummary> {
         val queryString = "SELECT * FROM $MATCH_SUMMARY " +
                 "WHERE $SUMMONER_ID = $summonerId AND $ROLE = '$role' AND $LANE = '$lane' " +
-                "ORDER BY $ID DESC " +
+                "ORDER BY $GAME_ID DESC " +
                 "LIMIT $numberOfMatches"
         val result = dbHelper.executeSqlQuery(queryString)
         val summaries = ArrayList<MatchSummary>()

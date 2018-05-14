@@ -5,6 +5,7 @@ import extensions.produceMatch
 import model.match.Match
 import util.Tables
 import util.columnnames.MatchColumns
+import util.logToConsole
 
 /**
  * @author Josiah Kendall
@@ -95,13 +96,17 @@ class MatchDAO(val dbHelper : DBHelper,
 
         dbHelper.executeSQLScript(sql)
         //save teams and children
+        val startTime = System.currentTimeMillis()
+        util.logToConsole("Starting saving of teams")
         for (team in match.teams) {
             teamDAO.saveTeamForMatch(team, match.gameId)
         }
+        util.logToConsole("Finished saving teams. Took ${System.currentTimeMillis() - startTime}")
 
         // save participants and children
         var participantIndex = 0
         var summonerId : Long
+        val participantStartTime = System.currentTimeMillis()
         for (participant in match.participants) {
             val participantIdentity = match.participantIdentities[participant.participantId-1]
 
@@ -112,10 +117,16 @@ class MatchDAO(val dbHelper : DBHelper,
             }
         }
 
+        util.logToConsole("finished saving participants. Took ${System.currentTimeMillis() - participantStartTime}")
+
         var teamId = -1
         var role = ""
         var lane = ""
         // save participantIdentities and children
+
+        // logging shit
+        val particpantIdentityStartTime = System.currentTimeMillis()
+
         for (participantIdentity in match.participantIdentities) {
             // todo tidy this shitty code
             val piSummonerId = participantIdentity.player?.summonerId
@@ -136,6 +147,8 @@ class MatchDAO(val dbHelper : DBHelper,
                         lane)
             }
         }
+
+        logToConsole("Finished saving participantIdenties. Took ${System.currentTimeMillis() - particpantIdentityStartTime}")
     }
 
     /**

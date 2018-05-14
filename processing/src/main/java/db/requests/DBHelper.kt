@@ -11,6 +11,9 @@ import util.Constant
 import java.sql.*
 import java.util.logging.Level
 import java.util.logging.Logger
+import java.sql.DriverManager
+
+
 
 /**
 
@@ -32,7 +35,7 @@ class DBHelper {
     val GAME_ID_COLUMN = "gameId"
     val PARTICIPANT_ID_COLUMN = "ParticipantId"
     val MASTERY_ID_COLUMN = "MasteryId"
-    val RANK_COLUMN = "Rank"
+    val RANK_COLUMN = "_Rank"
     val PARTICIPANT_ROW_ID_COLUMN = "ParticipantRowId"
 
     private var host: String? = null
@@ -89,11 +92,11 @@ class DBHelper {
                 // For some reason the local connection variable doesnt work, even though it seems to be correct. Therefore i use this connection method.
                 return try {
                     connection = DriverManager.getConnection(host!!, username, password)
-                    currentlyConnected = connection!!.isValid(1000)
+                    currentlyConnected = connection!!.isValid(5000)
                     currentlyConnected
                 } catch (sqlException: SQLException) {
                     println("An error occurred whist getting a connection to the database.\n"
-                            + "host: " + host + "\n"
+                            + "host is: " + host + "\n"
                             + "username: " + username)
                     println(sqlException.message)
                     false

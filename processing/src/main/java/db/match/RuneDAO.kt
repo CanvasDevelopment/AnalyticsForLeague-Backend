@@ -5,6 +5,7 @@ import extensions.produceRune
 import model.match.Rune
 import util.ColumnNames
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * @author Josiah Kendall
@@ -26,6 +27,23 @@ class RuneDAO(val dbHelper: DBHelper) {
                 "${rune.rank})"
 
         return dbHelper.executeSQLScript(sql)
+    }
+
+    fun saveAllRunes(runes : ArrayList<Rune>, participantRowId: Long) {
+        var sql = "Insert into $RUNE_TABLE (" +
+                "${columnNames.PARTICIPANT_ROW_ID}," +
+                "${columnNames.RUNE_ID}," +
+                "${columnNames.RANK}) VALUES"
+
+        val iterator = runes.iterator()
+        while (iterator.hasNext()) {
+            sql = sql.plus(iterator.next().insertString(participantRowId))
+            if (iterator.hasNext()) {
+                sql = sql.plus(",")
+            }
+        }
+
+        dbHelper.executeSQLScript(sql)
     }
 
     fun getRuneById(id : Long) : Rune {

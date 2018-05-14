@@ -28,6 +28,29 @@ class MasteryTests {
     }
 
     @Test
+    fun `Make sure that we can save a bunch of masteries really fast`() {
+        val mastery1 = Mastery(1, 5)
+        val mastery2 = Mastery(2, 5)
+        val mastery3 = Mastery(3, 5)
+        val mastery4 = Mastery(4, 5)
+        val mastery5 = Mastery(5, 5)
+
+        val masteries = ArrayList<Mastery>()
+        masteries.add(mastery1)
+        masteries.add(mastery2)
+        masteries.add(mastery3)
+        masteries.add(mastery4)
+        masteries.add(mastery5)
+
+
+        masteryDAO.saveMasteries(masteries, -1)
+
+        val retrievedMasteries= masteryDAO.getAllMasteriesForParticipantInstance(-1)
+        Assert.assertTrue(retrievedMasteries.size == 5)
+        Assert.assertTrue(retrievedMasteries[0].masteryId == mastery1.masteryId)
+    }
+
+    @Test
     fun ensureThatWeCanSaveAndFetchAMasteryByItsId() {
         val mastery = Mastery(1, 5)
         val result = masteryDAO.saveMastery(mastery, -1)
