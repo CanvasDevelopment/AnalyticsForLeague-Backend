@@ -11,14 +11,14 @@ import model.TotalMatchStats
  */
 class MatchDao(private val dbHelper: DbHelper) : MatchDaoContract {
     private val gameIdColumn = "gameId"
-    private val matchSummaryTable = "matchsummary2"
+    private val matchSummaryTable = "matchsummary"
     private val summonerIdColumn = "summonerId"
     override fun loadTwentyIds(table: String, offset: Int, summonerId: Long): ArrayList<Long> {
-//        val sql = Builder()
-//                .select(gameIdColumn)
-//                .tableName(matchSummaryTable)
-//                .where("$summonerIdColumn = $summonerId")
-//                .orderBy(gameIdColumn)
+        val sql = Builder()
+                .select(gameIdColumn)
+                .tableName(matchSummaryTable)
+                .where("$summonerIdColumn = $summonerId")
+                .orderBy(gameIdColumn)
 //                .
         // going to be along the lines of select * from $role_summarystats
         return ArrayList()

@@ -5,7 +5,7 @@ package util
  */
 class Constant {
     object Database {
-        val DEFAULT_HOST = "jdbc:mysql://localhost:3306/local_lolanlaytics"
+        val DEFAULT_HOST = "jdbc:mysql://127.0.0.1:3306/lol_analytics?useLegacyDatetimeCode=false&serverTimezone=UTC"
         val DEFAULT_USERNAME = "root"
         val DEFAULT_PASSWORD = "Idnw2bh2"
     }

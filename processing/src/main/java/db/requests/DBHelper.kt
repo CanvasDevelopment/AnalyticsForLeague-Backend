@@ -101,14 +101,12 @@ class DBHelper {
                     println(sqlException.message)
                     false
                 }
-
             }
         } catch (e: ClassNotFoundException) {
             e.printStackTrace()
         }
 
         return false
-
     }
 
     /**
@@ -161,21 +159,19 @@ class DBHelper {
             throw IllegalStateException("No Current database connection. Use DbConnect() to connect to a database")
         }
 
-        val statement = connection!!.prepareStatement(script)
-        statement.executeUpdate(script, Statement.RETURN_GENERATED_KEYS)
-        val generatedKeys : ResultSet = statement.generatedKeys
-        var id : Long = 0
-        if (generatedKeys.next()) {
-            id = generatedKeys.getLong(1)
+        try {
+            val statement = connection!!.prepareStatement(script)
+            statement.executeUpdate(script, Statement.RETURN_GENERATED_KEYS)
+            val generatedKeys : ResultSet = statement.generatedKeys
+            var id : Long = 0
+            if (generatedKeys.next()) {
+                id = generatedKeys.getLong(1)
+            }
+
+            return id
+        } catch (error : SQLSyntaxErrorException) {
+            Logger.getLogger(DBHelper::class.java.name).log(Level.SEVERE, "There was a sql syntax error", error)
         }
-
-        return id
-    }
-
-    /**
-     * This function creates all the database tables that we need.
-     */
-    fun initialiseDatabase() {
-
+        return -1
     }
 }

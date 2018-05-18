@@ -8,8 +8,11 @@ import com.google.api.server.spi.config.Api
 import com.google.api.server.spi.config.ApiMethod
 import com.google.api.server.spi.config.ApiNamespace
 import com.google.api.server.spi.config.Named
+import db.match.TimelineDAO
 import di.KodeinManager
 import model.beans.Response
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * @author Josiah Kendall
@@ -63,7 +66,8 @@ class Api  {
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "syncMatch/{gameId}")
     fun syncMatch(@Named("gameId") gameId : Long) : Response {
-        val result = sync.matchControl.fetchAndSaveMatch(gameId);
+        Logger.getLogger(TimelineDAO::class.java.name).log(Level.SEVERE, "requested match sync for $gameId", "")
+        val result = sync.matchControl.fetchAndSaveMatch(gameId)
         if (result) {
             return Response(200, "")
         }

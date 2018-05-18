@@ -4,6 +4,7 @@ import db.requests.DBHelper
 import extensions.produceRune
 import model.match.Rune
 import util.ColumnNames
+import java.sql.SQLSyntaxErrorException
 import java.util.*
 import kotlin.collections.ArrayList
 

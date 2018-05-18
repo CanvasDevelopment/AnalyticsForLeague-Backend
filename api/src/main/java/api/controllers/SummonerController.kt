@@ -43,7 +43,6 @@ class SummonerController(private val summonerDao: SummonerDao,
 
         // failed
         return Response(creationResultCode, getBlankSummonerDetails())
-
     }
 
     /**
@@ -59,8 +58,10 @@ class SummonerController(private val summonerDao: SummonerDao,
     }
 
     fun syncSummoner(summonerId: Long) : Response<String> {
-        val syncResult = processingInterface.syncUser(summonerId)
+//        val syncResult = processingInterface.syncUser(summonerId)
+        val syncResult = processingInterface.syncUserMatchList(summonerId)
         if (syncResult) {
+
             return Response(200, "ok")
         }
         return Response(500, "Error occurred - sync interface returned false")

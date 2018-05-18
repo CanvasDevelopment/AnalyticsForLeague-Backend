@@ -4,6 +4,7 @@ import api.stat.analysis.AnalysisDao
 import api.stat.analysis.AnalysisPresenter
 import com.github.salomonbrys.kodein.*
 import database.DbHelper
+import database.match.MatchSummaryDAO
 import service_contracts.ProcessingImpl
 
 
@@ -33,6 +34,10 @@ class KodeinManager {
             AnalysisPresenter(
                     kodein.instance() ,
                     kodein.instance())
+        }
+
+        bind<MatchSummaryDAO>() with provider {
+            MatchSummaryDAO(kodein.instance())
         }
 
 
