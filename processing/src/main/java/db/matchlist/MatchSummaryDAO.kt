@@ -82,8 +82,8 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
         val result = dbHelper.executeSqlQuery(queryString)
         if (result.next()) return true
         return false
-
     }
+
     /**
      * Get a match summary by gameId
      * @param gameId The game Id we are searching for.
@@ -138,6 +138,39 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
         return summaries
     }
 
+    /**
+     * Fetch the number of match summaries that we have saved in a database for a certain summoner.
+     * This is a reflection of how many games a summoner has played
+     */
+    fun loadNumberOfMatchSummariesForASummoner(summonerId: Long) : Int {
+        val numberOfMatches = "numberOfMatches"
+        val sql = "SELECT count($GAME_ID) as $numberOfMatches from $MATCH_SUMMARY where $SUMMONER_ID = $summonerId"
+        val result = dbHelper.executeSqlQuery(sql)
+        while (result.first()) {
+            return result.getInt(numberOfMatches)
+        }
 
+        return -1
+    }
+
+    /**
+     * Fetch the number of match summaries for a match.
+     *
+     * @param summonerId The summoner for whom we are fetching the stats
+     * @param gameId     The max game id. We want to fetch all matches up to and including this game id.
+     * @return The number of games that match the criteria as an Int. Returns -1 if no games are found.
+     */
+    fun loadNumberOfMatchSummariesUpToAndIncludingGivenMatchId(summonerId: Long, gameId: Long) : Int {
+        val numberOfMatches = "count"
+        val sql = "Select count(*) as $numberOfMatches from $MATCH_SUMMARY where $SUMMONER_ID = $summonerId" +
+                " AND $GAME_ID <= $gameId"
+
+        val result = dbHelper.executeSqlQuery(sql)
+        if (result.first()) {
+            return result.getInt(numberOfMatches)
+        }
+
+        return -1
+    }
 
 }

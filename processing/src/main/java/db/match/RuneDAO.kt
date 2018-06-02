@@ -43,8 +43,9 @@ class RuneDAO(val dbHelper: DBHelper) {
                 sql = sql.plus(",")
             }
         }
+        if (sql.isNotBlank())
+            dbHelper.executeSQLScript(sql)
 
-        dbHelper.executeSQLScript(sql)
     }
 
     fun getRuneById(id : Long) : Rune {

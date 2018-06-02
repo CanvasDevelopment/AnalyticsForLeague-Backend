@@ -1,11 +1,14 @@
 package db.match
 
 import db.requests.DBHelper
+import extensions.GAME_ID
+import extensions.SUMMONER_ID
 import extensions.produceMatch
 import model.match.Match
 import util.Tables
 import util.columnnames.MatchColumns
 import util.logToConsole
+import java.sql.ResultSet
 
 /**
  * @author Josiah Kendall
@@ -14,7 +17,6 @@ class MatchDAO(val dbHelper : DBHelper,
                val teamDAO: TeamDAO,
                val participantDAO: ParticipantDAO,
                val participantIdentityDAO: ParticipantIdentityDAO) : MatchDAOContracts.MatchDAOContract {
-
 
     fun doesMatchTableExist() : Boolean {
         return false
@@ -177,5 +179,21 @@ class MatchDAO(val dbHelper : DBHelper,
         val participantIdentities = participantIdentityDAO.getAllParticipantIdentitiesForAMatch(gameId)
         result.next()
         return result.produceMatch(teams, participants, participantIdentities)
+    }
+
+    /**
+     * Fetch the most recently saved match in the database for the given user.
+     *
+     * @param summonerId The id of the summoner for whom we are getting the most recent match
+     */
+    fun fetchIdOfMostRecentlySavedMatchForSummoner(summonerId: Long) : Long {
+        val sql = "SELECT Max($MATCH_TABLE.$GAME_ID) as $GAME_ID, $SUMMONER_ID from $MATCH_TABLE " +
+                "JOIN participant ON $MATCH_TABLE.$GAME_ID = participant.GameId where $SUMMONER_ID = $summonerId"
+        val result : ResultSet = dbHelper.executeSqlQuery(sql)
+        if (result.first()) {
+            return result.getLong(GAME_ID)
+        }
+
+        return -1
     }
 }

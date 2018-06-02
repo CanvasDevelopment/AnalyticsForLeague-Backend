@@ -7,6 +7,7 @@ import db.refined_stats.GameSummaryDAO
 import db.refined_stats.RefinedStatDAOContract
 import db.summoner.SummonerDAOContract
 import model.Summoner
+import model.match.Match
 import model.matchlist.MatchList
 import model.matchlist.MatchSummary
 import model.networking.NetworkResult
@@ -164,7 +165,7 @@ class MatchControlTests {
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(1, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(2, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(3, -1)).thenReturn(false)
-        matchControl.fetchAndSaveMatchSummaries(-1, matchSummaries)
+        matchControl.fetchAndSaveAllMatchesInAMatchSummaryList(-1, matchSummaries)
         verify(gameSummaryDaoContract, times(1)).doesGameSummaryForSummonerExist(1, -1)
         verify(gameSummaryDaoContract, times(1)).doesGameSummaryForSummonerExist(2, -1)
         verify(gameSummaryDaoContract, times(1)).doesGameSummaryForSummonerExist(3, -1)
@@ -214,7 +215,7 @@ class MatchControlTests {
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(1, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(2, -1)).thenReturn(false)
         `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(3, -1)).thenReturn(true)
-        matchControl.fetchAndSaveMatchSummaries(-1, matchSummaries)
+        matchControl.fetchAndSaveAllMatchesInAMatchSummaryList(-1, matchSummaries)
         verify(matchServiceApi, times(1)).getMatchByMatchId(RIOT_API_KEY, 1)
         verify(matchServiceApi, times(1)).getMatchByMatchId(RIOT_API_KEY, 2)
         verify(matchServiceApi, times(0)).getMatchByMatchId(RIOT_API_KEY, 3)
@@ -651,6 +652,41 @@ class MatchControlTests {
         Assert.assertTrue(matchControl.getTableName("middle",role) == "")
     }
 
+    @Test
+    fun `Make sure that we do not fetch a match that already exists`() {
+        val gameId = 123456L
+        val summonerID = 1234567L
+        `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(gameId, summonerID)).thenReturn(false)
+        `when`(matchDao.exists(gameId)).thenReturn(true)
+        matchControl.fetchAndSaveMatch(gameId, summonerID)
+        verify(matchServiceApi, times(0)).getMatchByMatchId(RIOT_API_KEY, gameId)
+    }
+
+    @Test
+    fun `Test that we do not fetch a match that already exists in refined table`() {
+        val gameId = 123456L
+        val summonerID = 1234567L
+        `when`(matchDao.exists(gameId)).thenReturn(false)
+        `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(gameId, summonerID)).thenReturn(true)
+        matchControl.fetchAndSaveMatch(gameId, summonerID)
+        verify(matchServiceApi, times(0)).getMatchByMatchId(RIOT_API_KEY, gameId)
+    }
+
+    @Test
+    fun `Test that we do fetch a match that does not exist in either`() {
+        val gameId = 123456L
+        val summonerID = 1234567L
+        val matchDetails = NetworkResult<Match>(mock(Match::class.java), 200)
+        `when`(matchServiceApi.getMatchByMatchId(RIOT_API_KEY, gameId)).thenReturn(matchDetails)
+        `when`(gameSummaryDaoContract.doesGameSummaryForSummonerExist(gameId, summonerID)).thenReturn(false)
+        `when`(matchDao.exists(gameId)).thenReturn(false)
+        matchControl.fetchAndSaveMatch(gameId, summonerID)
+        verify(matchServiceApi, times(1)).getMatchByMatchId(RIOT_API_KEY, gameId)
+
+    }
+
+
+
 //    @Test
 //    fun `Make sure that we can do a full load for a specific role`() {
 //        val summonerId : Long = 12345678
@@ -704,5 +740,4 @@ class MatchControlTests {
                 lane,
                 summonerId)
     }
-
 }

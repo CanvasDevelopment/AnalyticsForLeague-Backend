@@ -87,7 +87,7 @@ Create TABLE damagetakendiffpermin(
 );
 
 CREATE TABLE Mastery(
-  Id INTEGER AUTO_INCREMENT,
+  Id INTEGER AUTO_INCREMENT PRIMARY KEY,
   MasteryId INTEGER,
   ParticipantRowId BIGINT,
   _Rank INTEGER

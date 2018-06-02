@@ -226,6 +226,25 @@ class MatchTests {
         assert(matchExists2)
     }
 
+    @Test
+    fun `Test that we can fetch the most recently saved match`() {
+
+        val gameId = 1234567L
+        val gameId2 = 1334567L
+        val summonerId = 3333333333L
+        val match = produceMatch(gameId, summonerId)
+        val match2 = produceMatch(gameId2, summonerId)
+        val matchExists1 = matchDAO.exists(match.gameId)
+        assert(!matchExists1)
+        matchDAO.saveMatch(match)
+        matchDAO.saveMatch(match2)
+        val matchExists2 = matchDAO.exists(match.gameId)
+        assert(matchExists2)
+
+        val newestId = matchDAO.fetchIdOfMostRecentlySavedMatchForSummoner(summonerId)
+        assert(newestId == gameId2)
+    }
+
     private fun getParticipant() : Participant {
         val random = Random()
         val masteries = ArrayList<Mastery>()
@@ -384,6 +403,13 @@ class MatchTests {
         val pi1 = ParticipantIdentity(participantId, -1, player1)
         return pi1
     }
+
+    private fun getParticipantIdentity(participantId: Int, summonerId : Long) : ParticipantIdentity {
+        val player1 = produceRandomPlayer(summonerId)
+
+        val pi1 = ParticipantIdentity(participantId, -1, player1)
+        return pi1
+    }
     private fun getTeam() : Team {
         val random = Random()
         val ban1 = Ban(random.nextInt(), random.nextInt())
@@ -428,5 +454,89 @@ class MatchTests {
                 "OCE", // not used
                 "BLAH", // not used
                 1) // not used
+    }
+
+    fun produceRandomPlayer(summonerId: Long) : Player {
+        return Player(
+                "OCE", // doesnt matter
+                556, // not used in current tests
+                "Joe", // not used in current tests its just info
+                summonerId, // used
+                "OCE", // not used
+                "BLAH", // not used
+                1) // not used
+    }
+
+    fun produceMatch(gameId : Long, summunerId : Long) : Match {
+        val team1 = getTeam()
+        val team2 = getTeam()
+        val teams = arrayListOf<Team>()
+        teams.add(team1)
+        teams.add(team2)
+
+        val participant1 = getParticipant()
+        val participant2 = getParticipant()
+        val participant3 = getParticipant()
+        val participant4 = getParticipant()
+        val participant5 = getParticipant()
+        val participant6 = getParticipant()
+        val participant7 = getParticipant()
+        val participant8 = getParticipant()
+        val participant9 = getParticipant()
+        val participant10 = getParticipant()
+
+        val participants = arrayListOf<Participant>()
+        participants.add(participant1)
+        participants.add(participant2)
+        participants.add(participant3)
+        participants.add(participant4)
+        participants.add(participant5)
+        participants.add(participant6)
+        participants.add(participant7)
+        participants.add(participant8)
+        participants.add(participant9)
+        participants.add(participant10)
+
+        val participantIdentity1 = getParticipantIdentity(1, summunerId)
+        val participantIdentity2 = getParticipantIdentity(2)
+        val participantIdentity3 = getParticipantIdentity(3)
+        val participantIdentity4 = getParticipantIdentity(4)
+        val participantIdentity5 = getParticipantIdentity(5)
+        val participantIdentity6 = getParticipantIdentity(6)
+        val participantIdentity7 = getParticipantIdentity(7)
+        val participantIdentity8 = getParticipantIdentity(8)
+        val participantIdentity9 = getParticipantIdentity(9)
+        val participantIdentity10 = getParticipantIdentity(10)
+
+        val participantIdentities = arrayListOf<ParticipantIdentity>()
+        participantIdentities.add(participantIdentity1)
+        participantIdentities.add(participantIdentity2)
+        participantIdentities.add(participantIdentity3)
+        participantIdentities.add(participantIdentity4)
+        participantIdentities.add(participantIdentity5)
+        participantIdentities.add(participantIdentity6)
+        participantIdentities.add(participantIdentity7)
+        participantIdentities.add(participantIdentity8)
+        participantIdentities.add(participantIdentity9)
+        participantIdentities.add(participantIdentity10)
+
+        val match = Match(
+                gameId,
+                "oce",
+                123456,
+                123456,
+                1,
+                1,
+                6,
+                "test",
+                "test",
+                "test",
+                teams,
+                participants,
+                participantIdentities
+        )
+
+        return match
+
     }
 }

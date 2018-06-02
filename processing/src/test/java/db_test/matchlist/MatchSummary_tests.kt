@@ -18,7 +18,7 @@ class MatchSummary_tests {
     lateinit var dbHelper : DBHelper
     lateinit var matchSummaryDAO : MatchSummaryDAO
     val gameId : Long = -1
-    val MATCH_SUMMARY = "matchsummary2"
+    val MATCH_SUMMARY = "matchsummary"
     val summonerId : Long = -1
     @Before
     fun setUp() {
@@ -167,10 +167,79 @@ class MatchSummary_tests {
         assert(summaries[1].gameId == matchSummary3.gameId)
     }
 
+    @Test
+    fun `Make sure that we can fetch the correct amount of matches for a summoner`() {
+        val summonerId = random.nextLong()
+
+        assert(summonerId != -1L)
+        val matchSummary1 = generateMatchSummaryForSummoner(summonerId, "SOLO", "TOP")
+        val matchSummary2 = generateMatchSummaryForSummoner(summonerId, "SOLO", "TOP")
+        val matchSummary3 = generateMatchSummaryForSummoner(summonerId, "SOLO", "TOP")
+        val matchSummary4 = generateMatchSummaryForSummoner(summonerId, "SOLO", "TOP")
+        val matchSummary5 = generateMatchSummaryForSummoner(summonerId, "SOLO", "MID")
+        val matchSummary6 = generateMatchSummaryForSummoner(summonerId, "SOLO", "MID")
+        // 6 matches for our summoner
+        val matchSummary7 = generateMatchSummaryForSummoner(-1, "SOLO", "MID")
+        val matchSummary8 = generateMatchSummaryForSummoner(-1, "SOLO", "MID")
+
+        matchSummaryDAO.saveMatchSummary(matchSummary1)
+        matchSummaryDAO.saveMatchSummary(matchSummary2)
+        matchSummaryDAO.saveMatchSummary(matchSummary3)
+        matchSummaryDAO.saveMatchSummary(matchSummary4)
+        matchSummaryDAO.saveMatchSummary(matchSummary5)
+        matchSummaryDAO.saveMatchSummary(matchSummary6)
+        matchSummaryDAO.saveMatchSummary(matchSummary7)
+        matchSummaryDAO.saveMatchSummary(matchSummary8)
+
+        val numberOfMatches = matchSummaryDAO.loadNumberOfMatchSummariesForASummoner(summonerId)
+        assert(numberOfMatches == 6)
+    }
+
+    @Test
+    fun `Make sure that we can fetch the correct amount of matches less than a given game id for a summoner`() {
+        val summonerId = random.nextLong()
+
+        assert(summonerId != -1L)
+        val matchSummary1 = generateMatchSummaryForSummoner(summonerId, "SOLO", "TOP", 1)
+        val matchSummary2 = generateMatchSummaryForSummoner(summonerId, "SOLO", "TOP", 2)
+        val matchSummary3 = generateMatchSummaryForSummoner(summonerId, "SOLO", "TOP", 3)
+        val matchSummary4 = generateMatchSummaryForSummoner(summonerId, "SOLO", "TOP", 4)
+        val matchSummary5 = generateMatchSummaryForSummoner(summonerId, "SOLO", "MID", 5)
+        val matchSummary6 = generateMatchSummaryForSummoner(summonerId, "SOLO", "MID", 6)
+        // 6 matches for our summoner
+        val matchSummary7 = generateMatchSummaryForSummoner(-1, "SOLO", "MID")
+        val matchSummary8 = generateMatchSummaryForSummoner(-1, "SOLO", "MID")
+
+        matchSummaryDAO.saveMatchSummary(matchSummary1)
+        matchSummaryDAO.saveMatchSummary(matchSummary2)
+        matchSummaryDAO.saveMatchSummary(matchSummary3)
+        matchSummaryDAO.saveMatchSummary(matchSummary4)
+        matchSummaryDAO.saveMatchSummary(matchSummary5)
+        matchSummaryDAO.saveMatchSummary(matchSummary6)
+        matchSummaryDAO.saveMatchSummary(matchSummary7)
+        matchSummaryDAO.saveMatchSummary(matchSummary8)
+
+        val numberOfMatches = matchSummaryDAO.loadNumberOfMatchSummariesUpToAndIncludingGivenMatchId(summonerId,4)
+        assert(numberOfMatches == 4)
+    }
+
     private fun generateMatchSummaryForSummoner(summonerId: Long, role : String, lane : String) : MatchSummary {
         return MatchSummary(random.nextInt(),
                 "oce",
+                -1L,
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
                 random.nextLong(),
+                role,
+                lane,
+                summonerId)
+    }
+
+    private fun generateMatchSummaryForSummoner(summonerId: Long, role : String, lane : String, gameId : Long) : MatchSummary {
+        return MatchSummary(random.nextInt(),
+                "oce",
+                gameId,
                 random.nextInt(),
                 random.nextInt(),
                 random.nextInt(),

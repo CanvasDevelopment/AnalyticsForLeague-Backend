@@ -34,8 +34,8 @@ class MasteryDAO(val dbHelper : DBHelper) {
                 sql = sql.plus(",")
             }
         }
-
-        dbHelper.executeSQLScript(sql)
+        if (sql.isNotBlank())
+            dbHelper.executeSQLScript(sql)
     }
 
     fun saveMastery(mastery: Mastery, participantRowId : Long) : Long {

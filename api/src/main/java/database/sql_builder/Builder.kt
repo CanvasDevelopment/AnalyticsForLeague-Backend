@@ -3,12 +3,11 @@ package database.sql_builder
 /**
  * @author Josiah Kendall
  */
-class Builder() {
+class Builder {
 
     private var selector = "*"
     private var orderBy = "id"
     private var where = ""
-    private var default = selector
     private var limit = ""
     private var tableName = ""
 
@@ -32,22 +31,22 @@ class Builder() {
      * @return an instance of the builder that it was called upon, with the select set.
      */
     fun max() : Builder {
-        default = "max($selector)"
+        selector = "max($selector)"
         return this
     }
 
     fun min() : Builder {
-        default = "min($selector)"
+        selector = "min($selector)"
         return this
     }
 
     fun avg() : Builder {
-        default = "avg($selector)"
+        selector = "avg($selector)"
         return this
     }
 
     fun total() : Builder {
-        default = "sum($selector)"
+        selector = "sum($selector)"
         return this
     }
 
@@ -65,6 +64,8 @@ class Builder() {
         where = whereClause
         return this
     }
+
+
 
     fun toSql() : String {
         return "SELECT $selector FROM $tableName " +

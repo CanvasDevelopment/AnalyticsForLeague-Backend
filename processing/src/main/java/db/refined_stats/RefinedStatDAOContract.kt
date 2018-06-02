@@ -69,4 +69,6 @@ interface RefinedStatDAOContract {
      */
     fun fetchPlayerStatisticsForVillian(heroSummonerId: Long, heroRole: String, heroLane: String): ArrayList<FullGameStat>
 
+
+
 }

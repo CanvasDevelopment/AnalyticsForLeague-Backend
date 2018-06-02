@@ -5,6 +5,7 @@ import db.matchlist.MatchSummaryDAO
 import db.refined_stats.GameSummaryDaoContract
 import db.refined_stats.RefinedStatDAOContract
 import db.summoner.SummonerDAOContract
+import model.SyncProgress
 import model.matchlist.MatchList
 import model.matchlist.MatchSummary
 import model.networking.NetworkResult
@@ -13,7 +14,6 @@ import network.riotapi.MatchServiceApiImpl
 import util.*
 import util.columnnames.StaticColumnNames
 import java.lang.IllegalStateException
-import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.collections.ArrayList
@@ -80,7 +80,7 @@ class MatchControl(private val matchDAO: MatchDAO,
         if (numberOfMatchesToFetchForEachRole <= 0) {
             log.info("No limit of matches given. Fetching all match summaries.")
             val matchSummaries = matchSummaryDAO.getAllMatchesBySummonerId(summonerId)
-            fetchAndSaveMatchSummaries(summonerId, matchSummaries)
+            fetchAndSaveAllMatchesInAMatchSummaryList(summonerId, matchSummaries)
         } else {
             log.info("Limit given of $numberOfMatchesToFetchForEachRole")
 
@@ -98,15 +98,15 @@ class MatchControl(private val matchDAO: MatchDAO,
             allMatchSummaries.addAll(matchSummariesADC)
             allMatchSummaries.addAll(matchSummariesSupport)
 
-            fetchAndSaveMatchSummaries(summonerId,allMatchSummaries)
+            fetchAndSaveAllMatchesInAMatchSummaryList(summonerId,allMatchSummaries)
         }
     }
 
-    fun fetchAndSaveMatchSummaries(summonerId: Long, matchSummaries : ArrayList<MatchSummary>) {
+    fun fetchAndSaveAllMatchesInAMatchSummaryList(summonerId: Long, matchSummaries : ArrayList<MatchSummary>) {
         matchSummaries.forEach { matchSummary ->
             val alreadySaved = gameSummaryDaoContract.doesGameSummaryForSummonerExist(matchSummary.gameId, summonerId)
             if (!alreadySaved) {
-                fetchAndSaveMatch(matchSummary.gameId)
+                fetchAndSaveMatch(matchSummary.gameId, summonerId)
             }
         }
     }
@@ -118,20 +118,20 @@ class MatchControl(private val matchDAO: MatchDAO,
      *
      * @return a boolean. Probably doesn't need this but its there for now.
      */
-    fun fetchAndSaveMatch(gameId : Long) : Boolean {
-        log.info("Fetching match from server. MatchId: $gameId")
-        if (!matchDAO.exists(gameId)) {
+    fun fetchAndSaveMatch(gameId : Long, summonerId: Long) : Boolean {
+        // If we already have a fetched (or processed) a game then we do not need to fetch it again.
+        if (!matchDAO.exists(gameId) && !gameSummaryDaoContract.doesGameSummaryForSummonerExist(gameId, summonerId)) {
+            log.info("Fetching match from server. MatchId: $gameId")
             val matchDetails = matchServiceApi.getMatchByMatchId(RIOT_API_KEY, gameId)
-            // The ide says it cannot be null, but it can when testing.
-            // TODO handle this better?
             if (matchDetails.code == 429)
                 log.log(Level.WARNING,"Exceeded rate limits when fetching match")
             val match = matchDetails.data
 
             // If null, exit
-            log.log(Level.WARNING,"Request was 200 - OK, but the data was null (Match.sql save)")
             if (match!= null) {
                 matchDAO.saveMatch(match)
+            } else {
+                log.log(Level.WARNING,"Request was 200 - OK, but the data was null (Match.sql save)")
             }
         }
 
@@ -354,6 +354,13 @@ class MatchControl(private val matchDAO: MatchDAO,
 
     fun clearRawDatabasesOfSummoner(summonerId: Long) {
         matchDAO.deleteAllMatchesFromRawDBForASummoner(summonerId)
+    }
+
+    fun fetchSyncProgress(summonerId: Long) : SyncProgress{
+        val latestSyncedMatchId = matchDAO.fetchIdOfMostRecentlySavedMatchForSummoner(summonerId)
+        val numberOfSyncedMatches = matchSummaryDAO.loadNumberOfMatchSummariesUpToAndIncludingGivenMatchId(summonerId, latestSyncedMatchId)
+        val numberOfMatches = matchSummaryDAO.loadNumberOfMatchSummariesForASummoner(summonerId)
+        return SyncProgress(numberOfMatches, numberOfSyncedMatches)
     }
 
 

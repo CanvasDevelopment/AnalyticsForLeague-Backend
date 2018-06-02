@@ -1,6 +1,7 @@
 package application
 
 import application.domain.MatchControl
+import model.SyncProgress
 import util.*
 
 /**
@@ -8,6 +9,22 @@ import util.*
  */
 class Sync (val matchControl: MatchControl) {
 
+
+    fun refineStats(summonerId: Long) : Int {
+        val savedTop = matchControl.refineMatchData(summonerId, SOLO, TOP)
+        val savedMid = matchControl.refineMatchData(summonerId, SOLO, MID)
+        val savedJungle = matchControl.refineMatchData(summonerId, NONE, JUNGLE)
+        val savedSup = matchControl.refineMatchData(summonerId, DUO_SUPPORT, BOT)
+        val savedAdc = matchControl.refineMatchData(summonerId, DUO_CARRY, BOT)
+
+        if (savedJungle &&  savedAdc && savedMid && savedSup && savedTop) {
+            // Clear out the data to save space and monies - mayber remove this at some point
+            matchControl.clearRawDatabasesOfSummoner(summonerId)
+            return 200
+        }
+
+        return 500 // we failed something
+    }
 
     /**
      * Sync our summoner. This method triggers a 'sync' which pulls down all the matches that a summoner has not saved
@@ -19,23 +36,7 @@ class Sync (val matchControl: MatchControl) {
         matchControl.downloadAndSaveMatchSummaries(summonerId)
         matchControl.fetchAndSaveMatchesForASummoner(summonerId, 20)
         // refine all our match data
-        val savedTop = matchControl.refineMatchData(summonerId, SOLO, TOP)
-        val savedMid = matchControl.refineMatchData(summonerId, SOLO, MID)
-        val savedJungle = matchControl.refineMatchData(summonerId, NONE, JUNGLE)
-        val savedSup = matchControl.refineMatchData(summonerId, DUO_SUPPORT, BOT)
-        val savedAdc = matchControl.refineMatchData(summonerId, DUO_CARRY, BOT)
-
-
-        // Record the sync result here.
-
-        // clear the raw database
-        matchControl.clearRawDatabasesOfSummoner(summonerId)
-
-        if (savedJungle &&  savedAdc && savedMid && savedSup && savedTop) {
-            return 200
-        }
-
-        return 500 // we failed something
+        return 1
     }
 
     /**
@@ -45,5 +46,9 @@ class Sync (val matchControl: MatchControl) {
     fun syncMatchSummaries(summonerId: Long): Int {
         matchControl.downloadAndSaveMatchSummaries(summonerId)
         return 200
+    }
+
+    fun fetchSyncProgress(summonerId: Long): SyncProgress {
+       return matchControl.fetchSyncProgress(summonerId)
     }
 }

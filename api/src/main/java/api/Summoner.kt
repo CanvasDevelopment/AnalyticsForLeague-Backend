@@ -73,4 +73,9 @@ class Summoner {
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "sync/{summonerId}")
     fun sync(@Named("summonerId") summonerId : Long) : Response<String> = summonerController.syncSummoner(summonerId)
+
+    @ApiMethod(name = "refineUserStats",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "refineUserStats/{summonerId}")
+    fun refineUserStats(@Named("summonerId") summonerId: Long) : Response<String> = summonerController.refineUserStats(summonerId)
 }

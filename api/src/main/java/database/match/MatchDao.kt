@@ -5,21 +5,25 @@ import database.sql_builder.Builder
 import model.GameStageStats
 import model.MatchSummary
 import model.TotalMatchStats
+import java.sql.ResultSet
 
 /**
  * @author Josiah Kendall
  */
 class MatchDao(private val dbHelper: DbHelper) : MatchDaoContract {
+
     private val gameIdColumn = "gameId"
     private val matchSummaryTable = "matchsummary"
     private val summonerIdColumn = "summonerId"
+    private val matchTable = "matchtable"
+
     override fun loadTwentyIds(table: String, offset: Int, summonerId: Long): ArrayList<Long> {
         val sql = Builder()
                 .select(gameIdColumn)
                 .tableName(matchSummaryTable)
                 .where("$summonerIdColumn = $summonerId")
                 .orderBy(gameIdColumn)
-//                .
+//
         // going to be along the lines of select * from $role_summarystats
         return ArrayList()
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -53,5 +57,26 @@ class MatchDao(private val dbHelper: DbHelper) : MatchDaoContract {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    /**
+     * Fetch the most recently saved match in the database for the given user.
+     *
+     * @param summonerId The id of the summoner for whom we are getting the most recent match
+     */
+    fun fetchNewestMatchForSummoner(summonerId: Long) : Long {
+        val sql = Builder()
+                .select(gameIdColumn)
+                .tableName(matchTable)
+                .where("$summonerIdColumn = $summonerId")
+                .orderBy(gameIdColumn)
+                .max()
+                .toSql()
+
+        val result : ResultSet = dbHelper.executeSqlQuery(sql)
+        if (result.first()) {
+            return result.getLong("Max($gameIdColumn)")
+        }
+
+        return -1
+    }
 
 }

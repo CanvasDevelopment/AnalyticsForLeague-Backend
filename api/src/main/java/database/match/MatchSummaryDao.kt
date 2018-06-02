@@ -5,7 +5,7 @@ import database.match.model.MatchSummary
 import java.sql.ResultSet
 import java.util.ArrayList
 
-class MatchSummaryDAO(val dbHelper: DbHelper){
+class MatchSummaryDao(val dbHelper: DbHelper){
 
     private val MATCH_SUMMARY = "matchsummary"
     private val PLATFORM_ID = "PlatformId"

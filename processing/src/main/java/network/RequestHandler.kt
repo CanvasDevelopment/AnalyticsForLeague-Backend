@@ -56,7 +56,7 @@ class RequestHandler(private val requestDAOContract: RequestDAOContract,
         val conn = url.openConnection() as HttpURLConnection
         conn.doOutput = true
         conn.requestMethod = "GET"
-
+        conn.connectTimeout = 10000
         val rateLimitsFromHeaders = riotApiResponseHeaderParser.parseRateLimitsForAppAndEndpoint(conn, endpointId)
 
         // save method endpoint

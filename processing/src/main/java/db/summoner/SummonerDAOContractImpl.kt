@@ -75,7 +75,8 @@ class SummonerDAOContractImpl
 
     fun getSummoner(summonerName: String): Summoner? {
         log.info("Attempting to find summoner with name : " + summonerName)
-        val queryString = String.format("SELECT * FROM %s WHERE %s = %s", SummonerDAOContract.SUMMONER_TABLE, SummonerDAOContract.SUMMONER_NAME, summonerName)
+        val queryString = "SELECT * FROM ${SummonerDAOContract.SUMMONER_TABLE} WHERE ${SummonerDAOContract.SUMMONER_NAME} = '$summonerName'"
+        log.info("Searching for summoner: $queryString")
         try {
             val resultSet = dbHelper.executeSqlQuery(queryString)
             if (resultSet.next()) {
