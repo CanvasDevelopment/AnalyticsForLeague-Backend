@@ -40,33 +40,35 @@ class Analysis {
      * @param summonerId    The users summoner id.
      * @param lane          The role to filter the results to.
      * @param champId       The champion to filter the results to
-     * @param games         The number of games
+     * @param games         The number of limit
      */
     @ApiMethod(name = "getStatListWithChamp",
             httpMethod = ApiMethod.HttpMethod.GET,
-            path = "getStatList/{summonerId}/{lane}/{champ}/{games}")
+            path = "getStatList/{summonerId}/{lane}/{champ}/{limit}")
     fun getStatListWithChamp(@Named("summonerId") summonerId: Long,
                     @Named("lane") lane : String,
                     @Named("champ")champId: Int,
-                    @Named("games")games: Int) : ArrayList<AnalysisStatCardSkeleton> {
-        return presenter.fetchStatList(summonerId,lane,champId)
+                    @Named("limit")games: Int) : Response<ArrayList<AnalysisStatCardSkeleton>> {
+        val data = presenter.fetchStatList(summonerId,lane,champId)
+        return Response(200, data)
     }
 
     @ApiMethod(name = "getStatList",
             httpMethod = ApiMethod.HttpMethod.GET,
-            path = "getStatList/{summonerId}/{lane}/{games}")
+            path = "getStatList/{summonerId}/{lane}/{limit}")
     fun getStatList(@Named("summonerId") summonerId: Long,
                     @Named("lane") lane : String,
-                    @Named("games")games: Int) : ArrayList<AnalysisStatCardSkeleton> {
+                    @Named("limit")games: Int) : Response<ArrayList<AnalysisStatCardSkeleton>> {
 
-        return presenter.fetchStatList(summonerId,lane)
+        val data = presenter.fetchStatList(summonerId,lane)
+        return Response(200, data)
     }
 
     /**
      * Fetch a [AnalysisStatCardSkeleton] array for loading data on a card.
      *
      * @param summonerId    The summoner id of the user
-     * @param numberOfGames The number of games a user wants to filter the results to. E.g, for the most recent twenty games,
+     * @param numberOfGames The number of limit a user wants to filter the results to. E.g, for the most recent twenty limit,
      *                      this will be 20. The most recent 30, it will be 30 etc.
      * @param lane          The lane that the user wants to filter the results to.
      * @param champId       The id of the champion that the user wants to filter the results to.
@@ -74,31 +76,33 @@ class Analysis {
      */
     @ApiMethod(name = "fetchFullStatCardWithChamp",
             httpMethod = ApiMethod.HttpMethod.GET,
-            path = "fullStatCard/{summonerId}/{games}/{lane}/{champ}/{statName}")
+            path = "fullStatCard/{summonerId}/{limit}/{lane}/{champ}/{statName}")
     fun fetchFullStatCardValuesWithChamp(@Named("summonerId") summonerId: Long,
-                                @Named("games") numberOfGames : Int,
+                                @Named("limit") numberOfGames : Int,
                                 @Named("lane") lane: String,
                                 @Named("champ") champId : Int,
-                                @Named("statName") statName : String) : ArrayList<HeadToHeadStat> {
-        return presenter.fetchStatsForFullCard(summonerId,numberOfGames,lane,champId,statName,AVG)
+                                @Named("statName") statName : String) : Response<ArrayList<HeadToHeadStat>> {
+        val fullStatCard = presenter.fetchStatsForFullCard(summonerId,numberOfGames,lane,champId,statName,AVG)
+        return Response(200, fullStatCard)
     }
 
     /**
      * Fetch a [AnalysisStatCardSkeleton] array for loading data on a card.
      * @param summonerId    The summoner id of the user
-     * @param numberOfGames The number of games a user wants to filter the results to. E.g, for the most recent twenty games,
+     * @param numberOfGames The number of limit a user wants to filter the results to. E.g, for the most recent twenty limit,
      *                      this will be 20. The most recent 30, it will be 30 etc.
      * @param lane          The lane that the user wants to filter the results to.
      * @param statName      The name of the statistics that are required. See [StatTypes].
      */
     @ApiMethod(name = "fetchFullStatCardValues",
             httpMethod = ApiMethod.HttpMethod.GET,
-            path = "fullStatCard/{summonerId}/{games}/{lane}/{statName}")
+            path = "fullStatCard/{summonerId}/{limit}/{lane}/{statName}")
     fun fetchFullStatCardValues(@Named("summonerId") summonerId: Long,
-                                @Named("games") numberOfGames : Int,
+                                @Named("limit") numberOfGames : Int,
                                 @Named("lane") lane: String,
-                                @Named("statName") statName : String) : ArrayList<HeadToHeadStat> {
-        return presenter.fetchStatsForFullCard(summonerId,numberOfGames,lane,statName,AVG)
+                                @Named("statName") statName : String) : Response<ArrayList<HeadToHeadStat>> {
+        val fullStatCard = presenter.fetchStatsForFullCard(summonerId,numberOfGames,lane,statName,AVG)
+        return Response(200, fullStatCard)
     }
 
     /**
@@ -107,14 +111,15 @@ class Analysis {
      */
     @ApiMethod(name = "fetchHalfStatCardWithChamp",
             httpMethod = ApiMethod.HttpMethod.GET,
-            path = "halfStatCard/{summonerId}/{games}/{lane}/{champ}/{statName}")
+            path = "halfStatCard/{summonerId}/{limit}/{lane}/{champ}/{statName}")
     fun fetchHalfStatCardWithChamp( @Named("summonerId") summonerId: Long,
-                                    @Named("games") numberOfGames : Int,
+                                    @Named("limit") numberOfGames : Int,
                                     @Named("lane") lane: String,
                                     @Named("champ") champId : Int,
-                                    @Named("statName") statName : String) : HeadToHeadStat {
+                                    @Named("statName") statName : String) : Response<HeadToHeadStat> {
 
-        return presenter.fetchStatsForHalfCard(summonerId, numberOfGames, lane, champId, statName)
+        val halfStatCard = presenter.fetchStatsForHalfCard(summonerId, numberOfGames, lane, champId, statName)
+        return Response(200, halfStatCard)
     }
 
     /**
@@ -123,11 +128,12 @@ class Analysis {
      */
     @ApiMethod(name = "fetchHalfStatCard",
             httpMethod = ApiMethod.HttpMethod.GET,
-            path = "halfStatCard/{summonerId}/{games}/{lane}/{statName}")
+            path = "halfStatCard/{summonerId}/{limit}/{lane}/{statName}")
     fun fetchHalfStatCard( @Named("summonerId") summonerId: Long,
-                           @Named("games") numberOfGames : Int,
+                           @Named("limit") numberOfGames : Int,
                            @Named("lane") lane: String,
-                           @Named("statName") statName : String) : HeadToHeadStat {
-        return presenter.fetchStatsForHalfCard(summonerId, numberOfGames, lane, statName)
+                           @Named("statName") statName : String) : Response<HeadToHeadStat> {
+        val response = presenter.fetchStatsForHalfCard(summonerId, numberOfGames, lane, statName)
+        return Response(200, response)
     }
 }

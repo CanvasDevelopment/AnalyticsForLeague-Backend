@@ -25,7 +25,7 @@ class MatchController(private val matchDao : MatchDaoContract,
      *                      recent first to least recent last.
      */
     fun loadTwentyMatchIds(role : Int, startingPoint : Int, summonerId : Long) : ArrayList<Long> {
-        return matchDao.loadTwentyIds(tableNames.getRefinedStatsTableName(role), startingPoint, summonerId)
+        return matchDao.loadTwentyIds(startingPoint, summonerId)
     }
 
     /**
@@ -44,7 +44,6 @@ class MatchController(private val matchDao : MatchDaoContract,
      */
     fun loadTwentyMatchIds(role: Int, startingPoint : Int, summonerId : Long, heroChampId: Int) : ArrayList<Long> {
         return matchDao.loadTwentyIds(
-                tableNames.getRefinedStatsTableName(role),
                 startingPoint,
                 summonerId,
                 heroChampId)

@@ -14,23 +14,53 @@ class MatchDao(private val dbHelper: DbHelper) : MatchDaoContract {
 
     private val gameIdColumn = "gameId"
     private val matchSummaryTable = "matchsummary"
-    private val summonerIdColumn = "summonerId"
+    private val summonerIdColumn = "SummonerId"
     private val matchTable = "matchtable"
+    private val champColumn = "champion"
 
-    override fun loadTwentyIds(table: String, offset: Int, summonerId: Long): ArrayList<Long> {
+    /**
+     * @param startingPoint The starting point for our query - for instance if we want to fetch the next
+     * twenty ids, we would set this as 20.
+     *
+     * @param summonerId    The summoner for whom we are fetching the matches.
+     *
+     * @return An [ArrayList] of match ids.
+     */
+    override fun loadTwentyIds(startingPoint: Int, summonerId: Long): ArrayList<Long> {
         val sql = Builder()
-                .select(gameIdColumn)
+                .select("$gameIdColumn, $summonerIdColumn")
                 .tableName(matchSummaryTable)
                 .where("$summonerIdColumn = $summonerId")
                 .orderBy(gameIdColumn)
-//
-        // going to be along the lines of select * from $role_summarystats
-        return ArrayList()
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                .limit(startingPoint, startingPoint+20)
+                .toSql()
+        val resultSet = dbHelper.executeSqlQuery(sql)
+        val ids = ArrayList<Long>()
+        while (resultSet.next()) {
+            ids.add(resultSet.getLong(summonerIdColumn))
+        }
+
+        return ids
     }
 
-    override fun loadTwentyIds(table: String, startingPoint: Int, summonerId: Long, heroChampId: Int): ArrayList<Long> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun loadTwentyIds(startingPoint: Int,
+                               summonerId: Long,
+                               heroChampId: Int): ArrayList<Long> {
+        val sql = Builder()
+                .select("$gameIdColumn, $summonerIdColumn, $champColumn")
+                .tableName(matchSummaryTable)
+                .where("$summonerIdColumn = $summonerId and $champColumn = $heroChampId")
+                .orderBy(gameIdColumn)
+                .limit(startingPoint, startingPoint+20)
+                .toSql()
+
+        val resultSet = dbHelper.executeSqlQuery(sql)
+        val ids = ArrayList<Long>()
+        while (resultSet.next()) {
+            ids.add(resultSet.getLong(summonerIdColumn))
+        }
+
+        return ids
     }
 
     override fun loadTwentyIds(table: String, startingPoint: Int, summonerId: Long, heroChampId: Int, villanChampId: Int): ArrayList<Long> {

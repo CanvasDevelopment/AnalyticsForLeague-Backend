@@ -73,13 +73,13 @@ class DefaultStatTypes {
 
         val result = ArrayList<AnalysisStatCardSkeleton>()
 
-        result.add(kda)
+//        result.add(kda)
         result.add(creepsCard)
         result.add(damage)
         result.add(xp)
         result.add(gold)
-        result.add(wardsPlaced)
-        result.add(wardsKilled)
+//        result.add(wardsPlaced)
+//        result.add(wardsKilled)
 
         return result
     }

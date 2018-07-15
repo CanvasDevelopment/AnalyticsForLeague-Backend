@@ -1,5 +1,7 @@
 package service_contracts
 
+import model.response_beans.SyncProgress
+
 /**
  * @author Josiah Kendall
  */
@@ -32,4 +34,5 @@ interface ProcessingContract {
     fun syncUserMatchList(summonerId: Long) : Boolean
 
     fun refineUserStats(summonerId: Long): Boolean
+    fun getSyncProgress(summonerId: Long): SyncProgress
 }

@@ -58,14 +58,14 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * Fetch stats for a card. This returns the card details for a summoner based on the parameters given.
      *
      * @param summonerId        The summoner id of the user
-     * @param games             The number of recent games to limit this fetch to.
+     * @param games             The number of recent limit to limit this fetch to.
      * @param lane              The lane to filter our results to.
      * @param champId           The id of the champion that we want to filter/limit our results to. This means that we will
-     *                          only be fetching games that the user played the champ specified by this id.
+     *                          only be fetching limit that the user played the champ specified by this id.
      * @param statName          The name of that select that we are interested in.
      * @param statAccumulatorType   The accumulation type. For instance, max, min or average.
      */
-    fun fetchStatsForFullCard(summonerId: Long, games: Int, lane: String, champId: Int, statName : String, statAccumulatorType : String) : ArrayList<HeadToHeadStat> {
+    fun fetchStatsForFullCard(summonerId: Long, games : Int, lane: String, champId: Int, statName : String, statAccumulatorType : String) : ArrayList<HeadToHeadStat> {
         return analysisDao.fetchDeltas(summonerId,games,lane,statName,statAccumulatorType,champId)
 
     }
@@ -75,7 +75,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * Fetch stats for a card. This returns the card details for a summoner based on the parameters given.
      *
      * @param summonerId        The summoner id of the user
-     * @param games             The number of recent games to limit this fetch to.
+     * @param games             The number of recent limit to limit this fetch to.
      * @param lane              The lane to filter our results to.
      * @param statName          The name of that select that we are interested in.
      * @param statAccumulatorType   The accumulation type. For instance, max, min or average.
@@ -100,8 +100,8 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * like kills or assists, but will be expanded to include delta / game stage stats too, such as damage and creeps.
      *
      * @param summonerId    The id of our hero.
-     * @param games         The number of games to fetch this data for. For example, to fetch data for the last 20, you
-     *                      would use 20 as a parameter. To get the data for all games, use 10000, or something stupid.
+     * @param games         The number of limit to fetch this data for. For example, to fetch data for the last 20, you
+     *                      would use 20 as a parameter. To get the data for all limit, use 10000, or something stupid.
      * @param lane          The lane that the summoner was playing.
      * @param statName      The name of the select that we want to fetch.
      */
@@ -123,8 +123,8 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * Note that this page does not include a game stage, so it will be a total select. This is currently just for stats
      * like kills or assists, but will be expanded to include delta / game stage stats too, such as damage and creeps.
      * @param summonerId    The id of our hero.
-     * @param games         The number of games to fetch this data for. For example, to fetch data for the last 20, you
-     *                      would use 20 as a parameter. To get the data for all games, use 10000, or something stupid.
+     * @param games         The number of limit to fetch this data for. For example, to fetch data for the last 20, you
+     *                      would use 20 as a parameter. To get the data for all limit, use 10000, or something stupid.
      * @param lane          The lane that the summoner was playing.
      * @param statName      The name of the select that we want to fetch.
      * @param heroChampId   Filter to just results where the hero used this champion.
@@ -147,8 +147,8 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * Note that this page does not include a game stage, so it will be a total select. This is currently just for stats
      * like kills or assists, but will be expanded to include delta / game stage stats too, such as damage and creeps.
      * @param summonerId    The id of our hero.
-     * @param games         The number of games to fetch this data for. For example, to fetch data for the last 20, you
-     *                      would use 20 as a parameter. To get the data for all games, use 10000, or something stupid.
+     * @param games         The number of limit to fetch this data for. For example, to fetch data for the last 20, you
+     *                      would use 20 as a parameter. To get the data for all limit, use 10000, or something stupid.
      * @param lane          The lane that the summoner was playing.
      * @param statName      The name of the select that we want to fetch.
      * @param heroChampId   Filter to just results where the hero used this champion.
@@ -172,8 +172,8 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * Note that this page does not include a game stage, so it will be a total select. This is currently just for stats
      * like kills or assists, but will be expanded to include delta / game stage stats too, such as damage and creeps.
      * @param summonerId    The id of our hero.
-     * @param games         The number of games to fetch this data for. For example, to fetch data for the last 20, you
-     *                      would use 20 as a parameter. To get the data for all games, use 10000, or something stupid.
+     * @param games         The number of limit to fetch this data for. For example, to fetch data for the last 20, you
+     *                      would use 20 as a parameter. To get the data for all limit, use 10000, or something stupid.
      * @param lane          The lane that the summoner was playing.
      * @param statName      The name of the select that we want to fetch.
      * @param gameStage     Indicate that only a certain game stage is required - either [EARLY_GAME], [MID_GAME] or [LATE_GAME]
@@ -193,7 +193,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * The fetch for getting the information for the creeps per minute cardUrl detailUrl page.
      *
      * @param summonerId    The hero summoner id.
-     * @param games         The number of recent games to limit our filter to.
+     * @param games         The number of recent limit to limit our filter to.
      * @param lane          The lane we want the info for.
      * @return A [CreepsPerMinuteDeltasDetail] object with the stats on it.
      */

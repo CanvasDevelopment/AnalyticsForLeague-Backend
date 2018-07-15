@@ -8,6 +8,7 @@ import db.summoner.SummonerDao
 import di.KodeinManager
 import model.Response
 import model.response_beans.SummonerDetails
+import model.response_beans.SyncProgress
 import service_contracts.ProcessingImpl
 
 /**
@@ -73,9 +74,15 @@ class Summoner {
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "sync/{summonerId}")
     fun sync(@Named("summonerId") summonerId : Long) : Response<String> = summonerController.syncSummoner(summonerId)
-
     @ApiMethod(name = "refineUserStats",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "refineUserStats/{summonerId}")
     fun refineUserStats(@Named("summonerId") summonerId: Long) : Response<String> = summonerController.refineUserStats(summonerId)
+
+    @ApiMethod(name = "syncProgress",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "syncProgress/{summonerId}")
+    fun syncProgress(@Named("summonerId") summonerId: Long) : Response<SyncProgress> {
+        return summonerController.syncProgress(summonerId)
+    }
 }

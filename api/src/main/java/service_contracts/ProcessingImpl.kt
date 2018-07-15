@@ -9,6 +9,7 @@ import com.google.gson.Gson
 import database.match.MatchSummaryDao
 import database.match.model.MatchSummary
 import di.KodeinManager
+import model.response_beans.SyncProgress
 import network.NetworkResult
 import network.Response
 import util.*
@@ -27,7 +28,7 @@ class ProcessingImpl : ProcessingContract {
     val km = KodeinManager()
     private val gson = Gson()
     private val PRODUCTION_URL = "https://processing-dot-analytics-for-league.appspot.com/"
-    private val LOCAL_URL = "http://192.168.21.41:65070"
+    private val LOCAL_URL = "http://192.168.1.223:65070"
 
     private val matchSummaryDao : MatchSummaryDao = km.kodein.instance()
     private val syncQueue = QueueFactory.getDefaultQueue()
@@ -133,6 +134,12 @@ class ProcessingImpl : ProcessingContract {
         val refineUrl = "$url/_ah/processing/api/v1/refineStats/$summonerId"
         val result :NetworkResult<Response> = sendHttpGetRequest(Response::class.java, URL(refineUrl))
         return result.code in 200..299
+    }
+
+    override fun getSyncProgress(summonerId: Long): SyncProgress {
+        val syncProgressUrl = "$url/_ah/processing/api/v1/syncProgress/$summonerId"
+        val result : NetworkResult<SyncProgress> = sendHttpGetRequest(SyncProgress::class.java, URL(syncProgressUrl))
+        return result.data!!
     }
 
 }

@@ -3,6 +3,7 @@ package api.controllers
 import db.summoner.SummonerDao
 import model.Response
 import model.response_beans.SummonerDetails
+import model.response_beans.SyncProgress
 import service_contracts.ProcessingContract
 
 /**
@@ -76,5 +77,10 @@ class SummonerController(private val summonerDao: SummonerDao,
     }
 
     private fun getBlankSummonerDetails() : SummonerDetails = SummonerDetails(-1,-1,"",-1,-1,-1)
+
+    fun syncProgress(summonerId: Long) : Response<SyncProgress> {
+        val syncProgress = processingInterface.getSyncProgress(summonerId)
+        return Response(200, syncProgress)
+    }
 
 }

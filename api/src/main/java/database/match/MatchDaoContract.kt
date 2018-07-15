@@ -9,8 +9,8 @@ import model.TotalMatchStats
  */
 interface MatchDaoContract {
 
-    fun loadTwentyIds(table : String, startingPoint : Int, summonerId : Long) : ArrayList<Long>
-    fun loadTwentyIds(table : String, startingPoint : Int, summonerId : Long, heroChampId: Int) : ArrayList<Long>
+    fun loadTwentyIds(startingPoint: Int, summonerId: Long) : ArrayList<Long>
+    fun loadTwentyIds(startingPoint: Int, summonerId: Long, heroChampId: Int) : ArrayList<Long>
     fun loadTwentyIds(table : String, startingPoint : Int, summonerId : Long, heroChampId : Int, villanChampId : Int) : ArrayList<Long>
     fun loadMatchSummary(table: String, matchId : Long, summonerId: Long) : MatchSummary
     fun loadTotalStatsForAMatch(table : String, matchId : Long, summonerId:Long) : TotalMatchStats

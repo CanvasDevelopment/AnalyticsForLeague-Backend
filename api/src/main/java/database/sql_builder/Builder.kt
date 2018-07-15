@@ -55,8 +55,13 @@ class Builder {
         return this
     }
 
-    fun games(games : Int) : Builder {
+    fun limit(games : Int) : Builder {
         limit = "LIMIT $games"
+        return this
+    }
+
+    fun limit(firstLimit : Int, secondLimit : Int) : Builder {
+        limit = "LIMIT $firstLimit, $secondLimit"
         return this
     }
 
