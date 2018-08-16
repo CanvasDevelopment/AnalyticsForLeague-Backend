@@ -9,12 +9,14 @@ import model.TotalMatchStats
  */
 interface MatchDaoContract {
 
-    fun loadTwentyIds(startingPoint: Int, summonerId: Long) : ArrayList<Long>
-    fun loadTwentyIds(startingPoint: Int, summonerId: Long, heroChampId: Int) : ArrayList<Long>
-    fun loadTwentyIds(table : String, startingPoint : Int, summonerId : Long, heroChampId : Int, villanChampId : Int) : ArrayList<Long>
-    fun loadMatchSummary(table: String, matchId : Long, summonerId: Long) : MatchSummary
-    fun loadTotalStatsForAMatch(table : String, matchId : Long, summonerId:Long) : TotalMatchStats
-    fun loadEarlyGameStageStatsForAMatch(table: String, matchId: Long, summonerId: Long) : GameStageStats
-    fun loadMidGameStageStatsForAMatch(table: String, matchId: Long, summonerId: Long) : GameStageStats
-    fun loadLateGameStageStatsForAMatch(table: String, matchId: Long, summonerId: Long) : GameStageStats
+    fun loadTwentyIds(startingPoint : Int, summonerId: Long) : ArrayList<Long>
+    fun loadTwentyIds(startingPoint : Int, summonerId: Long, heroChampId : Int) : ArrayList<Long>
+    fun loadTwentyIds(startingPoint : Int, summonerId: Long, heroChampId : Int, role : String) : ArrayList<Long>
+    fun loadTwentyIds(role : String, startingPoint : Int, summonerId : Long, heroChampId : Int, villanChampId : Int) : ArrayList<Long>
+    fun loadMatchSummary(role : String, matchId : Long, summonerId: Long) : MatchSummary
+    fun loadTotalStatsForAMatch(role : String, matchId : Long, summonerId:Long) : TotalMatchStats
+    fun loadEarlyGameStageStatsForAMatch(role: String, matchId: Long, summonerId: Long) : GameStageStats
+    fun loadMidGameStageStatsForAMatch(role: String, matchId: Long, summonerId: Long) : GameStageStats
+    fun loadLateGameStageStatsForAMatch(role: String, matchId: Long, summonerId: Long) : GameStageStats
+    fun loadTwentyIds(startingPoint: Int, summonerId: Long, lane: String): ArrayList<Long>
 }
