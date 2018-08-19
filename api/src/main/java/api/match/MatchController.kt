@@ -1,16 +1,22 @@
-package api.controllers
+package api.match
 
+import api.match.model.PerformanceWeight
+import api.stat.analysis.model.HeadToHeadStat
+import database.match.MatchDao
 import database.match.MatchDaoContract
+import extensions.produceHeadToHeadStat
 import model.GameStageStats
 import model.MatchSummary
 import model.TotalMatchStats
+import util.Constant
 import util.GameStages
 import util.TableNames
+import java.sql.ResultSet
 
 /**
  * @author Josiah Kendall
  */
-class MatchController(private val matchDao : MatchDaoContract,
+class MatchController(private val matchDao : MatchDao,
                       private val tableNames: TableNames) {
     /**
      * Load an array of twenty match ids. The matches will be in order from most recent to least recent.
@@ -79,8 +85,67 @@ class MatchController(private val matchDao : MatchDaoContract,
      * @param matchId The match that we are wanting the details for.
      * @param summonerId The summoner who we are fetching the match details for.
      */
-    fun loadMatchSummary(role: Int, matchId : Long, summonerId: Long) : MatchSummary {
-        return matchDao.loadMatchSummary(tableNames.getRefinedStatsTableName(role), matchId, summonerId)
+    fun loadMatchSummary(role: Int, matchId : Long, summonerId: Long) : MatchSummary? {
+        // load performance profiles todo replace this with proper stuff
+        val earlyGamePerformanceProfile =produceMockPerformanceHashMap(Constant.GameStage.EARLY_GAME)
+        val midGamePerformanceProfile =produceMockPerformanceHashMap(Constant.GameStage.MID_GAME)
+        val lateGamePerformanceProfile =produceMockPerformanceHashMap(Constant.GameStage.LATE_GAME)
+        // create column lists to send to dao. This allows us to fetch the stats we need from the db
+        val earlyGameColumns = ArrayList<String>()
+        earlyGamePerformanceProfile.keys.toTypedArray().toCollection(earlyGameColumns)
+
+        // fetch the stats
+        // fetch the performance
+        val resultSet = matchDao.fetchStatsForHeroAndVillan(
+                summonerId,
+                matchId,
+                earlyGameColumns,
+                tableNames.getRefinedStatsTableName(role))
+
+         val earlyGameResult : HeadToHeadStat = resultSet.produceHeadToHeadStat(earlyGamePerformanceProfile)
+        // then do the same for the next two.
+
+        // test we return an emptty object if none found
+        // test that we can process properly when result set returns the right thing.
+       // if (resultSet.f)
+        // iterate over the resultset and get the stats
+        for (performanceStat in earlyGamePerformanceProfile) {
+            // fetch stat form the list and apply the weight
+
+        }
+
+        var midGameTotal = 0
+        for (performanceWeight in midGamePerformanceProfile) {
+            // fetch stat
+            // multiply by
+        }
+        var lateGameTotal = 0
+        for (performanceWeight in midGamePerformanceProfile) {
+            // fetch stat
+            // multiply by
+        }
+        //
+        return null
+    }
+
+    fun produceMockPerformanceHashMap(gameStage : String) : HashMap<String, Float> {
+        val hero = "hero"
+        val villan = "villan"
+        val performanceProfile = HashMap<String, Float>()
+        performanceProfile.put( "${hero}Creeps$gameStage",0.25f)
+        performanceProfile.put( "${villan}Creeps$gameStage",0.25f)
+        performanceProfile.put( "${hero}Gold$gameStage",0.3f)
+        performanceProfile.put( "${villan}Gold$gameStage",0.3f)
+        performanceProfile.put( "${hero}damageDealt$gameStage",0.30f)
+        performanceProfile.put( "${villan}damageDealt$gameStage",0.30f)
+        performanceProfile.put( "${hero}Xp$gameStage",0.15f)
+        performanceProfile.put( "${villan}Xp$gameStage",0.15f)
+        return performanceProfile
+    }
+
+
+    fun testResultSet(result : ResultSet) : Boolean{
+        return result.first()
     }
 
     /**

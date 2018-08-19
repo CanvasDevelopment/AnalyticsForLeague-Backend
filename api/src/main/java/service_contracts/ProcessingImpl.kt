@@ -28,7 +28,7 @@ class ProcessingImpl : ProcessingContract {
     val km = KodeinManager()
     private val gson = Gson()
     private val PRODUCTION_URL = "https://processing-dot-analytics-for-league.appspot.com/"
-    private val LOCAL_URL = "http://192.168.1.223:65070"
+    private val LOCAL_URL = "http://192.168.1.27:65070"
 
     private val matchSummaryDao : MatchSummaryDao = km.kodein.instance()
     private val syncQueue = QueueFactory.getDefaultQueue()
@@ -42,13 +42,13 @@ class ProcessingImpl : ProcessingContract {
         }
     }
 
-    override fun syncUser(summonerId: Long): Boolean {
+    override fun syncUser(summonerId: Long) : Boolean {
         val syncUrl = url + "/_ah/processing/api/v1/syncUser/$summonerId"
         val result = sendHttpGetRequest(Response::class.java, URL(syncUrl))
         return result.code == 200
     }
 
-    override fun createNewUser(accountName: String): Int {
+    override fun createNewUser(accountName : String): Int {
         // send request to
         val fetchUserUrl = url + "/_ah/processing/api/v1/createNewUser/$accountName"
         val result = sendHttpGetRequest(Response::class.java, URL(fetchUserUrl))
@@ -80,7 +80,7 @@ class ProcessingImpl : ProcessingContract {
         return NetworkResult(null, respCode)
     }
 
-    override fun syncUserMatchList(summonerId: Long): Boolean {
+    override fun syncUserMatchList(summonerId : Long): Boolean {
         val syncUrl = url + "/_ah/processing/api/v1/syncMatchList/$summonerId"
         val result : NetworkResult<Response> = sendHttpGetRequest(Response::class.java, URL(syncUrl))
 

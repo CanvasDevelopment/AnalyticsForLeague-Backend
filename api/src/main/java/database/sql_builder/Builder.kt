@@ -21,6 +21,18 @@ class Builder {
         return this
     }
 
+    fun select(statNames : ArrayList<String>) : Builder {
+        for (stat in statNames) {
+            if (selector.isEmpty()) {
+                this.selector = stat
+            } else {
+                selector = selector.plus(", $stat")
+            }
+        }
+
+        return this
+    }
+
     fun tableName(tableName : String) : Builder {
         this.tableName = tableName
         return this

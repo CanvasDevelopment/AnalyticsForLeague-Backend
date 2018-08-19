@@ -13,7 +13,6 @@ interface MatchDaoContract {
     fun loadTwentyIds(startingPoint : Int, summonerId: Long, heroChampId : Int) : ArrayList<Long>
     fun loadTwentyIds(startingPoint : Int, summonerId: Long, heroChampId : Int, role : String) : ArrayList<Long>
     fun loadTwentyIds(role : String, startingPoint : Int, summonerId : Long, heroChampId : Int, villanChampId : Int) : ArrayList<Long>
-    fun loadMatchSummary(role : String, matchId : Long, summonerId: Long) : MatchSummary
     fun loadTotalStatsForAMatch(role : String, matchId : Long, summonerId:Long) : TotalMatchStats
     fun loadEarlyGameStageStatsForAMatch(role: String, matchId: Long, summonerId: Long) : GameStageStats
     fun loadMidGameStageStatsForAMatch(role: String, matchId: Long, summonerId: Long) : GameStageStats
