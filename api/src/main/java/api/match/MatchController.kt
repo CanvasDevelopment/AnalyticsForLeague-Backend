@@ -1,13 +1,49 @@
 package api.match
 
 import api.match.model.PerformanceWeight
+import api.stat.analysis.model.HERO_CREEPS
 import api.stat.analysis.model.HeadToHeadStat
 import database.match.MatchDao
 import database.match.MatchDaoContract
+import database.match.model.MatchIdentifier
+import database.tables.StatColumns
+import database.tables.StatColumns.HERO_ASSISTS
+import database.tables.StatColumns.HERO_CHAMP_ID
+import database.tables.StatColumns.HERO_DEATHS
+import database.tables.StatColumns.HERO_EARLY_GAME_CREEPS
+import database.tables.StatColumns.HERO_EARLY_GAME_DAMAGE
+import database.tables.StatColumns.HERO_EARLY_GAME_GOLD
+import database.tables.StatColumns.HERO_EARLY_GAME_XP
+import database.tables.StatColumns.HERO_KILLS
+import database.tables.StatColumns.HERO_LATE_GAME_CREEPS
+import database.tables.StatColumns.HERO_LATE_GAME_DAMAGE
+import database.tables.StatColumns.HERO_LATE_GAME_GOLD
+import database.tables.StatColumns.HERO_LATE_GAME_XP
+import database.tables.StatColumns.HERO_MID_GAME_CREEPS
+import database.tables.StatColumns.HERO_MID_GAME_DAMAGE
+import database.tables.StatColumns.HERO_MID_GAME_GOLD
+import database.tables.StatColumns.HERO_MID_GAME_XP
+import database.tables.StatColumns.HERO_RESULT
+import database.tables.StatColumns.VILLAN_ASSISTS
+import database.tables.StatColumns.VILLAN_CHAMP_ID
+import database.tables.StatColumns.VILLAN_DEATHS
+import database.tables.StatColumns.VILLAN_EARLY_GAME_CREEPS
+import database.tables.StatColumns.VILLAN_EARLY_GAME_DAMAGE
+import database.tables.StatColumns.VILLAN_EARLY_GAME_GOLD
+import database.tables.StatColumns.VILLAN_EARLY_GAME_XP
+import database.tables.StatColumns.VILLAN_KILLS
+import database.tables.StatColumns.VILLAN_LATE_GAME_CREEPS
+import database.tables.StatColumns.VILLAN_LATE_GAME_DAMAGE
+import database.tables.StatColumns.VILLAN_LATE_GAME_GOLD
+import database.tables.StatColumns.VILLAN_LATE_GAME_XP
+import database.tables.StatColumns.VILLAN_MID_GAME_CREEPS
+import database.tables.StatColumns.VILLAN_MID_GAME_DAMAGE
+import database.tables.StatColumns.VILLAN_MID_GAME_GOLD
+import database.tables.StatColumns.VILLAN_MID_GAME_XP
 import extensions.produceHeadToHeadStat
 import model.GameStageStats
+import model.MatchPerformanceDetails
 import model.MatchSummary
-import model.TotalMatchStats
 import util.Constant
 import util.GameStages
 import util.TableNames
@@ -30,7 +66,7 @@ class MatchController(private val matchDao : MatchDao,
      * @return              [ArrayList] of [Long]. Each long is a match id. The matches will be in order from most
      *                      recent first to least recent last.
      */
-    fun loadTwentyMatchIds(role : Int, startingPoint : Int, summonerId : Long) : ArrayList<Long> {
+    fun loadTwentyMatchIds(role : Int, startingPoint : Int, summonerId : Long) : ArrayList<MatchIdentifier> {
         return matchDao.loadTwentyIds(startingPoint, summonerId)
     }
 
@@ -85,64 +121,52 @@ class MatchController(private val matchDao : MatchDao,
      * @param matchId The match that we are wanting the details for.
      * @param summonerId The summoner who we are fetching the match details for.
      */
-    fun loadMatchSummary(role: Int, matchId : Long, summonerId: Long) : MatchSummary? {
+    fun loadMatchSummary(role : Int, matchId : Long, summonerId: Long) : MatchSummary {
         // load performance profiles todo replace this with proper stuff
-        val earlyGamePerformanceProfile =produceMockPerformanceHashMap(Constant.GameStage.EARLY_GAME)
-        val midGamePerformanceProfile =produceMockPerformanceHashMap(Constant.GameStage.MID_GAME)
-        val lateGamePerformanceProfile =produceMockPerformanceHashMap(Constant.GameStage.LATE_GAME)
+        val earlyGamePerformanceProfile = matchDao.produceMockPerformanceHashMap(Constant.GameStage.EARLY_GAME)
+        val midGamePerformanceProfile = matchDao.produceMockPerformanceHashMap(Constant.GameStage.MID_GAME)
+        val lateGamePerformanceProfile = matchDao.produceMockPerformanceHashMap(Constant.GameStage.LATE_GAME)
         // create column lists to send to dao. This allows us to fetch the stats we need from the db
+
         val earlyGameColumns = ArrayList<String>()
+        val midGameColumns = ArrayList<String>()
+        val lateGameColumns = ArrayList<String>()
+
         earlyGamePerformanceProfile.keys.toTypedArray().toCollection(earlyGameColumns)
+        midGamePerformanceProfile.keys.toTypedArray().toCollection(midGameColumns)
+        lateGamePerformanceProfile.keys.toTypedArray().toCollection(lateGameColumns)
 
         // fetch the stats
-        // fetch the performance
-        val resultSet = matchDao.fetchStatsForHeroAndVillan(
-                summonerId,
-                matchId,
-                earlyGameColumns,
-                tableNames.getRefinedStatsTableName(role))
+        val tableName = tableNames.getRefinedStatsTableName(role)
 
-         val earlyGameResult : HeadToHeadStat = resultSet.produceHeadToHeadStat(earlyGamePerformanceProfile)
+        // fetch the performance
+        val resultSetEarlyGame = matchDao.fetchStatsForHeroAndVillan(summonerId,matchId,earlyGameColumns,tableName)
+        val resultSetMidGame = matchDao.fetchStatsForHeroAndVillan(summonerId,matchId,midGameColumns,tableName)
+        val resultSetLateGame = matchDao.fetchStatsForHeroAndVillan(summonerId,matchId,midGameColumns,tableName)
+
+         val earlyGameResult : HeadToHeadStat = resultSetEarlyGame.produceHeadToHeadStat(earlyGamePerformanceProfile)
+         val midGameResult : HeadToHeadStat = resultSetMidGame.produceHeadToHeadStat(midGamePerformanceProfile)
+         val lateGameResult : HeadToHeadStat = resultSetLateGame.produceHeadToHeadStat(lateGamePerformanceProfile)
         // then do the same for the next two.
 
-        // test we return an emptty object if none found
-        // test that we can process properly when result set returns the right thing.
-       // if (resultSet.f)
-        // iterate over the resultset and get the stats
-        for (performanceStat in earlyGamePerformanceProfile) {
-            // fetch stat form the list and apply the weight
-
+        // fetch game result (win) and champ ids
+        val resultSet = matchDao.fetchWinAndChampIds(matchId, summonerId, tableNames.getRefinedStatsTableName(role))
+        if (!resultSet.first()) {
+            throw IllegalStateException("Failed to find any match with the given criteria")
         }
 
-        var midGameTotal = 0
-        for (performanceWeight in midGamePerformanceProfile) {
-            // fetch stat
-            // multiply by
-        }
-        var lateGameTotal = 0
-        for (performanceWeight in midGamePerformanceProfile) {
-            // fetch stat
-            // multiply by
-        }
-        //
-        return null
+        return MatchSummary(
+                earlyGameResult.heroStatValue,
+                earlyGameResult.enemyStatValue,
+                midGameResult.heroStatValue,
+                midGameResult.enemyStatValue,
+                lateGameResult.heroStatValue,
+                lateGameResult.enemyStatValue,
+                resultSet.getBoolean(HERO_RESULT), // todo make this more robust - should not have text
+                resultSet.getInt(HERO_CHAMP_ID),
+                resultSet.getInt(VILLAN_CHAMP_ID),
+                matchId)
     }
-
-    fun produceMockPerformanceHashMap(gameStage : String) : HashMap<String, Float> {
-        val hero = "hero"
-        val villan = "villan"
-        val performanceProfile = HashMap<String, Float>()
-        performanceProfile.put( "${hero}Creeps$gameStage",0.25f)
-        performanceProfile.put( "${villan}Creeps$gameStage",0.25f)
-        performanceProfile.put( "${hero}Gold$gameStage",0.3f)
-        performanceProfile.put( "${villan}Gold$gameStage",0.3f)
-        performanceProfile.put( "${hero}damageDealt$gameStage",0.30f)
-        performanceProfile.put( "${villan}damageDealt$gameStage",0.30f)
-        performanceProfile.put( "${hero}Xp$gameStage",0.15f)
-        performanceProfile.put( "${villan}Xp$gameStage",0.15f)
-        return performanceProfile
-    }
-
 
     fun testResultSet(result : ResultSet) : Boolean{
         return result.first()
@@ -156,13 +180,120 @@ class MatchController(private val matchDao : MatchDao,
      * @param matchId       The id of the match that we are interested in.
      * @param summonerId    The id of the summoner who we want the stats for
      */
-    fun loadTotalStatsForAMatch(role: Int, matchId : Long, summonerId:Long) : TotalMatchStats {
-        return matchDao.loadTotalStatsForAMatch(
-                tableNames.getRefinedStatsTableName(role),
-                matchId,
-                summonerId)
+    fun loadMatchPerformanceSummary(role: Int, matchId : Long, summonerId:Long) : MatchPerformanceDetails {
+        val tableName = tableNames.getRefinedStatsTableName(role)
+        val columnNames = ArrayList<String>()
+        columnNames.add(StatColumns.HERO_KILLS)
+        columnNames.add(StatColumns.HERO_ASSISTS)
+        columnNames.add(StatColumns.HERO_DEATHS)
+        columnNames.add(StatColumns.HERO_EARLY_GAME_CREEPS)
+        columnNames.add(StatColumns.HERO_EARLY_GAME_DAMAGE)
+        columnNames.add(StatColumns.HERO_EARLY_GAME_GOLD)
+        columnNames.add(StatColumns.HERO_EARLY_GAME_XP)
+        columnNames.add(StatColumns.HERO_MID_GAME_CREEPS)
+        columnNames.add(StatColumns.HERO_MID_GAME_DAMAGE)
+        columnNames.add(StatColumns.HERO_MID_GAME_GOLD)
+        columnNames.add(StatColumns.HERO_MID_GAME_XP)
+        columnNames.add(StatColumns.HERO_LATE_GAME_CREEPS)
+        columnNames.add(StatColumns.HERO_LATE_GAME_DAMAGE)
+        columnNames.add(StatColumns.HERO_LATE_GAME_GOLD)
+        columnNames.add(StatColumns.HERO_LATE_GAME_XP)
+        columnNames.add(StatColumns.VILLAN_EARLY_GAME_CREEPS)
+        columnNames.add(StatColumns.VILLAN_EARLY_GAME_DAMAGE)
+        columnNames.add(StatColumns.VILLAN_EARLY_GAME_GOLD)
+        columnNames.add(StatColumns.VILLAN_EARLY_GAME_XP)
+        columnNames.add(StatColumns.VILLAN_MID_GAME_CREEPS)
+        columnNames.add(StatColumns.VILLAN_MID_GAME_DAMAGE)
+        columnNames.add(StatColumns.VILLAN_MID_GAME_GOLD)
+        columnNames.add(StatColumns.VILLAN_MID_GAME_XP)
+        columnNames.add(StatColumns.VILLAN_LATE_GAME_CREEPS)
+        columnNames.add(StatColumns.VILLAN_LATE_GAME_DAMAGE)
+        columnNames.add(StatColumns.VILLAN_LATE_GAME_GOLD)
+        columnNames.add(StatColumns.VILLAN_LATE_GAME_XP)
+        val resultSet = matchDao.fetchMatchDetails(summonerId,matchId,columnNames,tableName)
+        return produceMatchPerformanceDetails(resultSet)
+        // produce a match val from the result set
     }
 
+    fun produceMatchPerformanceDetails(result: ResultSet) : MatchPerformanceDetails {
+        if (!result.first()) {
+            throw IllegalStateException("Failed to find a match matching the given criteria")
+        }
+
+        val kda = ArrayList<HeadToHeadStat>()
+        kda.add(HeadToHeadStat(
+                result.getInt(VILLAN_KILLS).toFloat(),
+                result.getInt(HERO_KILLS).toFloat()))
+        kda.add(HeadToHeadStat(
+                result.getInt(VILLAN_DEATHS).toFloat(),
+                result.getInt(HERO_DEATHS).toFloat()))
+        kda.add(HeadToHeadStat(
+                result.getInt(VILLAN_ASSISTS).toFloat(),
+                result.getInt(HERO_ASSISTS).toFloat()))
+
+        val creeps = ArrayList<HeadToHeadStat>()
+        creeps.add(HeadToHeadStat(
+                result.getFloat(VILLAN_EARLY_GAME_CREEPS),
+                result.getFloat(HERO_EARLY_GAME_CREEPS)
+        ))
+        creeps.add(HeadToHeadStat(
+                result.getFloat(VILLAN_MID_GAME_CREEPS),
+                result.getFloat(HERO_MID_GAME_CREEPS)
+        ))
+        creeps.add(HeadToHeadStat(
+                result.getFloat(VILLAN_LATE_GAME_CREEPS),
+                result.getFloat(HERO_LATE_GAME_CREEPS)
+        ))
+
+        val damageDealt = ArrayList<HeadToHeadStat>()
+        damageDealt.add(HeadToHeadStat(
+                result.getFloat(VILLAN_EARLY_GAME_DAMAGE),
+                result.getFloat(HERO_EARLY_GAME_DAMAGE)
+        ))
+        damageDealt.add(HeadToHeadStat(
+                result.getFloat(VILLAN_MID_GAME_DAMAGE),
+                result.getFloat(HERO_MID_GAME_DAMAGE)
+        ))
+        damageDealt.add(HeadToHeadStat(
+                result.getFloat(VILLAN_LATE_GAME_DAMAGE),
+                result.getFloat(HERO_LATE_GAME_DAMAGE)
+        ))
+        val damageTaken = ArrayList<HeadToHeadStat>() // this one is empty, we dont use this one yet?
+        val gold = ArrayList<HeadToHeadStat>()
+        gold.add(HeadToHeadStat(
+                result.getFloat(VILLAN_EARLY_GAME_GOLD),
+                result.getFloat(HERO_EARLY_GAME_GOLD)
+        ))
+        gold.add(HeadToHeadStat(
+                result.getFloat(VILLAN_MID_GAME_GOLD),
+                result.getFloat(HERO_MID_GAME_GOLD)
+        ))
+        gold.add(HeadToHeadStat(
+                result.getFloat(VILLAN_LATE_GAME_GOLD),
+                result.getFloat(HERO_LATE_GAME_GOLD)
+        ))
+        val xp = ArrayList<HeadToHeadStat>()
+        xp.add(HeadToHeadStat(
+                result.getFloat(VILLAN_EARLY_GAME_XP),
+                result.getFloat(HERO_EARLY_GAME_XP)
+        ))
+        xp.add(HeadToHeadStat(
+                result.getFloat(VILLAN_MID_GAME_XP),
+                result.getFloat(HERO_MID_GAME_XP)
+        ))
+        xp.add(HeadToHeadStat(
+                result.getFloat(VILLAN_LATE_GAME_XP),
+                result.getFloat(HERO_LATE_GAME_XP)
+        ))
+        return MatchPerformanceDetails(
+                kda,
+                creeps,
+                damageDealt,
+                damageTaken,
+                gold,
+                xp)
+    }
+//    fun produceColumnNames(role: Int) : ArrayList<String>() {}
     /**
      * Load the [GameStageStats] for a match.
      *

@@ -17,10 +17,10 @@ class ResultSetController(val resultSet: ResultSet) {
         // so we need to get the villan and hero scores for the same object
         // get the hero key.
         // then extract the hero word, add villan, and that is the comparison object
-        var totalHeroScore = 0f
-        var totalVillainScore = 0f
+
         val results = ArrayList<Float>()
         val villainResults = ArrayList<Float>()
+        resultSet.first()
         for (key in performanceProfile.keys) {
             if (key.startsWith("hero")) {
                 val heroScore = if (resultSet.getObject(key) is Int) {
@@ -28,8 +28,14 @@ class ResultSetController(val resultSet: ResultSet) {
                 } else {
                     resultSet.getFloat(key)
                 }
-//                val heroScore : Float = ( as Int
-                val heroAdjustedScore : Float = heroScore * performanceProfile[key]!!
+
+                // Get hero adjusted score. We don't want to have this value a zero, but sometimes it can be
+                // This means we give it the slightest value.
+                val heroAdjustedScore : Float = if (heroScore > 0) {
+                    heroScore * performanceProfile[key]!!
+                } else {
+                    0.01f * performanceProfile[key]!!
+                }
 
                 val villanKey = utils.getVillainKey(key)
                 val villanScore = if (resultSet.getObject(villanKey) is Int) {
@@ -37,9 +43,16 @@ class ResultSetController(val resultSet: ResultSet) {
                 } else {
                     resultSet.getFloat(villanKey)
                 }
-                val villanAdjustedScore : Float = villanScore * performanceProfile[villanKey]!!
+
+
+                val villanAdjustedScore : Float = if (villanScore > 0) {
+                     villanScore * performanceProfile[villanKey]!!
+                } else {
+                    0.01f * performanceProfile[villanKey]!!
+                }
 
                 results.add(heroAdjustedScore / (villanAdjustedScore + heroAdjustedScore))
+
                 villainResults.add(villanAdjustedScore / (villanAdjustedScore + heroAdjustedScore))
             }
         }

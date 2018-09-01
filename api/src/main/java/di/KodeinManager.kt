@@ -1,11 +1,14 @@
 package di
 
+import api.match.MatchController
 import api.stat.analysis.AnalysisDao
 import api.stat.analysis.AnalysisPresenter
 import com.github.salomonbrys.kodein.*
 import database.DbHelper
+import database.match.MatchDao
 import database.match.MatchSummaryDao
 import service_contracts.ProcessingImpl
+import util.TableNames
 
 
 /**
@@ -40,6 +43,18 @@ class KodeinManager {
             MatchSummaryDao(kodein.instance())
         }
 
+        bind<MatchController>() with provider {
+            MatchController(
+                    kodein.instance(),
+                    kodein.instance())
+        }
 
+        bind<MatchDao>() with provider {
+            MatchDao(kodein.instance())
+        }
+
+        bind<TableNames>() with provider {
+            TableNames()
+        }
     }
 }

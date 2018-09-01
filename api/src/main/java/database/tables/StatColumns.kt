@@ -1,4 +1,4 @@
-package database
+package database.tables
 
 /**
  * @author Josiah Kendall
@@ -33,5 +33,29 @@ object StatColumns {
     const val VILLAN_WARDS_PLACED = "villanWardsPlaced"
     const val HERO_WARDS_KILLED= "heroWardsKilled"
     const val VILLAN_WARDS_KILLED= "villanWardsKilled"
+    const val HERO_EARLY_GAME_CREEPS = "heroCreepsEarlyGame"
+    const val HERO_MID_GAME_CREEPS = "heroCreepsMidGame"
+    const val HERO_LATE_GAME_CREEPS = "heroCreepsLateGame"
+    const val VILLAN_EARLY_GAME_CREEPS = "villanCreepsEarlyGame"
+    const val VILLAN_MID_GAME_CREEPS = "villanCreepsMidGame"
+    const val VILLAN_LATE_GAME_CREEPS = "villanCreepsLateGame"
+    const val HERO_EARLY_GAME_XP = "heroXpEarlyGame"
+    const val HERO_MID_GAME_XP = "heroXpMidGame"
+    const val HERO_LATE_GAME_XP = "heroXpLateGame"
+    const val VILLAN_EARLY_GAME_XP = "villanXpEarlyGame"
+    const val VILLAN_MID_GAME_XP = "villanXpMidGame"
+    const val VILLAN_LATE_GAME_XP = "villanXpLateGame"
+    const val HERO_EARLY_GAME_GOLD = "heroGoldEarlyGame"
+    const val HERO_MID_GAME_GOLD = "heroGoldMidGame"
+    const val HERO_LATE_GAME_GOLD = "heroGoldLateGame"
+    const val VILLAN_EARLY_GAME_GOLD = "villanGoldEarlyGame"
+    const val VILLAN_MID_GAME_GOLD = "villanGoldMidGame"
+    const val VILLAN_LATE_GAME_GOLD = "villanGoldLateGame"
+    const val HERO_EARLY_GAME_DAMAGE = "heroDamageEarlyGame"
+    const val HERO_MID_GAME_DAMAGE = "heroDamageMidGame"
+    const val HERO_LATE_GAME_DAMAGE = "heroDamageLateGame"
+    const val VILLAN_EARLY_GAME_DAMAGE = "villanDamageEarlyGame"
+    const val VILLAN_MID_GAME_DAMAGE = "villanDamageMidGame"
+    const val VILLAN_LATE_GAME_DAMAGE = "villanDamageLateGame"
 
 }

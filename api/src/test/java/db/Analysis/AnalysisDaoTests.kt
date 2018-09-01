@@ -42,15 +42,15 @@ class AnalysisDaoTests {
         val deltas = ad.fetchAvgDeltas(1542360, 20, MID, CREEPS)
         assert(deltas.earlyGame == 62f)
         assert(deltas.midGame == 65.33333587646484f)
-        assert(deltas.lateGame == 75.99999f)
+        Assert.assertEquals(deltas.lateGame, 76f, 0.05f)
     }
 
     @Test
     fun `Make sure that we can get the max creeps per minute for mid`() {
         val deltas = ad.fetchMaxDeltas(1542360, 20, MID, CREEPS)
-        assert(deltas.earlyGame == 65f)
-        assertEquals(deltas.midGame , 81.00001f)
-        assert(deltas.lateGame == 88.99999f)
+        Assert.assertEquals(deltas.earlyGame, 65f, 0.05f)
+        Assert.assertEquals(deltas.midGame , 81.00001f, 0.05f)
+        Assert.assertEquals(deltas.lateGame, 88.99999f, 0.05f)
     }
 
     @Test
@@ -85,8 +85,8 @@ class AnalysisDaoTests {
     @Test
     fun `Make sure that we can fetch average head to head stats for a summoner with a specific champion during mid game`() {
         val deltas = ad.fetchHeadToHeadStat(summonerId,20,TOP,AVG, MID_GAME, CREEPS,58)
-        assert(deltas.heroStatValue == 66.33333079020183f)
-        assert(deltas.enemyStatValue == 52.333333333333336f)
+        Assert.assertEquals(deltas.heroStatValue, 66.33333079020183f, 0.05f)
+        Assert.assertEquals(deltas.enemyStatValue, 52.333333333333336f, 0.05f)
     }
 
     @Test
@@ -106,36 +106,36 @@ class AnalysisDaoTests {
     @Test
     fun `Make sure that we can fetch average head to head stats of wards killed`() {
         val deltas = ad.fetchHeadToHeadStat(summonerId, 20, JUNGLE, AVG, WARDS_KILLED)
-        assert(deltas.heroStatValue == 1.1f)
-        assert(deltas.enemyStatValue == 1.45f)
+        Assert.assertEquals(deltas.heroStatValue, 1.1f, 0.05f)
+        Assert.assertEquals(deltas.enemyStatValue, 1.45f, 0.05f)
     }
 
     @Test
     fun `Make sure that we can fetch average head to head stats of wards placed`() {
         val deltas = ad.fetchHeadToHeadStat(summonerId, 20, JUNGLE, AVG, WARDS_PLACED)
-        assert(deltas.heroStatValue == 11.3f)
-        assert(deltas.enemyStatValue == 9.05f)
+        Assert.assertEquals(deltas.heroStatValue, 11.3f, 0.05f)
+        Assert.assertEquals(deltas.enemyStatValue, 9.05f, 0.05f)
     }
 
     @Test
     fun `Make sure that we can fetch average head to head stats of barons killed`() {
         val deltas = ad.fetchHeadToHeadStat(summonerId, 20, JUNGLE, AVG, TEAM_BARON_KILLS)
-        assert(deltas.heroStatValue == 0.2f)
-        assert(deltas.enemyStatValue == 0.35f)
+        Assert.assertEquals(deltas.heroStatValue, 0.2f, 0.05f)
+        Assert.assertEquals(deltas.enemyStatValue, 0.35f, 0.05f)
     }
 
     @Test
     fun `Make sure that we can fetch average head to head stats of dragons killed`() {
         val deltas = ad.fetchHeadToHeadStat(summonerId, 20, JUNGLE, AVG, TEAM_DRAGON_KILLS)
-        assert(deltas.heroStatValue == 1.7f)
-        assert(deltas.enemyStatValue == 1.050f)
+        Assert.assertEquals(deltas.heroStatValue, 1.7f, 0.05f)
+        Assert.assertEquals(deltas.enemyStatValue, 1.050f, 0.05f)
     }
 
     @Test
     fun `Make sure that we can fetch average head to head stats of rift heralds killed`() {
         val deltas = ad.fetchHeadToHeadStat(summonerId, 20, JUNGLE, AVG, RIFT_HERALD_KILLS)
-        assert(deltas.heroStatValue == 0.05f)
-        assert(deltas.enemyStatValue == 0f)
+        Assert.assertEquals(deltas.heroStatValue, 0.05f)
+        Assert.assertEquals(deltas.enemyStatValue, 0f)
     }
 
 

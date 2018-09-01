@@ -10,4 +10,6 @@ class MatchSummary(val earlyGameHero : Float,
                    val lateGameHero : Float,
                    val lategameVillan : Float,
                    val won : Boolean,
-                   val champId : Int)
+                   val champId : Int,
+                   val enemyChampId : Int,
+                   val gameId : Long)
