@@ -1,11 +1,9 @@
 package api.user
 
 import com.github.salomonbrys.kodein.instance
-import com.google.api.server.spi.config.Api
 import com.google.api.server.spi.config.ApiMethod
-import com.google.api.server.spi.config.ApiNamespace
 import com.google.api.server.spi.config.Named
-import di.KodeinManager
+import di.KodeinManager_api
 import model.Response
 
 /**
@@ -19,7 +17,7 @@ import model.Response
 //)
 class UserApi {
 
-    private val km = KodeinManager()
+    private val km = KodeinManager_api()
     private val presenter: UserPresenter = km.kodein.instance()
 
     @ApiMethod(name = "doesUserExist",

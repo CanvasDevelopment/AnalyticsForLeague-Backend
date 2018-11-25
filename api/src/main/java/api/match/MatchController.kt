@@ -147,7 +147,6 @@ class MatchController(private val matchDao : MatchDao,
          val earlyGameResult : HeadToHeadStat = resultSetEarlyGame.produceHeadToHeadStat(earlyGamePerformanceProfile)
          val midGameResult : HeadToHeadStat = resultSetMidGame.produceHeadToHeadStat(midGamePerformanceProfile)
          val lateGameResult : HeadToHeadStat = resultSetLateGame.produceHeadToHeadStat(lateGamePerformanceProfile)
-        // then do the same for the next two.
 
         // fetch game result (win) and champ ids
         val resultSet = matchDao.fetchWinAndChampIds(matchId, summonerId, tableNames.getRefinedStatsTableName(role))
@@ -155,17 +154,17 @@ class MatchController(private val matchDao : MatchDao,
             throw IllegalStateException("Failed to find any match with the given criteria")
         }
 
+        val detailsUrl = "$role/$matchId/$summonerId"
         return MatchSummary(
-                earlyGameResult.heroStatValue,
-                earlyGameResult.enemyStatValue,
-                midGameResult.heroStatValue,
-                midGameResult.enemyStatValue,
-                lateGameResult.heroStatValue,
-                lateGameResult.enemyStatValue,
-                resultSet.getBoolean(HERO_RESULT), // todo make this more robust - should not have text
+                matchId,
                 resultSet.getInt(HERO_CHAMP_ID),
                 resultSet.getInt(VILLAN_CHAMP_ID),
-                matchId)
+                earlyGameResult,
+                midGameResult,
+                lateGameResult,
+                resultSet.getBoolean(HERO_RESULT),
+                detailsUrl
+             )
     }
 
     fun testResultSet(result : ResultSet) : Boolean{

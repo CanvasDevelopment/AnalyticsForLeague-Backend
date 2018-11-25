@@ -6,7 +6,7 @@ import com.google.api.server.spi.config.ApiMethod
 import com.google.api.server.spi.config.ApiNamespace
 import com.google.api.server.spi.config.Named
 import database.match.model.MatchIdentifier
-import di.KodeinManager
+import di.KodeinManager_api
 import model.MatchPerformanceDetails
 import model.MatchSummary
 import model.Response
@@ -22,7 +22,7 @@ import service_contracts.ProcessingImpl
                 packagePath = ""))
 class Match {
 
-    private val km = KodeinManager()
+    private val km = KodeinManager_api()
     private val matchController = km.kodein.instance<MatchController>()
     private val processingImpl = km.kodein.instance<ProcessingImpl>()
 

@@ -5,6 +5,10 @@
     <version>1</version>
     <runtime>java8</runtime>
     <threadsafe>true</threadsafe>
+    <static-files>
+        <include path="/champion/**.png" >
+        </include>
+    </static-files>
     <basic-scaling>
         <max-instances>5</max-instances>
     </basic-scaling>

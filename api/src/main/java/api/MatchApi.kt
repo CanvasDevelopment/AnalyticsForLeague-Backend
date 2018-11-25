@@ -5,10 +5,8 @@ import com.google.api.server.spi.config.Api
 import com.google.api.server.spi.config.ApiMethod
 import com.google.api.server.spi.config.ApiNamespace
 import com.google.api.server.spi.config.Named
-import database.DbHelper
-import di.KodeinManager
+import di.KodeinManager_api
 import model.Response
-import service_contracts.ProcessingContract
 import service_contracts.ProcessingImpl
 
 /**
@@ -21,7 +19,7 @@ import service_contracts.ProcessingImpl
                 packagePath = "")
 )
 class MatchApi {
-    private val km = KodeinManager()
+    private val km = KodeinManager_api()
     private val processingApi = km.kodein.instance<ProcessingImpl>()
 
     @ApiMethod(name = "isSummonerRegistered",

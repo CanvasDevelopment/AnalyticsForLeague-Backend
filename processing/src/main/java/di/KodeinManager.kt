@@ -27,6 +27,8 @@ import network.riotapi.header.RiotApiResponseHeaderParser
 import retrofit.RestAdapter
 import retrofit.client.UrlConnectionClient
 import retrofit.converter.GsonConverter
+import ChampDataProcessing
+import db.champion.ChampDataDAO
 
 /**
  * @author Josiah Kendall
@@ -226,6 +228,14 @@ class KodeinManager {
             MatchServiceApiImpl(
                     kodein.instance(),
                     kodein.instance())
+        }
+
+        bind<ChampDataProcessing>() with provider {
+            ChampDataProcessing(kodein.instance())
+        }
+
+        bind<ChampDataDAO>() with provider {
+            ChampDataDAO(kodein.instance())
         }
     }
 }

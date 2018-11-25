@@ -1,15 +1,13 @@
 package api.stat.analysis
 
 import api.stat.analysis.model.AnalysisStatCardSkeleton
-import api.stat.analysis.model.FullStatCard
-import api.stat.analysis.model.CreepsPerMinuteDeltasDetail
 import api.stat.analysis.model.HeadToHeadStat
 import com.github.salomonbrys.kodein.instance
 import com.google.api.server.spi.config.Api
 import com.google.api.server.spi.config.ApiMethod
 import com.google.api.server.spi.config.ApiNamespace
 import com.google.api.server.spi.config.Named
-import di.KodeinManager
+import di.KodeinManager_api
 import model.Response
 import util.Constant.StatAccumulators.AVG
 import util.Constant.StatTypes
@@ -27,7 +25,7 @@ import util.Constant.StatTypes
 )
 class Analysis {
 
-    private val km = KodeinManager()
+    private val km = KodeinManager_api()
     private val presenter: AnalysisPresenter = km.kodein.instance()
 
     // Just a simple response test for the api
@@ -58,7 +56,7 @@ class Analysis {
             path = "getStatList/{summonerId}/{lane}/{limit}")
     fun getStatList(@Named("summonerId") summonerId: Long,
                     @Named("lane") lane : String,
-                    @Named("limit")games: Int) : Response<ArrayList<AnalysisStatCardSkeleton>> {
+                    @Named("limit") games: Int ) : Response<ArrayList<AnalysisStatCardSkeleton>> {
 
         val data = presenter.fetchStatList(summonerId,lane)
         return Response(200, data)
@@ -77,7 +75,8 @@ class Analysis {
     @ApiMethod(name = "fetchFullStatCardWithChamp",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "fullStatCard/{summonerId}/{limit}/{lane}/{champ}/{statName}")
-    fun fetchFullStatCardValuesWithChamp(@Named("summonerId") summonerId: Long,
+    fun fetchFullStatCardValuesWithChamp(
+                                @Named("summonerId") summonerId: Long,
                                 @Named("limit") numberOfGames : Int,
                                 @Named("lane") lane: String,
                                 @Named("champ") champId : Int,

@@ -171,6 +171,7 @@ class DBHelper {
             return id
         } catch (error : SQLSyntaxErrorException) {
             Logger.getLogger(DBHelper::class.java.name).log(Level.SEVERE, "There was a sql syntax error", error)
+            Logger.getLogger(DBHelper::class.java.name).log(Level.SEVERE, "SQL script was: ", script)
         }
         return -1
     }

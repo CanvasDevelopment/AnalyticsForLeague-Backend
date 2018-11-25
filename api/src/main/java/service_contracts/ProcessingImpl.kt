@@ -8,7 +8,7 @@ import com.google.appengine.api.utils.SystemProperty
 import com.google.gson.Gson
 import database.match.MatchSummaryDao
 import database.match.model.MatchSummary
-import di.KodeinManager
+import di.KodeinManager_api
 import model.response_beans.SyncProgress
 import network.NetworkResult
 import network.Response
@@ -25,15 +25,16 @@ import java.util.logging.Logger
  */
 class ProcessingImpl : ProcessingContract {
 
-    val km = KodeinManager()
+    val km = KodeinManager_api()
     private val gson = Gson()
     private val PRODUCTION_URL = "https://processing-dot-analytics-for-league.appspot.com/"
-    private val LOCAL_URL = "http://192.168.1.27:65070"
+    private val LOCAL_URL = "http://192.168.1.65:65070"
 
     private val matchSummaryDao : MatchSummaryDao = km.kodein.instance()
     private val syncQueue = QueueFactory.getDefaultQueue()
 
     private val url : String
+
     init {
         url = if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
             PRODUCTION_URL
@@ -50,7 +51,8 @@ class ProcessingImpl : ProcessingContract {
 
     override fun createNewUser(accountName : String): Int {
         // send request to
-        val fetchUserUrl = url + "/_ah/processing/api/v1/createNewUser/$accountName"
+        val accountNameNoSpaces = accountName.replace(" ", "%20")
+        val fetchUserUrl = "$url/_ah/processing/api/v1/createNewUser/$accountNameNoSpaces"
         val result = sendHttpGetRequest(Response::class.java, URL(fetchUserUrl))
         return result.code
     }

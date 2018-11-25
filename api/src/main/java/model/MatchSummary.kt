@@ -1,15 +1,15 @@
 package model
 
+import api.stat.analysis.model.HeadToHeadStat
+
 /**
  * @author Josiah Kendall
  */
-class MatchSummary(val earlyGameHero : Float,
-                   val earlyGameVillan : Float,
-                   val midGameHero : Float,
-                   val midGameVillan : Float,
-                   val lateGameHero : Float,
-                   val lategameVillan : Float,
-                   val won : Boolean,
+class MatchSummary(val gameId : Long,
                    val champId : Int,
                    val enemyChampId : Int,
-                   val gameId : Long)
+                   val earlyGame : HeadToHeadStat,
+                   val midGame : HeadToHeadStat,
+                   val lateGame : HeadToHeadStat,
+                   val won : Boolean,
+                   val detailsUrl : String)

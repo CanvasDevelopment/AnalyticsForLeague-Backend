@@ -2,10 +2,15 @@ package api
 
 import api.controllers.SummonerController
 import com.github.salomonbrys.kodein.instance
-import com.google.api.server.spi.config.*
+
+import com.google.api.server.spi.config.Api
+import com.google.api.server.spi.config.ApiMethod
+import com.google.api.server.spi.config.ApiNamespace
+import com.google.api.server.spi.config.Named
+
 import database.DbHelper
 import db.summoner.SummonerDao
-import di.KodeinManager
+import di.KodeinManager_api
 import model.Response
 import model.response_beans.SummonerDetails
 import model.response_beans.SyncProgress
@@ -22,7 +27,7 @@ import service_contracts.ProcessingImpl
 )
 class Summoner {
 
-    private val km = KodeinManager()
+    private val km = KodeinManager_api()
     private val dbHelper = km.kodein.instance<DbHelper>()
     private val summonerDao = SummonerDao(dbHelper)
     private val processingInterface = ProcessingImpl()

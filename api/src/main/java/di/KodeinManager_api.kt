@@ -17,7 +17,7 @@ import util.TableNames
  * This is the our module for our initialisation of all the dependencies we need, using [Kodein] for the injection
  */
 
-class KodeinManager {
+class KodeinManager_api {
 
     val kodein = Kodein {
 

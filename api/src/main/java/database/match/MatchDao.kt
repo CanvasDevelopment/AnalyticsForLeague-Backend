@@ -18,6 +18,7 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
     private val gameIdColumn = "gameId"
     private val laneColumn = "lane"
     private val roleColumn = "role"
+    private val timestampColumn = "TIMESTAMP"
     private val matchSummaryTable = "matchsummary"
     private val summonerIdColumn = "SummonerId"
     private val heroSummonerIdColumn = "heroSummonerId"
@@ -37,7 +38,7 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
      */
     override fun loadTwentyIds(startingPoint: Int, summonerId: Long): ArrayList<MatchIdentifier> {
         val sql = Builder()
-                .select("$gameIdColumn, $summonerIdColumn, $laneColumn, $roleColumn")
+                .select("$gameIdColumn, $summonerIdColumn, $laneColumn, $roleColumn, $timestampColumn")
                 .tableName(matchSummaryTable)
                 .where("$summonerIdColumn = $summonerId")
                 .orderBy(gameIdColumn)
@@ -45,10 +46,13 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
                 .toSql()
         val resultSet = dbHelper.executeSqlQuery(sql)
         val results = ArrayList<MatchIdentifier>()
+        // todo move this into the controller. Also move the code from the android client to here, that gets the correct role
         while (resultSet.next()) {
-            results.add(MatchIdentifier(resultSet.getLong(gameIdColumn),
+            results.add(MatchIdentifier(
+                    resultSet.getLong(gameIdColumn),
                     resultSet.getString(roleColumn),
-                    resultSet.getString(laneColumn)))
+                    resultSet.getString(laneColumn),
+                    resultSet.getLong(timestampColumn)))
         }
 
         return results

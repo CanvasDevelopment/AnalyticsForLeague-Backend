@@ -1,5 +1,6 @@
 package extensions
 
+import db.champion.ChampData
 import model.champion.Champion
 import model.champion.ChampionImage
 import model.match.*
@@ -20,6 +21,7 @@ import java.util.*
  */
 val columnNames = ColumnNames()
 val statColumns = StatsColumns()
+val champDataColumns = ChampDataColumns()
 val gameStageColumns = GameStageColumns()
 val particpantColumns = ParticipantColumns()
 val banColumns = BanColumns()
@@ -325,10 +327,11 @@ fun ResultSet.produceFullGameStat() : FullGameStat {
             getInt(statColumns.WARDS_KILLED)
     )
 }
+//
 
 //fun ResultSet.produceGameStagesLists(summonerId : Long) : GameStages {
 //    val gameDeltas = ArrayList<GameStageDelta>()
-//    while(next()) {
+//    while(next()) {§
 //        gameDeltas.add(produceGameStageStat())
 //    }
 //
