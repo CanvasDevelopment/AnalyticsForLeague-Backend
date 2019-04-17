@@ -31,7 +31,7 @@ class ChampDataTests {
 
         champDataDAO.saveChampData(champData)
 
-        val summonerId = 1L
+        val summonerId = "1L"
 
         val champDataReturned = champDataDAO.loadChampData(champData.id, summonerId)
         assertTrue(champDataReturned.name == champData.name)
@@ -50,7 +50,7 @@ class ChampDataTests {
         champData.id = Random().nextInt().toString()
         champData.version = "version"
 
-        val summonerId = 1L
+        val summonerId = "1L"
 
         champDataDAO.saveChampData(champData)
 
@@ -66,7 +66,7 @@ class ChampDataTests {
     @Test
     fun testThatWeCanLoadAllChamps() {
 
-        val summonerId = 1L
+        val summonerId = "1L"
 
         val before = champDataDAO.loadChampDataForAllChamps(summonerId)
         assertTrue { before.isEmpty() }
@@ -93,7 +93,7 @@ class ChampDataTests {
 
         champDataDAO.saveChampData(champData)
 
-        val summonerId = 1L
+        val summonerId = "1L"
 
         val champDataReturned = champDataDAO.loadChampData(champData.id, summonerId)
         assertTrue(champDataReturned.name == champData.name)

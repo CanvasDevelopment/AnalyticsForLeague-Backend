@@ -22,7 +22,7 @@ class DbHelper {
     val MATCH_HISTORY_URI_COLUMN :String = "matchHistoryUri"
     val PROFILE_ICON_COLUMN = "profileIcon"
     val ID_COLUMN = "id"
-    val GAME_ID_COLUMN = "gameId"
+    val GAME_ID_COLUMN = "matchId"
     val PARTICIPANT_ID_COLUMN = "ParticipantId"
     val MASTERY_ID_COLUMN = "MasteryId"
     val RANK_COLUMN = "Rank"

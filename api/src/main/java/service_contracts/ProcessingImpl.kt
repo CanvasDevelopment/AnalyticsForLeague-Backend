@@ -28,7 +28,7 @@ class ProcessingImpl : ProcessingContract {
     val km = KodeinManager_api()
     private val gson = Gson()
     private val PRODUCTION_URL = "https://processing-dot-analytics-for-league.appspot.com/"
-    private val LOCAL_URL = "http://192.168.1.65:65070"
+    private val LOCAL_URL = "http://192.168.1.5:65070"
 
     private val matchSummaryDao : MatchSummaryDao = km.kodein.instance()
     private val syncQueue = QueueFactory.getDefaultQueue()
@@ -43,7 +43,7 @@ class ProcessingImpl : ProcessingContract {
         }
     }
 
-    override fun syncUser(summonerId: Long) : Boolean {
+    override fun syncUser(summonerId : String) : Boolean {
         val syncUrl = url + "/_ah/processing/api/v1/syncUser/$summonerId"
         val result = sendHttpGetRequest(Response::class.java, URL(syncUrl))
         return result.code == 200
@@ -82,7 +82,7 @@ class ProcessingImpl : ProcessingContract {
         return NetworkResult(null, respCode)
     }
 
-    override fun syncUserMatchList(summonerId : Long): Boolean {
+    override fun syncUserMatchList(summonerId: String): Boolean {
         val syncUrl = url + "/_ah/processing/api/v1/syncMatchList/$summonerId"
         val result : NetworkResult<Response> = sendHttpGetRequest(Response::class.java, URL(syncUrl))
 
@@ -101,7 +101,7 @@ class ProcessingImpl : ProcessingContract {
      * Creates a bunch of tasks. Each task is a url request to fetch and store each match.
      * This queues a task that will run asynchronously.
      */
-    private fun queueTasksForMatches(summonerId: Long, queue: Queue) {
+    private fun queueTasksForMatches(summonerId: String, queue: Queue) {
 
         val topMatchSummaries : ArrayList<MatchSummary> = matchSummaryDao.getRecentMatchesBySummonerIdForRole(summonerId, 500, SOLO, TOP)
         val midMatchSummaries = matchSummaryDao.getRecentMatchesBySummonerIdForRole(summonerId, 500, SOLO, MID)
@@ -127,18 +127,18 @@ class ProcessingImpl : ProcessingContract {
         }
     }
 
-    fun syncMatchProxy(matchId : Long, summonerId: Long) {
+    fun syncMatchProxy(matchId : Long, summonerId: String) {
         val syncUrl = "$url/_ah/processing/api/v1/syncMatch/$matchId/$summonerId"
         val result : NetworkResult<Response> = sendHttpGetRequest(Response::class.java, URL(syncUrl))
     }
 
-    override fun refineUserStats(summonerId: Long): Boolean {
+    override fun refineUserStats(summonerId : String) : Boolean {
         val refineUrl = "$url/_ah/processing/api/v1/refineStats/$summonerId"
         val result :NetworkResult<Response> = sendHttpGetRequest(Response::class.java, URL(refineUrl))
         return result.code in 200..299
     }
 
-    override fun getSyncProgress(summonerId: Long): SyncProgress {
+    override fun getSyncProgress(summonerId : String): SyncProgress {
         val syncProgressUrl = "$url/_ah/processing/api/v1/syncProgress/$summonerId"
         val result : NetworkResult<SyncProgress> = sendHttpGetRequest(SyncProgress::class.java, URL(syncProgressUrl))
         return result.data!!

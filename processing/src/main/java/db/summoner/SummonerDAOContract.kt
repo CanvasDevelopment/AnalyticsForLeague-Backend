@@ -9,8 +9,8 @@ import model.Summoner
 interface SummonerDAOContract {
 
     fun saveSummoner(summoner: Summoner): Long
-    fun deleteSummoner(summonerId: Long)
-    fun getSummoner(summonerId: Long): Summoner?
+    fun deleteSummoner(summonerId: String)
+    fun getSummoner(summonerId: String): Summoner?
 
     companion object {
         val SUMMONER_TABLE = "Summoner"

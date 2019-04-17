@@ -52,8 +52,8 @@ class SummonerIntegrationTests {
     private fun produceRandomSummoner() : SummonerDetails {
         val random = Random()
         return SummonerDetails(
-                random.nextInt().toLong(),
-                random.nextLong(),
+                random.nextInt().toLong().toString(),
+                random.nextLong().toString(),
                 "test",
                 random.nextInt(),
                 random.nextInt(),

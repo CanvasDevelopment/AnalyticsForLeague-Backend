@@ -21,11 +21,11 @@ class AnalysisPresenterTests {
     private val processingApi = mock(ProcessingImpl::class.java)
     private val analysisDao = mock(AnalysisDao::class.java)
     private val analysisPresenter = AnalysisPresenter(processingApi, analysisDao)
+    val summonerId = random.nextLong().toString()
 
 
     @Test
     fun `Make sure that we can grab card Creep stat details correctly`() {
-        val summonerId = random.nextLong()
         val games = random.nextInt()
         val lane = "Top"
         val heroMax = produceRandomRawDelta()

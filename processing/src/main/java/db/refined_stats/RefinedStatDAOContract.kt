@@ -25,7 +25,7 @@ interface RefinedStatDAOContract {
      */
     fun fetchGameStageStatListForHero(
             deltaName: String,
-            summonerId: Long,
+            summonerId: String,
             role: String,
             lane: String): ArrayList<GameStageStat>
     /**
@@ -36,7 +36,7 @@ interface RefinedStatDAOContract {
      * @param lane The lane of the hero and the villan
      */
     fun fetchGameStageStatListForVillian(deltaName: String,
-                                         summonerId: Long,
+                                         summonerId: String,
                                          role: String,
                                          lane: String) : ArrayList<GameStageStat>
 
@@ -47,9 +47,9 @@ interface RefinedStatDAOContract {
      * @param role          The role that we want to filter to.
      * @param lane          The Lane that we want to filter to.
      */
-    fun fetchGameSummaryStatsForHero(summonerId: Long, role: String, lane: String): ArrayList<TeamSummaryStat>
+    fun fetchGameSummaryStatsForHero(summonerId: String, role: String, lane: String): ArrayList<TeamSummaryStat>
 
-    fun fetchGameSummaryStatsForVillan(summonerId: Long, role: String, lane: String): ArrayList<TeamSummaryStat>
+    fun fetchGameSummaryStatsForVillan(summonerId: String, role: String, lane: String): ArrayList<TeamSummaryStat>
 
     /**
      * Fetch an array of [FullGameStat] for a summoner in a specific role and lane.
@@ -57,7 +57,7 @@ interface RefinedStatDAOContract {
      * @param heroRole The hero role
      * @param heroLane The hero lane
      */
-    fun fetchPlayerStatisticsForHero(heroSummonerId: Long,
+    fun fetchPlayerStatisticsForHero(heroSummonerId: String,
                                      heroRole: String,
                                      heroLane: String) : ArrayList<FullGameStat>
 
@@ -67,7 +67,7 @@ interface RefinedStatDAOContract {
      * @param heroLane The lane of the hero
      * @param heroRole The role of the hero.
      */
-    fun fetchPlayerStatisticsForVillian(heroSummonerId: Long, heroRole: String, heroLane: String): ArrayList<FullGameStat>
+    fun fetchPlayerStatisticsForVillian(heroSummonerId: String, heroRole: String, heroLane: String): ArrayList<FullGameStat>
 
 
 

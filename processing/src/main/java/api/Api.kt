@@ -1,15 +1,12 @@
 package api
 
 import application.Sync
-import application.domain.MatchControl
 import application.domain.SummonerControl
 import com.github.salomonbrys.kodein.instance
 import com.google.api.server.spi.config.Api
 import com.google.api.server.spi.config.ApiMethod
 import com.google.api.server.spi.config.ApiNamespace
 import com.google.api.server.spi.config.Named
-import com.google.appengine.api.taskqueue.QueueFactory
-import db.match.TimelineDAO
 import di.KodeinManager
 import model.beans.Response
 import java.util.logging.Level
@@ -33,7 +30,7 @@ class Api  {
     @ApiMethod(name = "syncUser",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "syncUser/{summonerId}")
-    fun syncUser(@Named("summonerId") summonerId : Long): Response {
+    fun syncUser(@Named("summonerId") summonerId: String): Response {
         val responseCode = sync.syncMatches(summonerId)
         return Response(responseCode, "")
     }
@@ -42,7 +39,7 @@ class Api  {
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "createNewUser/{name}")
     fun createNewUser(@Named("name") name : String): Response {
-        val summonerExists = summonerControl.checkSummonerExists(name)
+        val summonerExists = summonerControl.checkSummonerExistsUsingSummonerName(name)
         if (summonerExists) {
             return Response(349, "")
         }
@@ -58,7 +55,7 @@ class Api  {
     @ApiMethod(name = "syncMatchList",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "syncMatchList/{summonerId}")
-    fun syncMatchList(@Named("summonerId") summonerId: Long) : Response {
+    fun syncMatchList(@Named("summonerId") summonerId: String) : Response {
         val responseCode = sync.syncMatchSummaries(summonerId)
         return Response(responseCode, "")
     }
@@ -66,7 +63,7 @@ class Api  {
     @ApiMethod(name = "syncMatch",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "syncMatch/{gameId}/{summonerId}")
-    fun syncMatch(@Named("gameId") gameId : Long, @Named("summonerId") summonerId: Long) : Response {
+    fun syncMatch(@Named("gameId") gameId: Long, @Named("summonerId") summonerId: String) : Response {
         Logger.getLogger(this::class.java.name).log(Level.INFO, "requested match sync for $gameId", "")
         val result = sync.matchControl.fetchAndSaveMatch(gameId, summonerId)
         if (result) {
@@ -79,7 +76,7 @@ class Api  {
     @ApiMethod(name = "syncProgress",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "syncProgress/{summonerId}")
-    fun syncProgress(@Named("summonerId") summonerId: Long) : Response {
+    fun syncProgress(@Named("summonerId") summonerId: String) : Response {
         Logger.getLogger(this::class.java.name).log(Level.INFO, "requested sync progress update for $summonerId", "")
         val result = sync.fetchSyncProgress(summonerId)
         return Response(200, result.toString())
@@ -88,7 +85,7 @@ class Api  {
     @ApiMethod(name = "refineStats",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "refineStats/{summonerId}")
-    fun refineStats(@Named("summonerId") summonerId: Long) : Response {
+    fun refineStats(@Named("summonerId") summonerId: String) : Response {
         Logger.getLogger(this::class.java.name).log(Level.INFO, "requested stat refinement for $summonerId", "")
         val result = sync.refineStats(summonerId)
         return Response(result, result.toString())

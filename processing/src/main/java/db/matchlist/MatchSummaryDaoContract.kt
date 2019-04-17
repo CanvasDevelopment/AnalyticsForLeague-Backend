@@ -12,5 +12,5 @@ interface MatchSummaryDaoContract {
     fun getMatchSummary(id : Long) : MatchSummary
     fun exists(gameId: Long) : Boolean
     fun getMatchSummaryByGameId(gameId : Long) : MatchSummary
-    fun getAllMatchesBySummonerId(summonerId: Long) : ArrayList<MatchSummary>
+    fun getAllMatchesBySummonerId(summonerId: String) : ArrayList<MatchSummary>
 }

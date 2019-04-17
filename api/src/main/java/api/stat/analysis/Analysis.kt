@@ -43,7 +43,7 @@ class Analysis {
     @ApiMethod(name = "getStatListWithChamp",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "getStatList/{summonerId}/{lane}/{champ}/{limit}")
-    fun getStatListWithChamp(@Named("summonerId") summonerId: Long,
+    fun getStatListWithChamp(@Named("summonerId") summonerId : String,
                     @Named("lane") lane : String,
                     @Named("champ")champId: Int,
                     @Named("limit")games: Int) : Response<ArrayList<AnalysisStatCardSkeleton>> {
@@ -54,7 +54,7 @@ class Analysis {
     @ApiMethod(name = "getStatList",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "getStatList/{summonerId}/{lane}/{limit}")
-    fun getStatList(@Named("summonerId") summonerId: Long,
+    fun getStatList(@Named("summonerId") summonerId : String,
                     @Named("lane") lane : String,
                     @Named("limit") games: Int ) : Response<ArrayList<AnalysisStatCardSkeleton>> {
 
@@ -74,9 +74,9 @@ class Analysis {
      */
     @ApiMethod(name = "fetchFullStatCardWithChamp",
             httpMethod = ApiMethod.HttpMethod.GET,
-            path = "fullStatCard/{summonerId}/{limit}/{lane}/{champ}/{statName}")
+            path = "fullStatCard/{summonerId}/{limit}/{lane}/{statName}/{champ}")
     fun fetchFullStatCardValuesWithChamp(
-                                @Named("summonerId") summonerId: Long,
+                                @Named("summonerId") summonerId : String,
                                 @Named("limit") numberOfGames : Int,
                                 @Named("lane") lane: String,
                                 @Named("champ") champId : Int,
@@ -96,7 +96,7 @@ class Analysis {
     @ApiMethod(name = "fetchFullStatCardValues",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "fullStatCard/{summonerId}/{limit}/{lane}/{statName}")
-    fun fetchFullStatCardValues(@Named("summonerId") summonerId: Long,
+    fun fetchFullStatCardValues(@Named("summonerId") summonerId : String,
                                 @Named("limit") numberOfGames : Int,
                                 @Named("lane") lane: String,
                                 @Named("statName") statName : String) : Response<ArrayList<HeadToHeadStat>> {
@@ -111,7 +111,7 @@ class Analysis {
     @ApiMethod(name = "fetchHalfStatCardWithChamp",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "halfStatCard/{summonerId}/{limit}/{lane}/{champ}/{statName}")
-    fun fetchHalfStatCardWithChamp( @Named("summonerId") summonerId: Long,
+    fun fetchHalfStatCardWithChamp( @Named("summonerId") summonerId : String,
                                     @Named("limit") numberOfGames : Int,
                                     @Named("lane") lane: String,
                                     @Named("champ") champId : Int,
@@ -128,7 +128,7 @@ class Analysis {
     @ApiMethod(name = "fetchHalfStatCard",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "halfStatCard/{summonerId}/{limit}/{lane}/{statName}")
-    fun fetchHalfStatCard( @Named("summonerId") summonerId: Long,
+    fun fetchHalfStatCard( @Named("summonerId") summonerId : String,
                            @Named("limit") numberOfGames : Int,
                            @Named("lane") lane: String,
                            @Named("statName") statName : String) : Response<HeadToHeadStat> {

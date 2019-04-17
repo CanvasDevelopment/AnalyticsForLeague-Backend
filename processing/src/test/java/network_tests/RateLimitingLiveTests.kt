@@ -60,7 +60,7 @@ class RateLimitingLiveTests {
     @Test
     fun `FetchAndSaveMatchsForAMatchSummaryList`() {
         summonerControl.registerSummoner("kloin")
-        val summonerId : Long = 1542360
+        val summonerId : String = "1542360"
         // fetch match summaries for me
         matchControl.downloadAndSaveMatchSummaries(summonerId)
         val preFetchMatchTime = System.currentTimeMillis()

@@ -7,5 +7,5 @@ CREATE TABLE MatchSummary(
   TIMESTAMP BIGINT,
   Role VARCHAR(16),
   Lane VARCHAR(16),
-  SummonerId BIGINT
+  SummonerId VARCHAR(64)
 )

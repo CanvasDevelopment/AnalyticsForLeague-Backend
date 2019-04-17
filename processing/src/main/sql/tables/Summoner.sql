@@ -1,6 +1,6 @@
 Create TABLE Summoner(
-  Id BIGINT PRIMARY KEY,
-  AccountId BIGINT,
+  Id VARCHAR(64) PRIMARY KEY,
+  AccountId VARCHAR(64),
   SummonerName VARCHAR(64),
   ProfileIconId INTEGER,
   SummonerLevel INTEGER,

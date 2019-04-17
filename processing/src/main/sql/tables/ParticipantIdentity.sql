@@ -1,6 +1,6 @@
 CREATE TABLE ParticipantIdentity(
-  ParticipantId INTEGER PRIMARY KEY,
-  SummonerId BIGINT,
+  ParticipantId INTEGER,
+  SummonerId VARCHAR(64),
   GameId BIGINT,
   TeamId INTEGER,
   Role VARCHAR(16),

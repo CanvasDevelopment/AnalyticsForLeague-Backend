@@ -1,6 +1,5 @@
 package extensions
 
-import db.champion.ChampData
 import model.champion.Champion
 import model.champion.ChampionImage
 import model.match.*
@@ -64,7 +63,7 @@ val PARTICIPANT_ID = "ParticipantId"
 fun ResultSet.produceMatchSummary(): MatchSummary {
     val result = this
     val ms = MatchSummary()
-    ms.id = result.getInt(ID)
+//    ms.id = result.getInt(ID)
     ms.platformId = result.getString(PLATFORM_ID)
     ms.gameId = result.getLong(GAME_ID)
     ms.champion = result.getInt(CHAMPION)
@@ -73,7 +72,7 @@ fun ResultSet.produceMatchSummary(): MatchSummary {
     ms.timestamp = result.getLong(TIMESTAMP)
     ms.role = result.getString(ROLE)
     ms.lane = result.getString(LANE)
-    ms.summonerId = result.getLong(SUMMONER_ID)
+    ms.summonerId = result.getString(SUMMONER_ID)
     return ms
 }
 
@@ -101,7 +100,7 @@ fun ResultSet.produceChampionImage(): ChampionImage {
 
 fun ResultSet.producePlayer(): Player {
     val platformId: String = getString(PLATFORM_ID)
-    val accountId: Long = getLong(ACCOUNT_ID)
+    val accountId: String = getString(ACCOUNT_ID)
     val summonerName: String = getString(SUMMONER_NAME)
     val currentPlatformId: String = getString(CURRENT_PLATFORM_ID)
     val matchHistoryUri: String = getString(MATCH_HISTORY_URI)
@@ -110,7 +109,7 @@ fun ResultSet.producePlayer(): Player {
     // The reason we return -1 here is that we never need to fetch a player instance with the summoner Id, as that
     // summonerId will always be on the parent (ParticipantIdentity), as it is through the participantIdentity that we find
     // this object. However, we cannot remove the summonerId as we need to have it on the data object when it is fetched from Riot.
-    return Player(platformId, accountId, summonerName, -1, currentPlatformId, matchHistoryUri, profileIcon)
+    return Player(platformId, accountId, summonerName, "-1", currentPlatformId, matchHistoryUri, profileIcon)
 }
 
 fun ResultSet.produceParticipantIdentity(): ParticipantIdentity {
@@ -306,7 +305,7 @@ fun ResultSet.produceGameStageRefinedStat(): GameStageStat {
 }
 
 fun ResultSet.produceSummaryStat() : TeamSummaryStat {
-    return TeamSummaryStat(getLong(particpantColumns.SUMMONER_ID),
+    return TeamSummaryStat(getString(particpantColumns.SUMMONER_ID),
             getInt(particpantColumns.CHAMPION_ID),
             getLong(particpantColumns.GAME_ID),
             getInt(teamColumns.TEAM_ID),

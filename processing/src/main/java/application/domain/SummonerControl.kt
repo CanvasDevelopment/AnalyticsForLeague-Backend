@@ -2,7 +2,6 @@ package application.domain
 
 import db.summoner.SummonerDAOContractImpl
 import model.Summoner
-import network.riotapi.SummonerService
 import network.riotapi.SummonerServiceImpl
 import util.RIOT_API_KEY
 
@@ -17,7 +16,7 @@ class SummonerControl(private val summonerDao: SummonerDAOContractImpl,
      * @param summonerId id of the summoner that we want to check for.
      * @return True of the summoner exists, false if not.
      */
-    fun checkSummonerExists(summonerId : Long) : Boolean {
+    fun checkSummonerExists(summonerId : String) : Boolean {
         val summoner = summonerDao.getSummoner(summonerId)
         return summoner != null
     }
@@ -27,8 +26,8 @@ class SummonerControl(private val summonerDao: SummonerDAOContractImpl,
      * @param summonerName name of the summoner that we want to check for.
      * @return True of the summoner exists, false if not.
      */
-    fun checkSummonerExists(summonerName: String) : Boolean {
-        val summoner = summonerDao.getSummoner(summonerName)
+    fun checkSummonerExistsUsingSummonerName(summonerName: String) : Boolean {
+        val summoner = summonerDao.getSummonerByName(summonerName)
         return summoner != null
     }
 
@@ -44,7 +43,7 @@ class SummonerControl(private val summonerDao: SummonerDAOContractImpl,
             return false
         }
         if (result.code == 200) {
-            if (summonerDao.getSummoner(summoner.id) == null) {
+            if (summonerDao.getSummonerByName(summoner.id) == null) {
                 val saveSummonerResult = summonerDao.saveSummoner(summoner)
                 if (saveSummonerResult != (-1).toLong()) {
                     return true

@@ -1,10 +1,8 @@
 package network.riotapi
 
 import application.region.RegionController
-import model.Summoner
 import model.match.Match
 import model.matchlist.MatchList
-import model.matchlist.MatchSummary
 import model.networking.Endpoints
 import model.networking.NetworkResult
 import network.RequestHandler
@@ -18,11 +16,11 @@ class MatchServiceApiImpl(private val requestHandler: RequestHandler,
 
     private val endpoints = Endpoints()
 
-    fun getMatchListForAccount(apiKey: String, accountId: Long): NetworkResult<MatchList> {
+    fun getMatchListForAccount(apiKey: String, accountId: String): NetworkResult<MatchList> {
         val url = "https://" +
                 regionController.getRiotRegionName() +
                 ".api.riotgames.com/" +
-                "/lol/match/v3/matchlists/by-account/$accountId?api_key=$apiKey"
+                "/lol/match/v4/matchlists/by-account/$accountId?api_key=$apiKey"
         return requestHandler.requestDataWithRateLimiting (
                 { requestHandler.sendHttpGetRequest(MatchList::class.java, URL(url), endpoints.V3_MATCHLISTS) },
                 endpoints.V3_MATCHLISTS
@@ -33,7 +31,7 @@ class MatchServiceApiImpl(private val requestHandler: RequestHandler,
         val url = "https://" +
                 regionController.getRiotRegionName() +
                 ".api.riotgames.com/" +
-                "lol/match/v3/matches/$matchId?api_key=$apiKey"
+                "lol/match/v4/matches/$matchId?api_key=$apiKey"
         return requestHandler.requestDataWithRateLimiting (
                 { requestHandler.sendHttpGetRequest(Match::class.java, URL(url), endpoints.V3_MATCHES) },
                 endpoints.V3_MATCHES

@@ -45,7 +45,7 @@ class ChampDataParserTests {
         val champWrapper = gson.fromJson(result, ChampWrapper::class.java)
         // now run through each of the items and save them to the database
         saveChamps(champWrapper.data!!)
-        val summonerId = -1L
+        val summonerId = "-1L"
         // test thatthe data is there
         val iterator = champWrapper.data!!.keys.iterator()
         while (iterator.hasNext()) {

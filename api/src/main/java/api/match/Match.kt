@@ -29,10 +29,28 @@ class Match {
     @ApiMethod(name = "loadTwentyMatchIdsWithRole",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "loadTwentyMatchIds/{role}/{startingPoint}/{summonerId}")
-    fun loadTwentyMatchIds(@Named("role") role : Int,
+    fun loadTwentyMatchIdsWithRole(@Named("role") role : Int,
                            @Named("startingPoint") startingPoint : Int,
-                           @Named("summonerId") summonerId : Long) : Response<ArrayList<MatchIdentifier>> {
+                           @Named("summonerId") summonerId : String) : Response<ArrayList<MatchIdentifier>> {
         return Response(200, matchController.loadTwentyMatchIds(role,startingPoint,summonerId))
+    }
+
+    @ApiMethod(name = "loadTwentyMatchIdsWithRoleAndChamp",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "loadTwentyMatchIds/{role}/{startingPoint}/{summonerId}/{champId}")
+    fun loadTwentyMatchIdsWithRoleAndChamp(@Named("role") role : Int,
+                           @Named("startingPoint") startingPoint : Int,
+                           @Named("summonerId") summonerId : String,
+                           @Named("champId") champId : Int) : Response<ArrayList<MatchIdentifier>> {
+        return Response(200, matchController.loadTwentyMatchIds(role,startingPoint,summonerId, champId))
+    }
+
+    @ApiMethod(name = "loadTwentyMatchIds",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "loadTwentyMatchIds/{startingPoint}/{summonerId}")
+    fun loadTwentyMatchIds(@Named("startingPoint") startingPoint : Int,
+                           @Named("summonerId") summonerId : String) : Response<ArrayList<MatchIdentifier>> {
+        return Response(200, matchController.loadTwentyMatchIds(startingPoint,summonerId))
     }
 
     @ApiMethod(name = "loadMatchSummary",
@@ -40,7 +58,7 @@ class Match {
             path = "loadMatchSummary/{role}/{matchId}/{summonerId}")
     fun loadMatchSummary(@Named("role") role : Int,
                          @Named("matchId") matchId : Long,
-                         @Named("summonerId") summonerId: Long) : Response<MatchSummary> {
+                         @Named("summonerId") summonerId : String) : Response<MatchSummary> {
         return Response(200, matchController.loadMatchSummary(role,matchId, summonerId))
     }
 
@@ -49,15 +67,15 @@ class Match {
             path = "loadMatchDetails/{role}/{matchId}/{summonerId}")
     fun loadMatchDetails(@Named("role") role: Int,
                          @Named("matchId") matchId: Long,
-                         @Named("summonerId") summonerId: Long) : Response<MatchPerformanceDetails> {
+                         @Named("summonerId") summonerId : String) : Response<MatchPerformanceDetails> {
         return Response(200, matchController.loadMatchPerformanceSummary(role,matchId,summonerId))
     }
 
     @ApiMethod(name = "syncMatch",
             httpMethod = ApiMethod.HttpMethod.GET,
-            path = "syncMatch/{gameId}/{summonerId}")
-    fun syncMatch(@Named("gameId") gameId : Long,
-                         @Named("summonerId") summonerId: Long) : Response<String> {
+            path = "syncMatch/{matchId}/{summonerId}")
+    fun syncMatch(@Named("matchId") gameId : Long,
+                         @Named("summonerId") summonerId: String) : Response<String> {
         processingImpl.syncMatchProxy(gameId,summonerId)
         return Response(200, "")
     }

@@ -11,7 +11,7 @@ package model.refined_stats
  *  @param gameId            The id of the game.
  *  @param teamId            The team they were on. Will either be 100 or 200
  */
-data class TeamSummaryStat(val summonerId : Long,
+data class TeamSummaryStat(val summonerId : String,
                            val champId : Int,
                            val gameId : Long,
                            val teamId : Int,

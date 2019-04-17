@@ -9,7 +9,6 @@ import model.match.Rune
 import util.MID
 import util.columnnames.ParticipantColumns
 import util.logToConsole
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -28,7 +27,7 @@ class ParticipantDAO(val dbHelper : DBHelper,
      * Save a [Participant], and all the child items of it.
      *
      */
-    fun saveParticipant(participant: Participant, gameId: Long, summonerId: Long) : Long {
+    fun saveParticipant(participant: Participant, gameId: Long, summonerId: String) : Long {
         val sql = "insert into $PARTICIPANT_TABLE(" +
                 "${participantColumns.PARTICIPANT_ID}, " +
                 "${participantColumns.TEAM_ID}, " +
@@ -45,7 +44,7 @@ class ParticipantDAO(val dbHelper : DBHelper,
                 "${participant.championId}," +
                 "${participant.spell1Id}," +
                 "${participant.spell2Id}," +
-                "$summonerId," +
+                "'$summonerId'," +
                 "'${participant.highestAchievedSeasonTier}'," +
                 "$gameId," +
                 "'${participant.timeline.role}'," +

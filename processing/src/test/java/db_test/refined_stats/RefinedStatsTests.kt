@@ -110,7 +110,7 @@ class RefinedStatsTests {
     @Test
     fun ensureThatWeFetchSummaryStatsCorrectlyForHero() {
         val summaryStats = refinedStatsDAO.fetchGameSummaryStatsForHero(
-                1542360,
+                "1542360",// todo fix this
                 "SOLO",
                 "TOP")
 
@@ -134,7 +134,7 @@ class RefinedStatsTests {
     @Test
     fun ensureThatWeFetchSummaryStatsCorrectlyForEnemy() {
         val summaryStats = refinedStatsDAO.fetchGameSummaryStatsForVillan(
-                1542360,
+                "", // todo
                 "SOLO",
                 "TOP")
 
@@ -158,7 +158,7 @@ class RefinedStatsTests {
     @Test
     fun ensureThatWeCanFetchCreepsDiffPerMinRefinedStatListForTop() {
         val stats = refinedStatsDAO.fetchGameStageStatListForHero(tables.CS_DIFF_PER_MIN,
-                1542360,
+                "", // todo
                 "SOLO",
                 "TOP")
 
@@ -176,7 +176,7 @@ class RefinedStatsTests {
     @Test
     fun ensureThatWeCanFetchCreepsPerMinRefinedStatListForTop() {
         val stats = refinedStatsDAO.fetchGameStageStatListForHero(tables.CREEPS_PER_MIN,
-                1542360,
+                "",
                 "SOLO",
                 "TOP")
 
@@ -194,7 +194,7 @@ class RefinedStatsTests {
     @Test
     fun ensureThatWeCanFetchGoldPerMinRefinedStatListForTop() {
         val stats = refinedStatsDAO.fetchGameStageStatListForHero(tables.GOLD_PER_MIN,
-                1542360,
+                "",
                 "SOLO",
                 "TOP")
 
@@ -213,7 +213,7 @@ class RefinedStatsTests {
     fun ensureThatWeCanFetchDamageTakenRefinedStatListForTop() {
         val stats = refinedStatsDAO.fetchGameStageStatListForHero(
                 tables.DAMAGE_TAKEN_PER_MIN,
-                1542360,
+                "",
                 "SOLO",
                 "TOP")
 
@@ -232,7 +232,7 @@ class RefinedStatsTests {
     fun ensureThatWeCanFetchGoldScoreForEnemyGameStages() {
         val stats = refinedStatsDAO.fetchGameStageStatListForVillian(
                 tables.GOLD_PER_MIN,
-                1542360,
+                "",
                 "SOLO",
                 "TOP")
 
@@ -249,7 +249,7 @@ class RefinedStatsTests {
 
     @Test
     fun ensureThatWeCanGetStatsTableStatsForHeroInRoleTOP() {
-        val stats = refinedStatsDAO.fetchPlayerStatisticsForHero(1542360,
+        val stats = refinedStatsDAO.fetchPlayerStatisticsForHero("",
                 "SOLO",
                 "TOP")
 
@@ -270,7 +270,7 @@ class RefinedStatsTests {
 
     @Test
     fun ensureThatWeCanGetStatsTableStatsForHeroInRoleJUNGLE() {
-        val stats = refinedStatsDAO.fetchPlayerStatisticsForHero(1542360,
+        val stats = refinedStatsDAO.fetchPlayerStatisticsForHero("",
                 "NONE",
                 "JUNGLE")
 
@@ -285,7 +285,7 @@ class RefinedStatsTests {
 
     @Test
     fun ensureThatWeCanGetStatsTableStatsForEnemyWhenWePlayingTopAndTheyPlayingTop() {
-        val stats = refinedStatsDAO.fetchPlayerStatisticsForVillian(1542360,
+        val stats = refinedStatsDAO.fetchPlayerStatisticsForVillian("",
                 "SOLO",
                 "TOP")
 
@@ -300,7 +300,7 @@ class RefinedStatsTests {
 
     @Test
     fun ensureThatWeCanGetStatsTableStatsForEnemyWhenWePlayingJungleAndTheyPlayingJungle() {
-        val stats = refinedStatsDAO.fetchPlayerStatisticsForVillian(1542360,
+        val stats = refinedStatsDAO.fetchPlayerStatisticsForVillian("todo",
                 "NONE",
                 "JUNGLE")
 

@@ -18,10 +18,10 @@ class ParticipantIdentityDAO(val dbHelper: DBHelper, val playerDAO: PlayerDAO) {
 
     fun saveParticipantIdentity(participantIdentity: ParticipantIdentity,
                                 gameId: Long,
-                                summonerId: Long,
-                                teamId : Int,
-                                role : String,
-                                lane : String) : Long {
+                                summonerId: String,
+                                teamId: Int,
+                                role: String,
+                                lane: String) : Long {
         val insertSQL = "Insert into $PARTICIPANT_IDENTITY_TABLE (" +
                 "${dbHelper.PARTICIPANT_ID_COLUMN}," +
                 "${dbHelper.SUMMONER_ID_COLUMN}," +
@@ -30,7 +30,7 @@ class ParticipantIdentityDAO(val dbHelper: DBHelper, val playerDAO: PlayerDAO) {
                 "${participantIdentityColumns.ROLE}," +
                 "${participantIdentityColumns.LANE}) values (" +
                 "${participantIdentity.participantId}," +
-                "$summonerId," +
+                "'$summonerId'," +
                 "$gameId," +
                 "$teamId," +
                 "'$role'," +
@@ -51,10 +51,10 @@ class ParticipantIdentityDAO(val dbHelper: DBHelper, val playerDAO: PlayerDAO) {
         return lane
     }
 
-    fun getParticipantIdentity(gameId : Long, summonerId : Long) : ParticipantIdentity  {
+    fun getParticipantIdentity(gameId: Long, summonerId: String) : ParticipantIdentity  {
         val selectSQL = "select * from $PARTICIPANT_IDENTITY_TABLE\n" +
                 "join player on participantidentity.Id = player.ParticipantIdentityRowId\n" +
-                "where participantidentity.gameId = $gameId and participantidentity.summonerId = $summonerId"
+                "where participantidentity.gameId = $gameId and participantidentity.summonerId = '$summonerId'"
         val result : ResultSet = dbHelper.executeSqlQuery(selectSQL)
         result.next()
         return result.produceParticipantIdentity()

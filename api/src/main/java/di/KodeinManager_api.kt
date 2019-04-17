@@ -8,6 +8,7 @@ import database.DbHelper
 import database.match.MatchDao
 import database.match.MatchSummaryDao
 import service_contracts.ProcessingImpl
+import util.RolesAndLanes
 import util.TableNames
 
 
@@ -46,6 +47,7 @@ class KodeinManager_api {
         bind<MatchController>() with provider {
             MatchController(
                     kodein.instance(),
+                    kodein.instance(),
                     kodein.instance())
         }
 
@@ -55,6 +57,10 @@ class KodeinManager_api {
 
         bind<TableNames>() with provider {
             TableNames()
+        }
+
+        bind<RolesAndLanes>() with provider {
+            RolesAndLanes()
         }
     }
 }

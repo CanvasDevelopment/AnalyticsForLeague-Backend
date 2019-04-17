@@ -22,21 +22,21 @@ class DefaultStatTypes {
 
     private val defaultNumberOfGames = 20
 
-    private fun produceFullStatCard(summonerId: Long, champId: Int, role: String, statType: String, statName : String) : AnalysisStatCardSkeleton {
+    private fun produceFullStatCard(summonerId: String, champId: Int, role: String, statType: String, statName : String) : AnalysisStatCardSkeleton {
         return AnalysisStatCardSkeleton(FULL_STAT,
                 "fullStatCard/$summonerId/$defaultNumberOfGames/$role/$champId/$statType",
                 "",
                 statName)
     }
 
-    private fun produceFullStatCard(summonerId: Long, role: String, statType: String, statName: String) : AnalysisStatCardSkeleton {
+    private fun produceFullStatCard(summonerId: String, role: String, statType: String, statName: String) : AnalysisStatCardSkeleton {
         return AnalysisStatCardSkeleton(FULL_STAT,
                 "fullStatCard/$summonerId/$defaultNumberOfGames/$role/$statType",
                 "",
                 statName)
     }
 
-    private fun produceHalfStatCard(summonerId: Long, role: String, champId: Int, statType: String, statName: String) : AnalysisStatCardSkeleton {
+    private fun produceHalfStatCard(summonerId: String, role: String, champId: Int, statType: String, statName: String) : AnalysisStatCardSkeleton {
         return AnalysisStatCardSkeleton(
                 HALF_STAT,
                 "halfStatCard/$summonerId/$defaultNumberOfGames/$role/$champId/$statType",
@@ -45,7 +45,7 @@ class DefaultStatTypes {
         )
     }
 
-    private fun produceHalfStatCard(summonerId: Long, role: String, statType: String, statName: String) : AnalysisStatCardSkeleton {
+    private fun produceHalfStatCard(summonerId: String, role: String, statType: String, statName: String) : AnalysisStatCardSkeleton {
         return AnalysisStatCardSkeleton(
                 HALF_STAT,
                 "halfStatCard/$summonerId/$defaultNumberOfGames/$role/$statType",
@@ -54,7 +54,7 @@ class DefaultStatTypes {
         )
     }
 
-    fun getDefaultStats(summonerId: Long, role : String) : ArrayList<AnalysisStatCardSkeleton> {
+    fun getDefaultStats(summonerId: String, role : String) : ArrayList<AnalysisStatCardSkeleton> {
 
         val creepsCard = produceFullStatCard(summonerId, role, CREEPS, "Creeps Per Minute")
         val damage = produceFullStatCard(summonerId, role, DAMAGE_DEALT, "Damage Dealt Per Minute")
@@ -84,7 +84,7 @@ class DefaultStatTypes {
         return result
     }
 
-    fun getDefaultStats(summonerId: Long, champId: Int, role : String) : ArrayList<AnalysisStatCardSkeleton> {
+    fun getDefaultStats(summonerId: String, champId: Int, role : String) : ArrayList<AnalysisStatCardSkeleton> {
 
         val creepsCard = produceFullStatCard(summonerId, champId, role, CREEPS, "Creeps Per Minute")
         val damage = produceFullStatCard(summonerId, champId, role, DAMAGE_DEALT, "Damage Dealt Per Minute")

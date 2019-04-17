@@ -24,8 +24,8 @@ class SummonerUnitTests {
 
     @Test
     fun `Make sure that we can register summoner correctly`() {
-        val summonerDetails = SummonerDetails(random.nextLong(),
-                random.nextLong(), "bob_the_feeder",
+        val summonerDetails = SummonerDetails(random.nextLong().toString(),
+                random.nextLong().toString(), "bob_the_feeder",
                 random.nextInt(),
                 random.nextInt(),
                 random.nextLong())
@@ -59,7 +59,7 @@ class SummonerUnitTests {
 
     @Test
     fun `Make sure that we can return 404 if we fail to find the summoner when retrieving summoner details`() {
-        val summonerId : Long = 1
+        val summonerId : String = "1"
         `when`(summonerDao.getSummoner(summonerId)).thenReturn(null)
         val response = summonerController.fetchSummonerDetails(summonerId)
         assert(response.resultCode == 404)

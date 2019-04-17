@@ -10,7 +10,7 @@ import util.*
 class Sync (val matchControl: MatchControl) {
 
 
-    fun refineStats(summonerId: Long) : Int {
+    fun refineStats(summonerId: String) : Int {
         val savedTop = matchControl.refineMatchData(summonerId, SOLO, TOP)
         val savedMid = matchControl.refineMatchData(summonerId, SOLO, MID)
         val savedJungle = matchControl.refineMatchData(summonerId, NONE, JUNGLE)
@@ -30,11 +30,11 @@ class Sync (val matchControl: MatchControl) {
      * Sync our summoner. This method triggers a 'sync' which pulls down all the matches that a summoner has not saved
      * previously
      */
-    fun syncMatches(summonerId : Long) : Int {
+    fun syncMatches(summonerId: String) : Int {
 
         // download all the matches that have not been processed.
         matchControl.downloadAndSaveMatchSummaries(summonerId)
-        matchControl.fetchAndSaveMatchesForASummoner(summonerId, 20)
+        matchControl.fetchAndSaveMatchesForASummoner(summonerId, 0)
         // refine all our match data
         return 1
     }
@@ -43,12 +43,12 @@ class Sync (val matchControl: MatchControl) {
      * Sync just our match summaries. This means that we can save time by just fetching the summaries, and then
      * trigger the save of
      */
-    fun syncMatchSummaries(summonerId: Long): Int {
+    fun syncMatchSummaries(summonerId: String): Int {
         matchControl.downloadAndSaveMatchSummaries(summonerId)
         return 200
     }
 
-    fun fetchSyncProgress(summonerId: Long): SyncProgress {
+    fun fetchSyncProgress(summonerId: String): SyncProgress {
        return matchControl.fetchSyncProgress(summonerId)
     }
 }

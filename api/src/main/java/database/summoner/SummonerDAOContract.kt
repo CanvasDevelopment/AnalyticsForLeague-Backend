@@ -8,8 +8,8 @@ import model.response_beans.SummonerDetails
 interface SummonerDAOContract {
 
     fun saveSummoner(summoner: SummonerDetails): Long
-    fun deleteSummoner(summonerId: Long)
-    fun getSummoner(summonerId: Long): SummonerDetails?
+    fun deleteSummoner(summonerId : String)
+    fun getSummoner(summonerId : String): SummonerDetails?
 
     companion object {
         val SUMMONER_TABLE = "Summoner"

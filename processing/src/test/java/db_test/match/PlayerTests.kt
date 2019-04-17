@@ -36,9 +36,9 @@ class PlayerTests {
         val profileIcon = 1
         val player = Player(
                 platformId,
-                1234567,
+                "1234567",
                 "kloin",
-                123489,
+                "123489",
                 "oce",
                 "sdf",
                 1)

@@ -55,7 +55,7 @@ class SummonerDao(private val dbHelper : DbHelper) : SummonerDAOContract {
         return -1
     }
 
-    override fun deleteSummoner(summonerId: Long) {
+    override fun deleteSummoner(summonerId : String) {
         log.info("Attempting to delete summoner with id : " + summonerId)
         val queryString = String.format("DELETE from %s WHERE %s = %s", SummonerDAOContract.SUMMONER_TABLE, SummonerDAOContract.ID, summonerId)
         try {
@@ -66,7 +66,7 @@ class SummonerDao(private val dbHelper : DbHelper) : SummonerDAOContract {
         }
     }
 
-    fun getSummoner(summonerName: String): SummonerDetails? {
+    fun getSummonerByName(summonerName: String): SummonerDetails? {
         log.info("Attempting to find summoner with name : " + summonerName)
 
         val queryString = "SELECT * FROM ${SummonerDAOContract.SUMMONER_TABLE} WHERE ${SummonerDAOContract.SUMMONER_NAME} = '$summonerName'"
@@ -74,8 +74,8 @@ class SummonerDao(private val dbHelper : DbHelper) : SummonerDAOContract {
         try {
             val resultSet = dbHelper.executeSqlQuery(queryString)
             if (resultSet.next()) {
-                val summoner = SummonerDetails(resultSet.getLong(SummonerDAOContract.ID),
-                        resultSet.getLong("AccountId"),
+                val summoner = SummonerDetails(resultSet.getString(SummonerDAOContract.ID),
+                        resultSet.getString("AccountId"),
                         resultSet.getString("SummonerName"),
                         resultSet.getInt("ProfileIconId"),
                         resultSet.getInt("SummonerLevel"),
@@ -91,14 +91,14 @@ class SummonerDao(private val dbHelper : DbHelper) : SummonerDAOContract {
         return null
     }
 
-    override fun getSummoner(summonerId: Long): SummonerDetails? {
+    override fun getSummoner(summonerId : String) : SummonerDetails? {
         log.info("Attempting to find summoner with Id : " + summonerId)
-        val queryString = String.format("SELECT * FROM %s WHERE %s = %s", SummonerDAOContract.SUMMONER_TABLE, SummonerDAOContract.ID, summonerId)
+        val queryString = String.format("SELECT * FROM %s WHERE %s = '%s'", SummonerDAOContract.SUMMONER_TABLE, SummonerDAOContract.ID, summonerId)
         try {
             val resultSet = dbHelper.executeSqlQuery(queryString)
             if (resultSet.next()) {
-                val summoner = SummonerDetails(resultSet.getLong(SummonerDAOContract.ID),
-                        resultSet.getLong("AccountId"),
+                val summoner = SummonerDetails(resultSet.getString(SummonerDAOContract.ID),
+                        resultSet.getString("AccountId"),
                         resultSet.getString("SummonerName"),
                         resultSet.getInt("ProfileIconId"),
                         resultSet.getInt("SummonerLevel"),

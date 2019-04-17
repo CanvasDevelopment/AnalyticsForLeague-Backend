@@ -1,7 +1,5 @@
 package db.champion
 
-import javax.management.monitor.StringMonitor
-
 class ChampData {
 
     /**
@@ -14,7 +12,7 @@ class ChampData {
     var name : String = ""
     var title : String = ""
     var blurb : String = ""
-    var summonerId : Long = -1
+    var summonerId : String = "-1"
     var games : Int = 0
 
     constructor(version :String,
@@ -23,7 +21,7 @@ class ChampData {
                 name : String,
                 title : String,
                 blurb : String,
-                summonerId : Long,
+                summonerId : String,
                 games : Int) {
         this.version = version
         this.id = id

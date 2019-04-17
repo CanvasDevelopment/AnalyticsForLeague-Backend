@@ -72,22 +72,22 @@ class Summoner {
     @ApiMethod(name = "summonerDetails",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "summonerDetails/{summonerId}")
-    fun getSummonerDetails(@Named("summonerId") summonerId : Long) : Response<SummonerDetails> =
+    fun getSummonerDetails(@Named("summonerId") summonerId : String) : Response<SummonerDetails> =
             summonerController.fetchSummonerDetails(summonerId)
 
     @ApiMethod(name = "sync",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "sync/{summonerId}")
-    fun sync(@Named("summonerId") summonerId : Long) : Response<String> = summonerController.syncSummoner(summonerId)
+    fun sync(@Named("summonerId") summonerId : String) : Response<String> = summonerController.syncSummoner(summonerId)
     @ApiMethod(name = "refineUserStats",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "refineUserStats/{summonerId}")
-    fun refineUserStats(@Named("summonerId") summonerId: Long) : Response<String> = summonerController.refineUserStats(summonerId)
+    fun refineUserStats(@Named("summonerId") summonerId: String) : Response<String> = summonerController.refineUserStats(summonerId)
 
     @ApiMethod(name = "syncProgress",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "syncProgress/{summonerId}")
-    fun syncProgress(@Named("summonerId") summonerId: Long) : Response<SyncProgress> {
+    fun syncProgress(@Named("summonerId") summonerId: String) : Response<SyncProgress> {
         return summonerController.syncProgress(summonerId)
     }
 }

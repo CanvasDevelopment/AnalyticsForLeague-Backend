@@ -1,10 +1,7 @@
 package api.match
 
-import api.match.model.PerformanceWeight
-import api.stat.analysis.model.HERO_CREEPS
 import api.stat.analysis.model.HeadToHeadStat
 import database.match.MatchDao
-import database.match.MatchDaoContract
 import database.match.model.MatchIdentifier
 import database.tables.StatColumns
 import database.tables.StatColumns.HERO_ASSISTS
@@ -44,16 +41,15 @@ import extensions.produceHeadToHeadStat
 import model.GameStageStats
 import model.MatchPerformanceDetails
 import model.MatchSummary
-import util.Constant
-import util.GameStages
-import util.TableNames
+import util.*
 import java.sql.ResultSet
 
 /**
  * @author Josiah Kendall
  */
 class MatchController(private val matchDao : MatchDao,
-                      private val tableNames: TableNames) {
+                      private val tableNames: TableNames,
+                      private val rolesAndLanes: RolesAndLanes) {
     /**
      * Load an array of twenty match ids. The matches will be in order from most recent to least recent.
      *
@@ -66,8 +62,30 @@ class MatchController(private val matchDao : MatchDao,
      * @return              [ArrayList] of [Long]. Each long is a match id. The matches will be in order from most
      *                      recent first to least recent last.
      */
-    fun loadTwentyMatchIds(role : Int, startingPoint : Int, summonerId : Long) : ArrayList<MatchIdentifier> {
-        return matchDao.loadTwentyIds(startingPoint, summonerId)
+    fun loadTwentyMatchIds(role: Int, startingPoint: Int, summonerId: String) : ArrayList<MatchIdentifier> {
+        return matchDao.loadTwentyIds(
+                startingPoint,
+                summonerId,
+                rolesAndLanes.getLane(role),
+                rolesAndLanes.getRole(role))
+    }
+
+    /**
+     * Load an array of twenty match ids. The matches will be in order from most recent to least recent.
+     *
+     * @param role          Filter the results to a specific role.
+     * @param startingPoint This parameter denotes where in the list of matches stored for a user we need to start
+     *                      when grabbing our next twenty match ids. For instance, if we want to the get the most recent
+     *                      match ids, we would set the starting point to 0. If we had already retrieved the most recent
+     *                      20 matches and wanted to retrieve another 20, then we would use 20 as the starting point.
+     * @param summonerId    This is the summoner for whom we are retrieving the matches for.
+     * @return              [ArrayList] of [Long]. Each long is a match id. The matches will be in order from most
+     *                      recent first to least recent last.
+     */
+    fun loadTwentyMatchIds(startingPoint: Int, summonerId: String) : ArrayList<MatchIdentifier> {
+        return matchDao.loadTwentyIds(
+                startingPoint,
+                summonerId)
     }
 
     /**
@@ -84,11 +102,13 @@ class MatchController(private val matchDao : MatchDao,
      * @return              [ArrayList] of [Long]. Each long is a match id. The matches will be in order from most
      *                      recent first to least recent last.
      */
-    fun loadTwentyMatchIds(role: Int, startingPoint : Int, summonerId : Long, heroChampId: Int) : ArrayList<Long> {
+    fun loadTwentyMatchIds(role: Int, startingPoint: Int, summonerId: String, heroChampId: Int) : ArrayList<MatchIdentifier> {
         return matchDao.loadTwentyIds(
                 startingPoint,
                 summonerId,
-                heroChampId)
+                heroChampId,
+                rolesAndLanes.getLane(role),
+                rolesAndLanes.getRole(role))
     }
 
     /**
@@ -106,7 +126,7 @@ class MatchController(private val matchDao : MatchDao,
      * @return              [ArrayList] of [Long]. Each long is a match id. The matches will be in order from most
      *                      recent first to least recent last.
      */
-    fun loadTwentyMatchIds(role : Int, startingPoint : Int, summonerId : Long, heroChampId : Int, villanChampId : Int) : ArrayList<Long> {
+    fun loadTwentyMatchIds(role : Int, startingPoint : Int, summonerId : String, heroChampId : Int, villanChampId : Int) : ArrayList<MatchIdentifier> {
         return matchDao.loadTwentyIds(
                 tableNames.getRefinedStatsTableName(role),
                 startingPoint,
@@ -121,7 +141,7 @@ class MatchController(private val matchDao : MatchDao,
      * @param matchId The match that we are wanting the details for.
      * @param summonerId The summoner who we are fetching the match details for.
      */
-    fun loadMatchSummary(role : Int, matchId : Long, summonerId: Long) : MatchSummary {
+    fun loadMatchSummary(role : Int, matchId : Long, summonerId : String) : MatchSummary {
         // load performance profiles todo replace this with proper stuff
         val earlyGamePerformanceProfile = matchDao.produceMockPerformanceHashMap(Constant.GameStage.EARLY_GAME)
         val midGamePerformanceProfile = matchDao.produceMockPerformanceHashMap(Constant.GameStage.MID_GAME)
@@ -163,7 +183,8 @@ class MatchController(private val matchDao : MatchDao,
                 midGameResult,
                 lateGameResult,
                 resultSet.getBoolean(HERO_RESULT),
-                detailsUrl
+                detailsUrl,
+                summonerId
              )
     }
 
@@ -179,7 +200,7 @@ class MatchController(private val matchDao : MatchDao,
      * @param matchId       The id of the match that we are interested in.
      * @param summonerId    The id of the summoner who we want the stats for
      */
-    fun loadMatchPerformanceSummary(role: Int, matchId : Long, summonerId:Long) : MatchPerformanceDetails {
+    fun loadMatchPerformanceSummary(role: Int, matchId : Long, summonerId : String) : MatchPerformanceDetails {
         val tableName = tableNames.getRefinedStatsTableName(role)
         val columnNames = ArrayList<String>()
         columnNames.add(StatColumns.HERO_KILLS)
@@ -302,7 +323,7 @@ class MatchController(private val matchDao : MatchDao,
      * @param gameStage     The stage of the game that we want the stats for. See [GameStages]
      * @return A [GameStageStats] instance for a match.
      */
-    fun loadGameStageStatsForAMatch(role : Int, gameStage : Int, matchId: Long, summonerId: Long) : GameStageStats {
+    fun loadGameStageStatsForAMatch(role : Int, gameStage : Int, matchId: Long, summonerId : String) : GameStageStats {
         val gameStages = GameStages()
 
         when(gameStage) {

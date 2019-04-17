@@ -36,10 +36,10 @@ class ParticipantIdentityTests {
     }
 
     fun produceRandomPlayer() : Player {
-        val summonerId : Long = Random().nextLong()
+        val summonerId : String = Random().nextLong().toString()
         return Player(
                 "OCE", // doesnt matter
-                556, // not used in current tests
+                "556", // not used in current tests
                 "Joe", // not used in current tests its just info
                 summonerId, // used
                 "OCE", // not used

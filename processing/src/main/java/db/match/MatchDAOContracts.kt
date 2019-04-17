@@ -9,6 +9,6 @@ interface MatchDAOContracts {
     interface MatchDAOContract {
         fun saveMatch(match : Match)
         fun getMatch(gameId: Long) : Match
-        fun deleteAllMatchesFromRawDBForASummoner(summonerId : Long)
+        fun deleteAllMatchesFromRawDBForASummoner(summonerId: String)
     }
 }

@@ -1,13 +1,9 @@
 package database.match
 
-import api.match.model.PerformanceWeight
-import api.stat.analysis.model.HeadToHeadStat
 import database.DbHelper
 import database.match.model.MatchIdentifier
 import database.sql_builder.Builder
-import extensions.produceHeadToHeadStat
 import model.GameStageStats
-import model.MatchSummary
 import java.sql.ResultSet
 
 /**
@@ -36,11 +32,11 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
      *
      * @return An [ArrayList] of match ids.
      */
-    override fun loadTwentyIds(startingPoint: Int, summonerId: Long): ArrayList<MatchIdentifier> {
+    override fun loadTwentyIds(startingPoint: Int, summonerId: String): ArrayList<MatchIdentifier> {
         val sql = Builder()
-                .select("$gameIdColumn, $summonerIdColumn, $laneColumn, $roleColumn, $timestampColumn")
+                .select("$gameIdColumn, $summonerIdColumn, $laneColumn, $roleColumn, $timestampColumn, $champColumn")
                 .tableName(matchSummaryTable)
-                .where("$summonerIdColumn = $summonerId")
+                .where("$summonerIdColumn = '$summonerId'")
                 .orderBy(gameIdColumn)
                 .limit(startingPoint, startingPoint+20)
                 .toSql()
@@ -52,7 +48,9 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
                     resultSet.getLong(gameIdColumn),
                     resultSet.getString(roleColumn),
                     resultSet.getString(laneColumn),
-                    resultSet.getLong(timestampColumn)))
+                    resultSet.getInt(champColumn),
+                    resultSet.getLong(timestampColumn),
+                    summonerId))
         }
 
         return results
@@ -66,73 +64,139 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
      *
      * @return An [ArrayList] of match ids.
      */
-    override fun loadTwentyIds(startingPoint: Int, summonerId: Long, lane : String): ArrayList<Long> {
+    override fun loadTwentyIds(startingPoint: Int, summonerId: String, lane: String): ArrayList<MatchIdentifier> {
         val sql = Builder()
-                .select("$gameIdColumn, $summonerIdColumn, $laneColumn")
+                .select("$gameIdColumn, $summonerIdColumn, $laneColumn, $roleColumn, $timestampColumn, $champColumn")
                 .tableName(matchSummaryTable)
-                .where("$summonerIdColumn = $summonerId AND $laneColumn = $lane")
+                .where("$summonerIdColumn = '$summonerId' AND $laneColumn = '$lane'")
                 .orderBy(gameIdColumn)
                 .limit(startingPoint, startingPoint+20)
                 .toSql()
         val resultSet = dbHelper.executeSqlQuery(sql)
-        val ids = ArrayList<Long>()
+        val results = ArrayList<MatchIdentifier>()
         while (resultSet.next()) {
-            ids.add(resultSet.getLong(gameIdColumn))
+                results.add(MatchIdentifier(
+                        resultSet.getLong(gameIdColumn),
+                        resultSet.getString(roleColumn),
+                        resultSet.getString(laneColumn),
+                        resultSet.getInt(champColumn),
+                        resultSet.getLong(timestampColumn),
+                        summonerId))
         }
 
-        return ids
+        return results
     }
 
     override fun loadTwentyIds(startingPoint: Int,
-                               summonerId: Long,
-                               heroChampId: Int): ArrayList<Long> {
+                               summonerId: String,
+                               heroChampId: Int): ArrayList<MatchIdentifier> {
         val sql = Builder()
-                .select("$gameIdColumn, $summonerIdColumn, $champColumn")
+                .select("$gameIdColumn, $summonerIdColumn, $laneColumn, $roleColumn, $timestampColumn, $champColumn")
                 .tableName(matchSummaryTable)
-                .where("$summonerIdColumn = $summonerId and $champColumn = $heroChampId")
+                .where("$summonerIdColumn = '$summonerId' and $champColumn = $heroChampId")
                 .orderBy(gameIdColumn)
                 .limit(startingPoint, startingPoint+20)
                 .toSql()
 
         val resultSet = dbHelper.executeSqlQuery(sql)
-        val ids = ArrayList<Long>()
+        val results = ArrayList<MatchIdentifier>()
         while (resultSet.next()) {
-            ids.add(resultSet.getLong(gameIdColumn))
+            results.add(MatchIdentifier(
+                    resultSet.getLong(gameIdColumn),
+                    resultSet.getString(roleColumn),
+                    resultSet.getString(laneColumn),
+                    resultSet.getInt(champColumn),
+                    resultSet.getLong(timestampColumn),
+                    summonerId))
         }
 
-        return ids
+        return results
     }
 
-    override fun loadTwentyIds(startingPoint: Int, summonerId: Long, heroChampId: Int, lane: String): ArrayList<Long> {
+    override fun loadTwentyIds(startingPoint: Int, summonerId: String, heroChampId: Int, lane: String): ArrayList<MatchIdentifier> {
         val sql = Builder()
-                .select("$gameIdColumn, $summonerIdColumn, $champColumn")
+                .select("$gameIdColumn, $summonerIdColumn, $champColumn, $roleColumn, $laneColumn, $timestampColumn")
                 .tableName(matchSummaryTable)
-                .where("$summonerIdColumn = $summonerId and $champColumn = $heroChampId and $laneColumn = $lane" )
+                .where("$summonerIdColumn = '$summonerId' and $champColumn = $heroChampId and $laneColumn = '$lane'" )
                 .orderBy(gameIdColumn)
                 .limit(startingPoint, startingPoint+20)
                 .toSql()
 
         val resultSet = dbHelper.executeSqlQuery(sql)
-        val ids = ArrayList<Long>()
+        val results = ArrayList<MatchIdentifier>()
         while (resultSet.next()) {
-            ids.add(resultSet.getLong(gameIdColumn))
+            results.add(MatchIdentifier(
+                    resultSet.getLong(gameIdColumn),
+                    resultSet.getString(roleColumn),
+                    resultSet.getString(laneColumn),
+                    resultSet.getInt(champColumn),
+                    resultSet.getLong(timestampColumn),
+                    summonerId))
         }
 
-        return ids
+        return results
     }
 
-    override fun loadTwentyIds(role: String, startingPoint: Int, summonerId: Long, heroChampId: Int, villanChampId: Int): ArrayList<Long> {
+    fun loadTwentyIds(startingPoint: Int, summonerId: String, lane:String, role:String) : ArrayList<MatchIdentifier> {
+        val sql = Builder()
+                .select("$gameIdColumn, $summonerIdColumn, $laneColumn, $roleColumn, $champColumn, $timestampColumn")
+                .tableName(matchSummaryTable)
+                .where("$summonerIdColumn = '$summonerId' and $laneColumn = '$lane' and  $roleColumn = '$role'" )
+                .orderBy(gameIdColumn)
+                .limit(startingPoint, startingPoint+20)
+                .toSql()
+
+        val resultSet = dbHelper.executeSqlQuery(sql)
+        val results = ArrayList<MatchIdentifier>()
+        while (resultSet.next()) {
+            results.add(MatchIdentifier(
+                    resultSet.getLong(gameIdColumn),
+                    resultSet.getString(roleColumn),
+                    resultSet.getString(laneColumn),
+                    resultSet.getInt(champColumn),
+                    resultSet.getLong(timestampColumn),
+                    summonerId))
+        }
+
+        return results
+    }
+
+    fun loadTwentyIds(startingPoint: Int, summonerId: String, heroChampId: Int, lane:String, role:String) : ArrayList<MatchIdentifier> {
+        val sql = Builder()
+                .select("$gameIdColumn, $summonerIdColumn, $champColumn, $laneColumn, $roleColumn, $timestampColumn")
+                .tableName(matchSummaryTable)
+                .where("$summonerIdColumn = '$summonerId' and $champColumn = $heroChampId and $laneColumn = '$lane' and  $roleColumn = '$role'" )
+                .orderBy(gameIdColumn)
+                .limit(startingPoint, startingPoint+20)
+                .toSql()
+
+        val resultSet = dbHelper.executeSqlQuery(sql)
+        val results = ArrayList<MatchIdentifier>()
+        while (resultSet.next()) {
+            results.add(MatchIdentifier(
+                    resultSet.getLong(gameIdColumn),
+                    resultSet.getString(roleColumn),
+                    resultSet.getString(laneColumn),
+                    resultSet.getInt(champColumn),
+                    resultSet.getLong(timestampColumn),
+                    summonerId))
+        }
+
+        return results
+    }
+
+    override fun loadTwentyIds(role: String, startingPoint: Int, summonerId : String, heroChampId: Int, villanChampId: Int): ArrayList<MatchIdentifier> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     // todo move this to the controller, this is too much logic for the dao
-     fun loadMatchSummary(role: String, matchId: Long, summonerId: Long) {
+     fun loadMatchSummary(role: String, matchId: Long, summonerId : String) {
 //        return MatchSummary()
     }
 //        // select the match details from the summoner id
 //        /**
 //         * return "{\"data\" :{" +
-//        "\"gameId\" : 1," +
+//        "\"matchId\" : 1," +
 //        "\"heroChampId\" : 1," +
 //        "\"champName\" : \"vi\"," + /\- can probably fetch this from the local database
 //        "\"villanChampId\" : 2,"
@@ -154,7 +218,7 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
 //        val sql = Builder()
 //                .select("$gameIdColumn, $summonerIdColumn, $champColumn")
 //                .tableName(tableName)
-//                .where("$summonerIdColumn = $summonerId and $champColumn = $heroChampId and $laneColumn = $lane" )
+//                .where("$summonerIdColumn = '$summonerId' and $champColumn = $heroChampId and $laneColumn = $lane" )
 //                .orderBy(gameIdColumn)
 //                .limit(startingPoint, startingPoint+20)
 //                .toSql()
@@ -171,30 +235,30 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
      * @param columnNames The column names of the database stats that we want to fetch
      * @param tableName The summary table to fetch from.
      */
-    fun fetchMatchDetails(summonerId: Long, gameId: Long, columnNames : ArrayList<String>, tableName: String) : ResultSet {
+    fun fetchMatchDetails(summonerId : String, gameId: Long, columnNames : ArrayList<String>, tableName: String) : ResultSet {
         columnNames.add(heroSummonerIdColumn)
         columnNames.add(gameIdColumn)
         val sqlEarlyGame = Builder()
                 .select(columnNames)
                 .tableName(tableName)
-                .where("$heroSummonerIdColumn = $summonerId And $gameIdColumn = $gameId") // we do not put > 0 here, as it is not a delta select
+                .where("$heroSummonerIdColumn = '$summonerId' And $gameIdColumn = $gameId") // we do not put > 0 here, as it is not a delta select
                 .toSql()
         return dbHelper.executeSqlQuery(sqlEarlyGame)
     }
 
-    override fun loadEarlyGameStageStatsForAMatch(role: String, matchId: Long, summonerId: Long): GameStageStats {
+    override fun loadEarlyGameStageStatsForAMatch(role: String, matchId: Long, summonerId : String): GameStageStats {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun loadMidGameStageStatsForAMatch(role: String, matchId: Long, summonerId: Long): GameStageStats {
+    override fun loadMidGameStageStatsForAMatch(role: String, matchId: Long, summonerId : String): GameStageStats {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun loadLateGameStageStatsForAMatch(role: String, matchId: Long, summonerId: Long): GameStageStats {
+    override fun loadLateGameStageStatsForAMatch(role: String, matchId: Long, summonerId : String): GameStageStats {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun fetchStatsForHeroAndVillan(summonerId: Long, gameId: Long, statNames : ArrayList<String>,
+    fun fetchStatsForHeroAndVillan(summonerId : String, gameId: Long, statNames : ArrayList<String>,
                                    tableName : String) : ResultSet {
         val selectStats = ArrayList<String>()
         selectStats.add(gameIdColumn)
@@ -203,7 +267,7 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
         val sql = Builder()
                 .select(statNames)
                 .tableName(tableName)
-                .where("$gameIdColumn = $gameId AND $heroSummonerIdColumn = $summonerId")
+                .where("$gameIdColumn = $gameId AND $heroSummonerIdColumn = '$summonerId'")
                 .toSql()
 
         return dbHelper.executeSqlQuery(sql)
@@ -214,11 +278,11 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
      *
      * @param summonerId The id of the summoner for whom we are getting the most recent match
      */
-    fun fetchNewestMatchForSummoner(summonerId: Long) : Long {
+    fun fetchNewestMatchForSummoner(summonerId : String) : Long {
         val sql = Builder()
                 .select(gameIdColumn)
                 .tableName(matchTable)
-                .where("$summonerIdColumn = $summonerId")
+                .where("$summonerIdColumn = '$summonerId'")
                 .orderBy(gameIdColumn)
                 .max()
                 .toSql()
@@ -231,7 +295,7 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
         return -1
     }
 
-    fun fetchWinAndChampIds(gameId: Long, summonerId: Long, refinedStatsTableName: String) : ResultSet {
+    fun fetchWinAndChampIds(gameId: Long, summonerId : String, refinedStatsTableName: String) : ResultSet {
         val itemsToFetch = ArrayList<String>()
         itemsToFetch.add(gameIdColumn)
         itemsToFetch.add(heroChampId)
@@ -242,7 +306,7 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
         val sql = Builder()
                 .select(itemsToFetch)
                 .tableName(refinedStatsTableName)
-                .where("$heroSummonerIdColumn = $summonerId and $gameIdColumn = $gameId")
+                .where("$heroSummonerIdColumn = '$summonerId' and $gameIdColumn = $gameId")
                 .orderBy(gameIdColumn)
                 .toSql()
 

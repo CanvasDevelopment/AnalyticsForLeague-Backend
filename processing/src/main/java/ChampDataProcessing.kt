@@ -1,12 +1,11 @@
 import com.google.appengine.repackaged.com.google.gson.Gson
 import db.champion.ChampData
 import db.champion.ChampDataDAO
-import java.io.File
-import java.io.FileOutputStream
+import model.networking.NetworkResult
+import java.io.*
 import java.util.zip.ZipEntry
-import java.io.FileInputStream
 import java.util.zip.ZipInputStream
-import java.io.BufferedInputStream
+import java.net.HttpURLConnection
 import java.net.URL
 import java.util.zip.ZipFile
 
@@ -21,65 +20,44 @@ class ChampDataProcessing(private val champDataDAO: ChampDataDAO) {
 
     fun start(version : String) {
         val url = "http://ddragon.leagueoflegends.com/cdn/$version/data/en_US/champion.json"
-        val downloadFileLocation = downloadFile(url)
+        val stringValue = downloadFile(url)
 //        unzipFile(downloadFileLocation)
-        processChampDataFile(downloadFileLocation)
+        processChampDataFile(stringValue)
     }
 
-    private fun downloadFile(url : String) : String {
+    private fun downloadFile(urlString : String) : String {
+        val gson =Gson()
+        val url = URL(urlString)
+        val conn = url.openConnection() as HttpURLConnection
+        conn.doOutput = true
+        conn.requestMethod = "GET"
+        conn.connectTimeout = 10000
 
-        var input: BufferedInputStream? = null
-        var fout: FileOutputStream? = null
-        try {
-            input = BufferedInputStream(URL(url).openStream())
-            fout = FileOutputStream(fileName)
+        val respCode = conn.responseCode
+        if (respCode == HttpURLConnection.HTTP_OK) {
+            val response = StringBuffer()
+            val reader = BufferedReader(InputStreamReader(conn.inputStream))
 
-            val data = ByteArray(1024)
-            var count: Int
-            do {
-                count = input.read(data, 0, 1024)
-                fout.write(data, 0, count)
-            } while (count != -1)
-        } catch (error : IndexOutOfBoundsException) {
-            // do nothing, I think its sweet.
-        } finally {
-            input?.close()
-            fout?.close()
+            // Parse our response
+            val lines = reader.readLines()
+            for(line in lines) {
+                response.append(line)
+            }
+            reader.close()
+        return response.toString()
         }
-        return fileName
+        return ""
     }
 
-    private fun unzipFile(downloadFile : String) {
-        val buffer = ByteArray(1024)
-        val zip = ZipFile(downloadFile)
-        val zis = ZipInputStream(BufferedInputStream(FileInputStream(downloadFile)))
-        var zipEntry: ZipEntry? = zis.nextEntry
-        while (zipEntry != null) {
-            val fileName = zipEntry.name
-            val newFile = File("$extractedFolder/$fileName")
-            val fos = FileOutputStream(newFile)
 
-            var len : Int
-            do {
-                len = zis.read(buffer)
-                fos.write(buffer, 0, len)
-            } while (len > 0)
-            fos.close()
-            zipEntry = zis.nextEntry
-        }
-        zis.closeEntry()
-        zis.close()
-    }
 //    fun saveAndExtractData
 
-    fun processChampDataFile(jsonDataPath : String) {
+    fun processChampDataFile(stringValue : String) {
         // path to data
         // open as string
-        var result = ""
-        File(jsonDataPath).forEachLine { result += it }
-        // parse it into a jsonWrapper
+
         val gson = Gson()
-        val champWrapper = gson.fromJson(result, ChampWrapper::class.java)
+        val champWrapper = gson.fromJson(stringValue, ChampWrapper::class.java)
         // now run through each of the items and save them to the database
         saveChamps(champWrapper.data!!)
     }

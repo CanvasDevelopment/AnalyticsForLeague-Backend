@@ -38,7 +38,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
      */
     override fun fetchGameStageStatListForHero(
             deltaName: String,
-            summonerId: Long,
+            summonerId: String,
             role: String,
             lane: String): ArrayList<GameStageStat> {
 
@@ -54,7 +54,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
                 "  LEFT JOIN timeline ON timeline.participantRowId = participant.Id\n" +
                 "  LEFT JOIN $deltaName ON $deltaName.timelineId = timeline.Id\n" +
                 "  LEFT JOIN matchtable on participant.GameId = matchtable.GameId\n" +
-                "WHERE participantidentity.SummonerId = $summonerId\n" +
+                "WHERE participantidentity.SummonerId = '$summonerId'\n" +
                 "      AND participantidentity.lane = '$lane'\n" +
                 "      AND participantidentity.role = '$role'\n" +
                 "      AND GameDuration > 300"
@@ -76,9 +76,9 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
      * @param lane The lane of the hero and the villan
      */
     override fun fetchGameStageStatListForVillian(deltaName: String,
-                                         summonerId: Long,
-                                         role: String,
-                                         lane: String) : ArrayList<GameStageStat> {
+                                                  summonerId: String,
+                                                  role: String,
+                                                  lane: String) : ArrayList<GameStageStat> {
         val sql = "SELECT\n" +
                 "  participantidentity.gameId,\n" +
                 "  zeroToTen * 10 as EarlyGame,\n" +
@@ -93,7 +93,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
                 "  LEFT JOIN timeline ON timeline.participantRowId = participant.Id\n" +
                 "  LEFT JOIN $deltaName ON $deltaName.timelineId = timeline.Id\n" +
                 "    LEFT JOIN matchtable on participant.GameId = matchtable.GameId\n" +
-                "WHERE participantidentity.SummonerId = $summonerId\n" +
+                "WHERE participantidentity.SummonerId = '$summonerId'\n" +
                 "      AND participantidentity.lane = '$lane'\n" +
                 "      AND participantidentity.role = '$role'\n" +
                 "      AND GameDuration > 300"
@@ -115,7 +115,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
      * @param role          The role that we want to filter to.
      * @param lane          The Lane that we want to filter to.
      */
-    override fun fetchGameSummaryStatsForHero(summonerId: Long, role: String, lane: String): ArrayList<TeamSummaryStat> {
+    override fun fetchGameSummaryStatsForHero(summonerId: String, role: String, lane: String): ArrayList<TeamSummaryStat> {
         val sql = "SELECT\n" +
                 "  ${tables.PARTICIPANT}.SummonerId,\n" +
                 "  ${tables.PARTICIPANT}.GameId,\n" +
@@ -146,7 +146,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
         return statList
     }
 
-    override fun fetchGameSummaryStatsForVillan(summonerId: Long, role: String, lane: String): ArrayList<TeamSummaryStat> {
+    override fun fetchGameSummaryStatsForVillan(summonerId: String, role: String, lane: String): ArrayList<TeamSummaryStat> {
        val sql = "SELECT\n" +
                "  participantidentity.SummonerId,\n" +
                "  participant.GameId,\n" +
@@ -184,9 +184,9 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
      * @param heroRole The hero role
      * @param heroLane The hero lane
      */
-    override fun fetchPlayerStatisticsForHero(heroSummonerId: Long,
-                                     heroRole: String,
-                                     heroLane: String) : ArrayList<FullGameStat> {
+    override fun fetchPlayerStatisticsForHero(heroSummonerId: String,
+                                              heroRole: String,
+                                              heroLane: String) : ArrayList<FullGameStat> {
         val sql = "SELECT\n" +
                 "  participantidentity.gameId,\n" +
                 "  stats.kills,\n" +
@@ -201,7 +201,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
                 "  LEFT JOIN matchtable ON participant.GameId = matchtable.GameId\n" +
                 "WHERE participantidentity.lane = '$heroLane'\n" +
                 "      AND participantidentity.role = '$heroRole'\n" +
-                "      AND participantidentity.SummonerId = $heroSummonerId\n" +
+                "      AND participantidentity.SummonerId = '$heroSummonerId'\n" +
                 "      AND GameDuration > 300"
         val result = dbHelper.executeSqlQuery(sql)
         val statList = ArrayList<FullGameStat>()
@@ -217,7 +217,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
      * @param heroLane The lane of the hero
      * @param heroRole The role of the hero.
      */
-    override fun fetchPlayerStatisticsForVillian(heroSummonerId: Long, heroRole: String, heroLane: String): ArrayList<FullGameStat> {
+    override fun fetchPlayerStatisticsForVillian(heroSummonerId: String, heroRole: String, heroLane: String): ArrayList<FullGameStat> {
         val sql = "SELECT\n" +
                 "  participantidentity.gameId,\n" +
                 "  stats.kills,\n" +
@@ -235,7 +235,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
                 "  LEFT JOIN matchtable ON participant.GameId = matchtable.GameId\n" +
                 "WHERE participantidentity.lane = '$heroLane'\n" +
                 "      AND participantidentity.role = '$heroRole'\n" +
-                "      AND participantidentity.SummonerId = $heroSummonerId\n" +
+                "      AND participantidentity.SummonerId = '$heroSummonerId'\n" +
                 "      AND GameDuration > 300"
         val result = dbHelper.executeSqlQuery(sql)
         val statList = ArrayList<FullGameStat>()

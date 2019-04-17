@@ -19,4 +19,6 @@ class ChampWrapper {
         this.data = data
     }
 
+    constructor()
+
 }

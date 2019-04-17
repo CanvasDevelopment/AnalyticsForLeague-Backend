@@ -38,7 +38,7 @@ class MatchControl(private val matchDAO: MatchDAO,
      * @param summonerId The id for the summoner we want the details
      * @return
      */
-    fun downloadAndSaveMatchSummaries(summonerId : Long) : Boolean {
+    fun downloadAndSaveMatchSummaries(summonerId: String) : Boolean {
 
         // if we don't get a summoner, return
         val summoner = summonerDAOContract.getSummoner(summonerId) ?: return false
@@ -75,7 +75,7 @@ class MatchControl(private val matchDAO: MatchDAO,
      *                                              The last 20, use 20. To fetch all matches that we have a match summary for, use
      *                                              0 or a negative number.
      */
-    fun fetchAndSaveMatchesForASummoner(summonerId: Long, numberOfMatchesToFetchForEachRole: Int) {
+    fun fetchAndSaveMatchesForASummoner(summonerId: String, numberOfMatchesToFetchForEachRole: Int) {
         // fetch
         if (numberOfMatchesToFetchForEachRole <= 0) {
             log.info("No limit of matches given. Fetching all match summaries.")
@@ -102,7 +102,7 @@ class MatchControl(private val matchDAO: MatchDAO,
         }
     }
 
-    fun fetchAndSaveAllMatchesInAMatchSummaryList(summonerId: Long, matchSummaries : ArrayList<MatchSummary>) {
+    fun fetchAndSaveAllMatchesInAMatchSummaryList(summonerId: String, matchSummaries: ArrayList<MatchSummary>) {
         matchSummaries.forEach { matchSummary ->
             val alreadySaved = gameSummaryDaoContract.doesGameSummaryForSummonerExist(matchSummary.gameId, summonerId)
             if (!alreadySaved) {
@@ -118,7 +118,7 @@ class MatchControl(private val matchDAO: MatchDAO,
      *
      * @return a boolean. Probably doesn't need this but its there for now.
      */
-    fun fetchAndSaveMatch(gameId : Long, summonerId: Long) : Boolean {
+    fun fetchAndSaveMatch(gameId: Long, summonerId: String) : Boolean {
         // If we already have a fetched (or processed) a game then we do not need to fetch it again.
         if (!matchDAO.exists(gameId) && !gameSummaryDaoContract.doesGameSummaryForSummonerExist(gameId, summonerId)) {
             log.info("Fetching match from server. MatchId: $gameId")
@@ -145,7 +145,7 @@ class MatchControl(private val matchDAO: MatchDAO,
      * @param role          The role for which we are interested in.
      * @param lane          The lane for which we are interested in.
      */
-    fun refineMatchData(summonerId: Long, role : String, lane : String) : Boolean {
+    fun refineMatchData(summonerId: String, role: String, lane: String) : Boolean {
         val tableName = getTableName(lane, role)
 
         // summary stats
@@ -352,11 +352,11 @@ class MatchControl(private val matchDAO: MatchDAO,
         throw IllegalStateException("Get columns used with invalid table")
     }
 
-    fun clearRawDatabasesOfSummoner(summonerId: Long) {
+    fun clearRawDatabasesOfSummoner(summonerId: String) {
         matchDAO.deleteAllMatchesFromRawDBForASummoner(summonerId)
     }
 
-    fun fetchSyncProgress(summonerId: Long) : SyncProgress{
+    fun fetchSyncProgress(summonerId: String) : SyncProgress{
         val latestSyncedMatchId = matchDAO.fetchIdOfMostRecentlySavedMatchForSummoner(summonerId)
         val numberOfSyncedMatches = matchSummaryDAO.loadNumberOfMatchSummariesUpToAndIncludingGivenMatchId(summonerId, latestSyncedMatchId)
         val numberOfMatches = matchSummaryDAO.loadNumberOfMatchSummariesForASummoner(summonerId)

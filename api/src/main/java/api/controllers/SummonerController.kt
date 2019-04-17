@@ -19,7 +19,7 @@ class SummonerController(private val summonerDao: SummonerDao,
      * @return              True if the summoner exists, false if not.
      */
     fun isSummonerRegistered(summonerName: String) : Response<Boolean> {
-        val exists = summonerDao.getSummoner(summonerName) != null
+        val exists = summonerDao.getSummonerByName(summonerName) != null
         if (exists) {
             return Response(200, exists)
         }
@@ -36,7 +36,7 @@ class SummonerController(private val summonerDao: SummonerDao,
     fun registerSummoner(summonerName: String) : Response<SummonerDetails> {
         val creationResultCode = processingInterface.createNewUser(summonerName)
         if (creationResultCode == 200) {
-            val summonerDetails = summonerDao.getSummoner(summonerName)
+            val summonerDetails = summonerDao.getSummonerByName(summonerName)
             if (summonerDetails != null) {
                 return Response(200, summonerDetails)
             }
@@ -51,14 +51,14 @@ class SummonerController(private val summonerDao: SummonerDao,
      * @param summonerId The id of the summoner for whom we want the details
      * @return A [SummonerDetails] object with the relevant info for our summoner.
      */
-    fun fetchSummonerDetails(summonerId : Long) : Response<SummonerDetails> {
+    fun fetchSummonerDetails(summonerId : String) : Response<SummonerDetails> {
         val summonerDetails = summonerDao.getSummoner(summonerId)
                 // If null, return 404
                 ?: return Response(404, getBlankSummonerDetails())
         return Response(200, summonerDetails)
     }
 
-    fun syncSummoner(summonerId: Long) : Response<String> {
+    fun syncSummoner(summonerId: String) : Response<String> {
 //        val syncResult = processingInterface.syncUser(summonerId)
         val syncResult = processingInterface.syncUserMatchList(summonerId)
         if (syncResult) {
@@ -68,7 +68,7 @@ class SummonerController(private val summonerDao: SummonerDao,
         return Response(500, "Error occurred - sync interface returned false")
     }
 
-    fun refineUserStats(summonerId: Long): Response<String> {
+    fun refineUserStats(summonerId : String): Response<String> {
         val syncResult = processingInterface.refineUserStats(summonerId)
         if (syncResult) {
             return Response(200, "success")
@@ -76,9 +76,9 @@ class SummonerController(private val summonerDao: SummonerDao,
         return Response(500, "Error occurred - processing request returned false")
     }
 
-    private fun getBlankSummonerDetails() : SummonerDetails = SummonerDetails(-1,-1,"",-1,-1,-1)
+    private fun getBlankSummonerDetails() : SummonerDetails = SummonerDetails("-1","-1","",-1,-1,-1)
 
-    fun syncProgress(summonerId: Long) : Response<SyncProgress> {
+    fun syncProgress(summonerId : String) : Response<SyncProgress> {
         val syncProgress = processingInterface.getSyncProgress(summonerId)
         return Response(200, syncProgress)
     }

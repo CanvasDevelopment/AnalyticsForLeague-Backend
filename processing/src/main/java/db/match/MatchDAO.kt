@@ -40,7 +40,7 @@ class MatchDAO(val dbHelper : DBHelper,
      * Delete alll the matches from our raw database for a specific summoner.
      * This is basically the clean up task that we do after processing
      */
-    override fun deleteAllMatchesFromRawDBForASummoner(summonerId: Long) {
+    override fun deleteAllMatchesFromRawDBForASummoner(summonerId: String) {
         val tables = Tables()
         dbHelper.connect()
         dbHelper.executeSQLScript("DELETE FROM matchtable")
@@ -107,7 +107,7 @@ class MatchDAO(val dbHelper : DBHelper,
 
         // save participants and children
         var participantIndex = 0
-        var summonerId : Long
+        var summonerId : String
         val participantStartTime = System.currentTimeMillis()
         for (participant in match.participants) {
             val participantIdentity = match.participantIdentities[participant.participantId-1]
@@ -186,9 +186,9 @@ class MatchDAO(val dbHelper : DBHelper,
      *
      * @param summonerId The id of the summoner for whom we are getting the most recent match
      */
-    fun fetchIdOfMostRecentlySavedMatchForSummoner(summonerId: Long) : Long {
+    fun fetchIdOfMostRecentlySavedMatchForSummoner(summonerId: String) : Long {
         val sql = "SELECT Max($MATCH_TABLE.$GAME_ID) as $GAME_ID, $SUMMONER_ID from $MATCH_TABLE " +
-                "JOIN participant ON $MATCH_TABLE.$GAME_ID = participant.GameId where $SUMMONER_ID = $summonerId"
+                "JOIN participant ON $MATCH_TABLE.$GAME_ID = participant.GameId where $SUMMONER_ID = '$summonerId'"
         val result : ResultSet = dbHelper.executeSqlQuery(sql)
         if (result.first()) {
             return result.getLong(GAME_ID)

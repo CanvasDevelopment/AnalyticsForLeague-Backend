@@ -15,7 +15,7 @@ class MatchSummary {
     var timestamp: Long = 0
     var role: String? = null
     var lane: String? = null
-    var summonerId: Long = 0
+    var summonerId: String = ""
 
     constructor() {
         // ?? why is this here?
@@ -30,7 +30,7 @@ class MatchSummary {
                 timestamp: Long,
                 role: String,
                 lane: String,
-                summonerId: Long) {
+                summonerId: String) {
         this.champion = champion
         this.gameId = gameId
         this.queue = queue

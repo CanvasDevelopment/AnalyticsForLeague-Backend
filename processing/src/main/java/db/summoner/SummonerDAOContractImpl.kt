@@ -32,7 +32,7 @@ class SummonerDAOContractImpl
                         + "%s,"
                         + "%s,"
                         + "%s)"
-                        + " values (%d, %d, '%s', %d, %d, %d)",
+                        + " values ('%s', '%s', '%s', %d, %d, %d)",
                 SummonerDAOContract.SUMMONER_TABLE,
                 SummonerDAOContract.ID,
                 SummonerDAOContract.ACCOUNT_ID,
@@ -61,7 +61,7 @@ class SummonerDAOContractImpl
         return -1
     }
 
-    override fun deleteSummoner(summonerId: Long) {
+    override fun deleteSummoner(summonerId: String) {
         log.info("Attempting to delete summoner with id : " + summonerId)
         val queryString = String.format("DELETE from %s WHERE %s = %s", SummonerDAOContract.SUMMONER_TABLE, SummonerDAOContract.ID, summonerId)
         try {
@@ -73,7 +73,7 @@ class SummonerDAOContractImpl
 
     }
 
-    fun getSummoner(summonerName: String): Summoner? {
+    fun getSummonerByName(summonerName: String): Summoner? {
         log.info("Attempting to find summoner with name : " + summonerName)
         val queryString = "SELECT * FROM ${SummonerDAOContract.SUMMONER_TABLE} WHERE ${SummonerDAOContract.SUMMONER_NAME} = '$summonerName'"
         log.info("Searching for summoner: $queryString")
@@ -81,11 +81,11 @@ class SummonerDAOContractImpl
             val resultSet = dbHelper.executeSqlQuery(queryString)
             if (resultSet.next()) {
                 val summoner = Summoner()
-                summoner.id = resultSet.getLong(SummonerDAOContract.ID)
+                summoner.id = resultSet.getString(SummonerDAOContract.ID)
                 summoner.name = resultSet.getString("SummonerName")
                 summoner.profileIconId = resultSet.getInt("ProfileIconId")
                 summoner.summonerLevel = resultSet.getInt("SummonerLevel")
-                summoner.accountId = resultSet.getLong("AccountId")
+                summoner.accountId = resultSet.getString("AccountId")
                 summoner.revisionDate = resultSet.getLong("RevisionDate")
 
                 log.info("Successfully loaded summoner : \n" + summoner.toString())
@@ -98,9 +98,9 @@ class SummonerDAOContractImpl
         return null
     }
 
-    override fun getSummoner(summonerId: Long): Summoner? {
+    override fun getSummoner(summonerId: String): Summoner? {
         log.info("Attempting to find summoner with Id : " + summonerId)
-        val queryString = String.format("SELECT * FROM %s WHERE %s = %s", SummonerDAOContract.SUMMONER_TABLE, SummonerDAOContract.ID, summonerId)
+        val queryString = String.format("SELECT * FROM %s WHERE %s = '%s'", SummonerDAOContract.SUMMONER_TABLE, SummonerDAOContract.ID, summonerId)
         try {
             val resultSet = dbHelper.executeSqlQuery(queryString)
             if (resultSet.next()) {
@@ -109,7 +109,7 @@ class SummonerDAOContractImpl
                 summoner.name = resultSet.getString("SummonerName")
                 summoner.profileIconId = resultSet.getInt("ProfileIconId")
                 summoner.summonerLevel = resultSet.getInt("SummonerLevel")
-                summoner.accountId = resultSet.getLong("AccountId")
+                summoner.accountId = resultSet.getString("AccountId")
                 summoner.revisionDate = resultSet.getLong("RevisionDate")
 
                 log.info("Successfully loaded summoner : \n" + summoner.toString())

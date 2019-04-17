@@ -29,7 +29,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      *
      * @return An ArrayList of card summaries which allow use to build cards and fetch the details for them in the app.
      */
-    fun fetchStatList(summonerId: Long, lane : String) : ArrayList<AnalysisStatCardSkeleton> {
+    fun fetchStatList(summonerId : String, lane : String) : ArrayList<AnalysisStatCardSkeleton> {
 
         // return the list for stats for the given role.
         // switch
@@ -49,7 +49,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      *
      * @return An ArrayList of card summaries which allow use to build cards and fetch the details for them in the app.
      */
-    fun fetchStatList(summonerId: Long, lane: String, champId : Int) : ArrayList<AnalysisStatCardSkeleton> {
+    fun fetchStatList(summonerId : String, lane: String, champId : Int) : ArrayList<AnalysisStatCardSkeleton> {
         return defaultStatTypes.getDefaultStats(summonerId, champId, lane)
     }
 
@@ -65,7 +65,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @param statName          The name of that select that we are interested in.
      * @param statAccumulatorType   The accumulation type. For instance, max, min or average.
      */
-    fun fetchStatsForFullCard(summonerId: Long, games : Int, lane: String, champId: Int, statName : String, statAccumulatorType : String) : ArrayList<HeadToHeadStat> {
+    fun fetchStatsForFullCard(summonerId : String, games : Int, lane: String, champId: Int, statName : String, statAccumulatorType : String) : ArrayList<HeadToHeadStat> {
         return analysisDao.fetchDeltas(summonerId,games,lane,statName,statAccumulatorType,champId)
 
     }
@@ -80,14 +80,14 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @param statName          The name of that select that we are interested in.
      * @param statAccumulatorType   The accumulation type. For instance, max, min or average.
      */
-    fun fetchStatsForFullCard(summonerId: Long, games: Int, lane: String, statName : String, statAccumulatorType : String) : ArrayList<HeadToHeadStat> {
+    fun fetchStatsForFullCard(summonerId : String, games: Int, lane: String, statName : String, statAccumulatorType : String) : ArrayList<HeadToHeadStat> {
         return analysisDao.fetchDeltas(summonerId,games,lane,statName,statAccumulatorType)
     }
 
     /**
      * The fetch for getting the information for the creeps
      */
-    fun creepsPerMinuteDeltasCard(summonerId : Long, games : Int, lane : String) : FullStatCard =// get creeps per minute early, mid and late for hero, for the enemy, for the villan
+    fun creepsPerMinuteDeltasCard(summonerId : String, games : Int, lane : String) : FullStatCard =// get creeps per minute early, mid and late for hero, for the enemy, for the villan
             analysisDao.fetchAvgCreepsPerMinStatCard(summonerId, games, lane)
 
     /**
@@ -105,7 +105,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @param lane          The lane that the summoner was playing.
      * @param statName      The name of the select that we want to fetch.
      */
-    fun fetchStatDetails(summonerId: Long, games : Int, lane: String, statName: String) : StatDetails {
+    fun fetchStatDetails(summonerId : String, games : Int, lane: String, statName: String) : StatDetails {
         val history = analysisDao.fetchPerformanceHistory(summonerId,games,lane, statName)
         val max = analysisDao.fetchStat(games,statName,lane,summonerId, MAX)
         val min = analysisDao.fetchStat(games,statName,lane,summonerId, MAX)
@@ -129,7 +129,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @param statName      The name of the select that we want to fetch.
      * @param heroChampId   Filter to just results where the hero used this champion.
      */
-    fun fetchStatDetails(summonerId: Long, games : Int, lane: String, statName: String, heroChampId : Int) : StatDetails {
+    fun fetchStatDetails(summonerId : String, games : Int, lane: String, statName: String, heroChampId : Int) : StatDetails {
         val history = analysisDao.fetchPerformanceHistory(summonerId,games,lane, statName,heroChampId)
         val max = analysisDao.fetchStat(games,statName,lane,summonerId, MAX,heroChampId)
         val min = analysisDao.fetchStat(games,statName,lane,summonerId, MAX, heroChampId)
@@ -154,7 +154,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @param heroChampId   Filter to just results where the hero used this champion.
      * @param gameStage     Indicate that only a certain game stage is required - either [EARLY_GAME], [MID_GAME] or [LATE_GAME]
      */
-    fun fetchStatDetails(summonerId: Long, games : Int, lane: String, statName: String, heroChampId: Int, gameStage : String) : StatDetails {
+    fun fetchStatDetails(summonerId : String, games : Int, lane: String, statName: String, heroChampId: Int, gameStage : String) : StatDetails {
         val history = analysisDao.fetchPerformanceHistory(summonerId,games,lane, statName, heroChampId, gameStage)
         val max = analysisDao.fetchStat(games,statName,lane,summonerId, gameStage, MAX,heroChampId)
         val min = analysisDao.fetchStat(games,statName,lane,summonerId, gameStage, MAX,heroChampId)
@@ -178,7 +178,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @param statName      The name of the select that we want to fetch.
      * @param gameStage     Indicate that only a certain game stage is required - either [EARLY_GAME], [MID_GAME] or [LATE_GAME]
      */
-    fun fetchStatDetails(summonerId: Long, games : Int, lane: String, statName: String, gameStage : String) : StatDetails {
+    fun fetchStatDetails(summonerId : String, games : Int, lane: String, statName: String, gameStage : String) : StatDetails {
         val history = analysisDao.fetchPerformanceHistory(summonerId,games,lane, statName, gameStage)
         val max = analysisDao.fetchStat(games,statName,lane,summonerId, gameStage, MAX)
         val min = analysisDao.fetchStat(games,statName,lane,summonerId, gameStage, MAX)
@@ -197,7 +197,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @param lane          The lane we want the info for.
      * @return A [CreepsPerMinuteDeltasDetail] object with the stats on it.
      */
-    fun creepsPerMinuteDeltasDetail(summonerId : Long, games: Int, lane: String) : CreepsPerMinuteDeltasDetail {
+    fun creepsPerMinuteDeltasDetail(summonerId : String, games: Int, lane: String) : CreepsPerMinuteDeltasDetail {
         val creepsMaxHero = analysisDao.fetchMaxDeltas(summonerId, games, lane, HERO_CREEPS)
         val creepsMaxVillan = analysisDao.fetchMaxDeltas(summonerId, games, lane, VILLAN_CREEPS)
         val creepsMinHero = analysisDao.fetchMinDeltas(summonerId, games, lane, HERO_CREEPS)
@@ -214,7 +214,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
     }
 
 
-    fun damagePerMinuteDeltasDetail(summonerId: Long, games: Int, lane: String): CreepsPerMinuteDeltasDetail {
+    fun damagePerMinuteDeltasDetail(summonerId : String, games: Int, lane: String): CreepsPerMinuteDeltasDetail {
         val maxHero = analysisDao.fetchMaxDeltas(summonerId, games, lane, HERO_DAMAGE)
         val maxVillan = analysisDao.fetchMaxDeltas(summonerId, games, lane, VILLAN_DAMAGE)
         val minHero = analysisDao.fetchMinDeltas(summonerId, games, lane, HERO_DAMAGE)
@@ -239,7 +239,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @param champId
      * @param statName
      */
-    fun fetchStatsForHalfCard(summonerId: Long, numberOfGames: Int, lane: String, champId: Int, statName: String): HeadToHeadStat {
+    fun fetchStatsForHalfCard(summonerId : String, numberOfGames: Int, lane: String, champId: Int, statName: String): HeadToHeadStat {
         return analysisDao.fetchHeadToHeadStat(summonerId, numberOfGames,lane,AVG,statName,champId)
     }
 
@@ -251,7 +251,7 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      * @param lane
      * @param statName
      */
-    fun fetchStatsForHalfCard(summonerId: Long, numberOfGames: Int, lane: String, statName: String): HeadToHeadStat {
+    fun fetchStatsForHalfCard(summonerId : String, numberOfGames: Int, lane: String, statName: String): HeadToHeadStat {
         return analysisDao.fetchHeadToHeadStat(summonerId, numberOfGames,lane,AVG,statName)
     }
 

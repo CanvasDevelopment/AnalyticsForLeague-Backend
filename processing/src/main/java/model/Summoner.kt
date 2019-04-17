@@ -7,9 +7,10 @@ package model
  */
 class Summoner {
 
-    var id: Long = 0
-    var accountId: Long = 0
-    var name: String? = null
+    var id: String = ""
+    var accountId: String = ""
+    var name: String? = ""
+    var puuid : String = ""
     var profileIconId: Int = 0
     var summonerLevel: Int = 0
     var revisionDate: Long = 0

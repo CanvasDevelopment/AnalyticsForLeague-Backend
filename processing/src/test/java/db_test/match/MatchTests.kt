@@ -231,7 +231,7 @@ class MatchTests {
 
         val gameId = 1234567L
         val gameId2 = 1334567L
-        val summonerId = 3333333333L
+        val summonerId = "3333333333L"
         val match = produceMatch(gameId, summonerId)
         val match2 = produceMatch(gameId2, summonerId)
         val matchExists1 = matchDAO.exists(match.gameId)
@@ -404,7 +404,7 @@ class MatchTests {
         return pi1
     }
 
-    private fun getParticipantIdentity(participantId: Int, summonerId : Long) : ParticipantIdentity {
+    private fun getParticipantIdentity(participantId: Int, summonerId: String) : ParticipantIdentity {
         val player1 = produceRandomPlayer(summonerId)
 
         val pi1 = ParticipantIdentity(participantId, -1, player1)
@@ -445,10 +445,10 @@ class MatchTests {
     }
 
     fun produceRandomPlayer() : Player {
-        val summonerId : Long = Random().nextLong()
+        val summonerId : String = Random().nextLong().toString()
         return Player(
                 "OCE", // doesnt matter
-                556, // not used in current tests
+                "556", // not used in current tests
                 "Joe", // not used in current tests its just info
                 summonerId, // used
                 "OCE", // not used
@@ -456,10 +456,10 @@ class MatchTests {
                 1) // not used
     }
 
-    fun produceRandomPlayer(summonerId: Long) : Player {
+    fun produceRandomPlayer(summonerId: String) : Player {
         return Player(
                 "OCE", // doesnt matter
-                556, // not used in current tests
+                "556", // not used in current tests
                 "Joe", // not used in current tests its just info
                 summonerId, // used
                 "OCE", // not used
@@ -467,7 +467,7 @@ class MatchTests {
                 1) // not used
     }
 
-    fun produceMatch(gameId : Long, summunerId : Long) : Match {
+    fun produceMatch(gameId: Long, summunerId: String) : Match {
         val team1 = getTeam()
         val team2 = getTeam()
         val teams = arrayListOf<Team>()

@@ -17,7 +17,7 @@ class MatchDaoTests {
     val matchDao = MatchDao(dbHelper)
     val random = Random()
 
-    val heroSummonerId = random.nextLong()
+    val heroSummonerId = random.nextLong().toString()
     val heroChampId = random.nextInt()
     val villanChampId  = random.nextInt()
     val heroTeamId = random.nextInt()
@@ -77,7 +77,7 @@ class MatchDaoTests {
 
     @Test
     fun `Test We Can List 20 matches for any role`() {
-        val summonerId = random.nextLong()
+        val summonerId = random.nextLong().toString()
         var index = 0
         while (index < 25) {
             matchSummaryDao.saveMatchSummary(produceRandomMatchSummary(summonerId))
@@ -90,7 +90,7 @@ class MatchDaoTests {
 
     @Test
     fun `Test We Can List 20 matches for any role with offset`() {
-        val summonerId = random.nextLong()
+        val summonerId = random.nextLong().toString()
         var index = 0
         while (index < 25) {
             matchSummaryDao.saveMatchSummary(produceRandomMatchSummary(summonerId))
@@ -103,7 +103,7 @@ class MatchDaoTests {
 
     @Test
     fun `Test We Can List 20 matches for any role with a certain champ`() {
-        val summonerId = random.nextLong()
+        val summonerId = random.nextLong().toString()
         val champId = random.nextInt()
         var index = 0
         while (index < 15) {
@@ -122,7 +122,7 @@ class MatchDaoTests {
 
     @Test
     fun `Test We Can List 20 matches for a single role with a certain champ`() {
-        val summonerId = random.nextLong()
+        val summonerId = random.nextLong().toString()
         val champId = random.nextInt()
         val lane = random.nextInt().toString()
         var index = 0
@@ -142,7 +142,7 @@ class MatchDaoTests {
 
     @Test
     fun `Test We Can List 20 matches for a single role with any champ`() {
-        val summonerId = random.nextLong()
+        val summonerId = random.nextLong().toString()
         val lane = random.nextInt().toString()
         val champId = random.nextInt()
         var index = 0
@@ -161,8 +161,50 @@ class MatchDaoTests {
     }
 
     @Test
+    fun `Test that we can load matches just for a certain role and lane`() {
+        val summonerId = random.nextLong().toString()
+        val lane = random.nextInt().toString()
+        val role = random.nextInt().toString()
+        val champId = random.nextInt()
+        var index = 0
+        while (index < 15) {
+            matchSummaryDao.saveMatchSummary(produceRandomMatchSummary(summonerId, lane, role))
+            index += 1
+        }
+
+        while (index < 25) {
+            matchSummaryDao.saveMatchSummary(produceRandomMatchSummary(summonerId,champId))
+            index += 1
+        }
+
+        val summaries = matchDao.loadTwentyIds(10,summonerId,lane, role)
+        assert(summaries.size == 5)
+    }
+
+    @Test
+    fun `Test that we can load matches just for a certain role and lane and champ`() {
+        val summonerId = random.nextLong().toString()
+        val lane = random.nextInt().toString()
+        val role = random.nextInt().toString()
+        val champId = random.nextInt()
+        var index = 0
+        while (index < 15) {
+            matchSummaryDao.saveMatchSummary(produceRandomMatchSummary(summonerId, lane, role, champId))
+            index += 1
+        }
+
+        while (index < 25) {
+            matchSummaryDao.saveMatchSummary(produceRandomMatchSummary(summonerId,champId))
+            index += 1
+        }
+
+        val summaries = matchDao.loadTwentyIds(10,summonerId,champId,lane, role)
+        assert(summaries.size == 5)
+    }
+
+    @Test
     fun `Test That We Can Fetch Correct Game Result And Champ Ids`() {
-        val summonerId = 1542360L
+        val summonerId = "1542360L"
         val tableName = "top_summarystats"
         val gameId = 161346846L
 
@@ -281,7 +323,7 @@ class MatchDaoTests {
                 "heroXpLateGame, " +
                 "villanXpLateGame) VALUES (" +
                 "$gameId, " +
-                "$heroSummonerId, " +
+                "'$heroSummonerId', " +
                 "$heroChampId, " +
                 "$villanChampId, " +
                 "$heroTeamId, " +
@@ -332,7 +374,7 @@ class MatchDaoTests {
                 "$villanXpLateGame)"
     }
 
-    fun produceRandomMatchSummary(summonerId : Long) : MatchSummary {
+    fun produceRandomMatchSummary(summonerId: String) : MatchSummary {
         return MatchSummary(
                 random.nextInt(),
                 random.nextFloat().toString(),
@@ -346,7 +388,7 @@ class MatchDaoTests {
                 summonerId)
     }
 
-    fun produceRandomMatchSummary(summonerId : Long, champId :Int) : MatchSummary {
+    fun produceRandomMatchSummary(summonerId: String, champId:Int) : MatchSummary {
         return MatchSummary(
                 random.nextInt(),
                 random.nextFloat().toString(),
@@ -360,7 +402,7 @@ class MatchDaoTests {
                 summonerId)
     }
 
-    fun produceRandomMatchSummary(summonerId : Long, champId :Int, lane : String) : MatchSummary {
+    fun produceRandomMatchSummary(summonerId: String, champId:Int, lane: String) : MatchSummary {
         return MatchSummary(
                 random.nextInt(),
                 random.nextFloat().toString(),
@@ -374,7 +416,35 @@ class MatchDaoTests {
                 summonerId)
     }
 
-    fun produceRandomMatchSummary(summonerId : Long, lane: String) : MatchSummary {
+    fun produceRandomMatchSummary(summonerId: String, lane: String, role: String) : MatchSummary {
+        return MatchSummary(
+                random.nextInt(),
+                random.nextFloat().toString(),
+                random.nextLong(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextInt(),
+                random.nextLong(),
+                role,
+                lane,
+                summonerId)
+    }
+
+    fun produceRandomMatchSummary(summonerId: String, lane: String, role: String, champId: Int) : MatchSummary {
+        return MatchSummary(
+                random.nextInt(),
+                random.nextFloat().toString(),
+                random.nextLong(),
+                champId,
+                random.nextInt(),
+                random.nextInt(),
+                random.nextLong(),
+                role,
+                lane,
+                summonerId)
+    }
+
+    fun produceRandomMatchSummary(summonerId: String, lane: String) : MatchSummary {
         return MatchSummary(
                 random.nextInt(),
                 random.nextFloat().toString(),

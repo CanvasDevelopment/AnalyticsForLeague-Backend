@@ -61,7 +61,7 @@ class MatchSummaryDao(val dbHelper: DbHelper){
             ms.timestamp = result.getLong(TIMESTAMP)
             ms.role = result.getString(ROLE)
             ms.lane = result.getString(LANE)
-            ms.summonerId = result.getLong(SUMMONER_ID)
+            ms.summonerId = result.getString(SUMMONER_ID)
             return ms
         }
         // need to handle this in our tests
@@ -81,7 +81,7 @@ class MatchSummaryDao(val dbHelper: DbHelper){
 
     }
     /**
-     * Get a match summary by gameId
+     * Get a match summary by matchId
      * @param gameId The game Id we are searching for.
      * @return A [MatchSummary]. Will be a blank match summary if it does not exist.
      */
@@ -99,8 +99,8 @@ class MatchSummaryDao(val dbHelper: DbHelper){
      * @param summonerId The summoner that we want to get the summaries for.
      * @return An [ArrayList] of [MatchSummary] that belong to that specific summoner.
      */
-    fun getAllMatchesBySummonerId(summonerId: Long) : ArrayList<MatchSummary> {
-        val queryString = "SELECT * FROM $MATCH_SUMMARY WHERE $SUMMONER_ID = $summonerId"
+    fun getAllMatchesBySummonerId(summonerId : String) : ArrayList<MatchSummary> {
+        val queryString = "SELECT * FROM $MATCH_SUMMARY WHERE $SUMMONER_ID = '$summonerId'"
         val result = dbHelper.executeSqlQuery(queryString)
         val summaries = ArrayList<MatchSummary>()
         while (result.next()) {
@@ -119,9 +119,9 @@ class MatchSummaryDao(val dbHelper: DbHelper){
      * @return                  An ArrayList of the [MatchSummary] objects that were found. The most recent will be first
      *                          in the list
      */
-    fun getRecentMatchesBySummonerIdForRole(summonerId: Long, numberOfMatches : Int, role : String, lane : String) : ArrayList<MatchSummary> {
+    fun getRecentMatchesBySummonerIdForRole(summonerId: String, numberOfMatches: Int, role: String, lane: String) : ArrayList<MatchSummary> {
         val queryString = "SELECT * FROM $MATCH_SUMMARY " +
-                "WHERE $SUMMONER_ID = $summonerId AND $ROLE = '$role' AND $LANE = '$lane' " +
+                "WHERE $SUMMONER_ID = '$summonerId' AND $ROLE = '$role' AND $LANE = '$lane' " +
                 "ORDER BY $GAME_ID DESC " +
                 "LIMIT $numberOfMatches"
         val result = dbHelper.executeSqlQuery(queryString)
@@ -136,7 +136,7 @@ class MatchSummaryDao(val dbHelper: DbHelper){
     private fun ResultSet.produceMatchSummary(): MatchSummary {
         val result = this
         val ms = MatchSummary()
-        ms.id = result.getInt(ID)
+//        ms.id = result.getInt(ID)
         ms.platformId = result.getString(PLATFORM_ID)
         ms.gameId = result.getLong(GAME_ID)
         ms.champion = result.getInt(CHAMPION)
@@ -145,7 +145,7 @@ class MatchSummaryDao(val dbHelper: DbHelper){
         ms.timestamp = result.getLong(TIMESTAMP)
         ms.role = result.getString(ROLE)
         ms.lane = result.getString(LANE)
-        ms.summonerId = result.getLong(SUMMONER_ID)
+        ms.summonerId = result.getString(SUMMONER_ID)
         return ms
     }
 }

@@ -8,6 +8,8 @@ import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.*
 import util.Constant
+import util.Role
+import util.RolesAndLanes
 import util.TableNames
 import java.sql.Array
 import java.sql.ResultSet
@@ -15,7 +17,8 @@ import java.sql.ResultSet
 class MatchControllerTests {
     val matchDao = mock(MatchDao::class.java)
     val tableNames = TableNames()
-    val matchController = MatchController(matchDao,tableNames)
+    val rolesAndLanes = mock(RolesAndLanes::class.java)
+    val matchController = MatchController(matchDao,tableNames,rolesAndLanes)
 
     @Test
     fun makeSureThatWeCanTestResultSet() {
@@ -29,7 +32,7 @@ class MatchControllerTests {
     @Test
     fun `Make sure that we can fetch match card summary data`() {
         val role = 1
-        val summonerId = 1L
+        val summonerId = "1L"
         val matchId = 1L
         val tableName = "top_summarystats"
         val resultSet = mock(ResultSet::class.java)
@@ -89,11 +92,11 @@ class MatchControllerTests {
         `when`(resultSet2.getInt("villanChampId")).thenReturn(10)
         `when`(matchDao.fetchWinAndChampIds(
                 anyLong(),
-                anyLong(),
+                anyString(),
                 anyString()))
                 .thenReturn(resultSet2)
 
-        val cardSummary = matchController.loadMatchSummary(1,1,1)
+        val cardSummary = matchController.loadMatchSummary(1,1,"1")
         assert(cardSummary.won)
         assert(cardSummary.champId ==5)
         assert(cardSummary.enemyChampId==10)

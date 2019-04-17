@@ -25,7 +25,7 @@ class MatchApi {
     @ApiMethod(name = "isSummonerRegistered",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "syncMatch/{matchId}/{summonerId}")
-    fun syncMatch(@Named("matchId")matchId : Long, @Named("summonerId") summonerId : Long) : Response<Boolean> {
+    fun syncMatch(@Named("matchId")matchId : Long, @Named("summonerId") summonerId : String) : Response<Boolean> {
         processingApi.syncMatchProxy(matchId, summonerId)
         return Response(200, true)
     }

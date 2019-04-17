@@ -30,7 +30,7 @@ import kotlin.test.assertEquals
 class AnalysisDaoTests {
     private val dbHelper = DbHelper()
     private val ad = AnalysisDao(dbHelper)
-    private val summonerId : Long = 1542360
+    private val summonerId : String = "1542360"
 
     @Before
     fun setUp () {
@@ -39,7 +39,7 @@ class AnalysisDaoTests {
 
     @Test
     fun `Make sure that we can get average villan creeps per minute for mid`() {
-        val deltas = ad.fetchAvgDeltas(1542360, 20, MID, CREEPS)
+        val deltas = ad.fetchAvgDeltas(summonerId, 20, MID, CREEPS)
         assert(deltas.earlyGame == 62f)
         assert(deltas.midGame == 65.33333587646484f)
         Assert.assertEquals(deltas.lateGame, 76f, 0.05f)
@@ -47,7 +47,7 @@ class AnalysisDaoTests {
 
     @Test
     fun `Make sure that we can get the max creeps per minute for mid`() {
-        val deltas = ad.fetchMaxDeltas(1542360, 20, MID, CREEPS)
+        val deltas = ad.fetchMaxDeltas(summonerId, 20, MID, CREEPS)
         Assert.assertEquals(deltas.earlyGame, 65f, 0.05f)
         Assert.assertEquals(deltas.midGame , 81.00001f, 0.05f)
         Assert.assertEquals(deltas.lateGame, 88.99999f, 0.05f)
@@ -55,7 +55,7 @@ class AnalysisDaoTests {
 
     @Test
     fun `Make sure that we can get the min damage per minute deltas for mid`() {
-        val deltas = ad.fetchMinDeltas(1542360, 20, MID, DAMAGE_DEALT)
+        val deltas = ad.fetchMinDeltas(summonerId, 20, MID, DAMAGE_DEALT)
         assert(deltas.earlyGame == 2232f)
         assertEquals(deltas.midGame , 3601f)
         assert(deltas.lateGame == 4090.0f)

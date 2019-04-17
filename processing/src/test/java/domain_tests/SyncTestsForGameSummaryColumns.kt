@@ -11,11 +11,8 @@ import model.Summoner
 import model.match.Match
 import model.matchlist.MatchList
 import model.networking.NetworkResult
-import network.riotapi.MatchServiceApi
 import network.riotapi.MatchServiceApiImpl
-import org.junit.Before
 import org.junit.BeforeClass
-import org.junit.Test
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import java.io.BufferedReader
@@ -106,13 +103,13 @@ class SyncTestsForGameSummaryColumns {
             `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match19Id))).thenReturn(NetworkResult(match19, 200))
             val match20 = gson.fromJson(getMatchString(match20Id), Match::class.java)
             `when`(matchServiceApi.getMatchByMatchId(anyString(), eq(match20Id))).thenReturn(NetworkResult(match20, 200))
-            `when`(matchServiceApi.getMatchListForAccount(anyString(), anyLong())).thenReturn(NetworkResult(matchList, 200))
+            `when`(matchServiceApi.getMatchListForAccount(anyString(), anyString())).thenReturn(NetworkResult(matchList, 200))
 
             val summoner = Summoner()
-            summoner.accountId = 1234567
+            summoner.accountId = "1234567"
             val summonerDAOmock = mock(SummonerDAOContract::class.java)
             val matchSummaryDaoMock = mock(MatchSummaryDAO::class.java)
-            `when`(summonerDAOmock.getSummoner(ArgumentMatchers.anyLong())).thenReturn(summoner)
+            `when`(summonerDAOmock.getSummoner(ArgumentMatchers.anyString())).thenReturn(summoner)
             val matchControl = MatchControl(km.kodein.instance(),
                     matchServiceApi,
                     matchSummaryDaoMock,
@@ -120,7 +117,7 @@ class SyncTestsForGameSummaryColumns {
                     km.kodein.instance(),
                     km.kodein.instance())
             sync = Sync(matchControl)
-            sync.syncMatches(1542360)
+            sync.syncMatches("1542360")
         }
 
         @JvmStatic

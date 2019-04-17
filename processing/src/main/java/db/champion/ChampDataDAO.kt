@@ -56,7 +56,7 @@ class ChampDataDAO(private val dbHelper: DBHelper) {
         return result.first()
     }
 
-    fun loadChampData(champId : String, summonerId: Long) : ChampData {
+    fun loadChampData(champId : String, summonerId : String) : ChampData {
         dbHelper.connect()
         val sql = "SELECT * from $tableName " +
                 "WHERE Id = '$champId'"
@@ -69,7 +69,7 @@ class ChampDataDAO(private val dbHelper: DBHelper) {
      * Load a list of all the champs in league of legends.
      * Each [ChampData] in the list represents a champ.
      */
-    fun loadChampDataForAllChamps(summonerId: Long) : ArrayList<ChampData> {
+    fun loadChampDataForAllChamps(summonerId : String) : ArrayList<ChampData> {
         dbHelper.connect()
         val champs = ArrayList<ChampData>()
         val sql = "select ChampData.champ_key,\n" +
@@ -81,7 +81,7 @@ class ChampDataDAO(private val dbHelper: DBHelper) {
                 "from MatchSummary\n" +
                 "                join ChampData\n" +
                 "on champ_key = Champion\n" +
-                "  and SummonerId = $summonerId\n" +
+                "  and SummonerId = '$summonerId' \n" +
                 "group by champ_key,\n" +
                 "         champ_name,\n" +
                 "         burb,\n" +
@@ -94,7 +94,22 @@ class ChampDataDAO(private val dbHelper: DBHelper) {
         return champs
     }
 
-    fun ResultSet.produceChampData(summonerId : Long) : ChampData {
+    /**
+     * Load a list of all the champs in league of legends.
+     * Each [ChampData] in the list represents a champ.
+     */
+    fun loadChampDataForAllChamps() : ArrayList<SimpleChamp> {
+        dbHelper.connect()
+        val champs = ArrayList<SimpleChamp>()
+        val sql = "select * from ChampData"
+        val result = dbHelper.executeSqlQuery(sql)
+        while(result.next()) {
+            champs.add(result.produceSimpleChamp())
+        }
+        return champs
+    }
+
+    fun ResultSet.produceChampData(summonerId : String) : ChampData {
         return ChampData(
                 getString(champDataColumns.version),
                 getString("champ_name"),
@@ -104,6 +119,15 @@ class ChampDataDAO(private val dbHelper: DBHelper) {
                 getString(champDataColumns.blurb),
                 summonerId,
                 getInt(champCount))
+    }
+    fun ResultSet.produceSimpleChamp() : SimpleChamp {
+        return SimpleChamp(
+                getString(champDataColumns.version),
+                getString("champ_name"),
+                getString(champDataColumns.key),
+                getString(champDataColumns.name),
+                getString("champ_name"),
+                getString(champDataColumns.blurb))
     }
 }
 

@@ -34,8 +34,8 @@ public class Summoner_Tests {
 
         SummonerDAOContractImpl summonerDAO = new SummonerDAOContractImpl(dbHelper);
         Summoner summoner = new Summoner();
-        summoner.setId(1);
-        summoner.setAccountId(1);
+        summoner.setId("1");
+        summoner.setAccountId("1");
         summoner.setSummonerLevel(30);
         summoner.setProfileIconId(3);
         summoner.setName("JOSIAH");
@@ -52,8 +52,8 @@ public class Summoner_Tests {
     @Test
     public void EnsureThatWeCanDeleteASummonerById() {
         Summoner summoner = new Summoner();
-        summoner.setId(1);
-        summoner.setAccountId(1);
+        summoner.setId("1");
+        summoner.setAccountId("1");
         summoner.setSummonerLevel(30);
         summoner.setProfileIconId(3);
         summoner.setName("JOSIAH");

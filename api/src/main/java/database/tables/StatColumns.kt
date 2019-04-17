@@ -7,7 +7,7 @@ package database.tables
  */
 object StatColumns {
 
-    const val GAME_ID = "gameId"
+    const val GAME_ID = "matchId"
     const val HERO_SUMMONER_ID = "heroSummonerId"
     const val HERO_CHAMP_ID = "heroChampId"
     const val VILLAN_CHAMP_ID = "villanChampId"
