@@ -20,7 +20,7 @@ class MatchServiceApiImpl(private val requestHandler: RequestHandler,
         val url = "https://" +
                 regionController.getRiotRegionName() +
                 ".api.riotgames.com/" +
-                "/lol/match/v4/matchlists/by-account/$accountId?api_key=$apiKey"
+                "/lol/match/v4/matchlists/by-account/$accountId?queue=420&api_key=$apiKey"
         return requestHandler.requestDataWithRateLimiting (
                 { requestHandler.sendHttpGetRequest(MatchList::class.java, URL(url), endpoints.V3_MATCHLISTS) },
                 endpoints.V3_MATCHLISTS

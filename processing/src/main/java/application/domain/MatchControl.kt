@@ -356,7 +356,7 @@ class MatchControl(private val matchDAO: MatchDAO,
         matchDAO.deleteAllMatchesFromRawDBForASummoner(summonerId)
     }
 
-    fun fetchSyncProgress(summonerId: String) : SyncProgress{
+    fun fetchSyncProgress(summonerId: String) : SyncProgress {
         val latestSyncedMatchId = matchDAO.fetchIdOfMostRecentlySavedMatchForSummoner(summonerId)
         val numberOfSyncedMatches = matchSummaryDAO.loadNumberOfMatchSummariesUpToAndIncludingGivenMatchId(summonerId, latestSyncedMatchId)
         val numberOfMatches = matchSummaryDAO.loadNumberOfMatchSummariesForASummoner(summonerId)

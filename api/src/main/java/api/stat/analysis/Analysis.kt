@@ -2,6 +2,7 @@ package api.stat.analysis
 
 import api.stat.analysis.model.AnalysisStatCardSkeleton
 import api.stat.analysis.model.HeadToHeadStat
+import api.stat.analysis.model.StatDetails
 import com.github.salomonbrys.kodein.instance
 import com.google.api.server.spi.config.Api
 import com.google.api.server.spi.config.ApiMethod
@@ -134,5 +135,42 @@ class Analysis {
                            @Named("statName") statName : String) : Response<HeadToHeadStat> {
         val response = presenter.fetchStatsForHalfCard(summonerId, numberOfGames, lane, statName)
         return Response(200, response)
+    }
+
+    @ApiMethod(name = "fetchStatDetails",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "statDetails/{summonerId}/{games}/{lane}/{statName}")
+    fun fetchStatDetails(@Named("summonerId") summonerId : String,
+                         @Named("games") games : Int,
+                         @Named("lane") lane: String,
+                         @Named("statName") statName: String) : Response<StatDetails>{
+        return Response(200, presenter.fetchStatDetails(summonerId, games, lane, statName))
+    }
+
+    @ApiMethod(name = "fetchStatDetailsWithChamp",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "statDetails/{summonerId}/{games}/{lane}/{statName}/{champKey}")
+    fun fetchStatDetailsWithChamp(@Named("summonerId") summonerId : String,
+                         @Named("games") games : Int,
+                         @Named("lane") lane: String,
+                         @Named("statName") statName: String,
+                         @Named("champKey") champKey : String) : Response<StatDetails>{
+        return Response(200, presenter.fetchStatDetails(summonerId, games, lane, statName, champKey))
+    }
+
+    @ApiMethod(name = "fetchSummonerWinRate",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "fetchSummonerWinRate/{summonerId}/{lane}")
+    fun fetchSummonerWinRate(@Named("summonerId") summonerId: String, @Named("lane") lane : String) : Response<HeadToHeadStat> {
+        return Response(200, presenter.fetchSummonerWinRate(summonerId, lane))
+    }
+
+    @ApiMethod(name = "fetchSummonerWinRateWithChamp",
+            httpMethod = ApiMethod.HttpMethod.GET,
+            path = "fetchSummonerWinRate/{summonerId}/{lane}/{champKey}")
+    fun fetchSummonerWinRateWithChamp(@Named("summonerId") summonerId: String,
+                                      @Named("lane") lane : String,
+                                      @Named("champKey") champKey : String) : Response<HeadToHeadStat> {
+        return return Response(200, presenter.fetchSummonerWinRate(summonerId, lane, champKey))
     }
 }

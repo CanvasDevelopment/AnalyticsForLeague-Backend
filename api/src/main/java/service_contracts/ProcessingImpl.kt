@@ -28,7 +28,7 @@ class ProcessingImpl : ProcessingContract {
     val km = KodeinManager_api()
     private val gson = Gson()
     private val PRODUCTION_URL = "https://processing-dot-analytics-for-league.appspot.com/"
-    private val LOCAL_URL = "http://192.168.1.5:65070"
+    private val LOCAL_URL = "http://192.168.0.106:65070"
 
     private val matchSummaryDao : MatchSummaryDao = km.kodein.instance()
     private val syncQueue = QueueFactory.getDefaultQueue()
@@ -140,8 +140,8 @@ class ProcessingImpl : ProcessingContract {
 
     override fun getSyncProgress(summonerId : String): SyncProgress {
         val syncProgressUrl = "$url/_ah/processing/api/v1/syncProgress/$summonerId"
-        val result : NetworkResult<SyncProgress> = sendHttpGetRequest(SyncProgress::class.java, URL(syncProgressUrl))
-        return result.data!!
+        val result : NetworkResult<Response> = sendHttpGetRequest(Response::class.java, URL(syncProgressUrl))
+        return gson.fromJson(result.data!!.data, SyncProgress::class.java)
     }
 
 }

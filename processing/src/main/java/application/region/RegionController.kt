@@ -7,6 +7,6 @@ class RegionController {
 
     // todo
     fun getRiotRegionName() : String {
-        return "oc1"
+        return "na1"
     }
 }

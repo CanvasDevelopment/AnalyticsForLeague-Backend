@@ -548,7 +548,6 @@ class AnalysisDao (private val dbHelper: DbHelper){
      * @return A [Float] value, based on the given parameters.
      */
     fun fetchStatList(numberOfGames : Int, statType: String, lane: String, summonerId : String) : ArrayList<Float> {
-
         val sqlEarlyGame = Builder()
                 .select(statType)
                 .tableName("${lane}_summarystats")
@@ -564,6 +563,31 @@ class AnalysisDao (private val dbHelper: DbHelper){
         }
 
         return resultArray
+    }
+
+    fun fetchSummonerWinRate(summonerId:String, numberOfMatches: Int, lane: String) : HeadToHeadStat {
+        val statType = "heroWin"
+        val sqlResult = Builder()
+                .select(statType)
+                .tableName("${lane}_summarystats")
+                .where("heroSummonerId = '$summonerId' And $statType Is Not Null") // we do not put > 0 here, as it is not a delta select
+                .limit(numberOfMatches)
+                .toSql()
+        val result = dbHelper.executeSqlQuery(sqlResult)
+        return result.produceWinRate(statType)
+
+    }
+
+    fun fetchSummonerWinRate(summonerId:String, numberOfMatches: Int, lane: String, champKey : String) : HeadToHeadStat {
+        val statType = "heroWin"
+        val sqlResult = Builder()
+                .select(statType)
+                .tableName("${lane}_summarystats")
+                .where("heroSummonerId = '$summonerId' And $statType Is Not Null And heroChampId = $champKey") // we do not put > 0 here, as it is not a delta select
+                .limit(numberOfMatches)
+                .toSql()
+        val result = dbHelper.executeSqlQuery(sqlResult)
+        return result.produceWinRate(statType)
     }
 
     private fun ResultSet.produceHeadToHeadArray() : ArrayList<HeadToHeadStat> {
@@ -582,6 +606,25 @@ class AnalysisDao (private val dbHelper: DbHelper){
         results.add(lateGameH2H)
         return results
     }
+
+    private fun ResultSet.produceWinRate(statType : String) : HeadToHeadStat {
+        var win = 0
+        var loss = 0
+        while(this.next()) {
+            val summonerWin = this.produceBoolean(statType)
+            if (summonerWin) {
+                win += 1
+            } else {
+                loss += 1
+            }
+        }
+
+        return HeadToHeadStat(loss.toFloat(), win.toFloat())
+    }
+
+    private fun ResultSet.produceBoolean(booleanName : String) : Boolean = getBoolean(booleanName)
+
+    private fun ResultSet.produceInt(intName : String) : Int = getInt(intName)
 
     private fun ResultSet.produceFloat(floatName : String) : Float = getFloat(floatName)
 

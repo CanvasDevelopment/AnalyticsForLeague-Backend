@@ -90,4 +90,5 @@ class Summoner {
     fun syncProgress(@Named("summonerId") summonerId: String) : Response<SyncProgress> {
         return summonerController.syncProgress(summonerId)
     }
+
 }

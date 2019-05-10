@@ -32,7 +32,6 @@ interface ProcessingContract {
      * @return True if successfully saved, false if not.
      */
     fun syncUserMatchList(summonerId: String) : Boolean
-
     fun refineUserStats(summonerId : String): Boolean
     fun getSyncProgress(summonerId : String): SyncProgress
 }

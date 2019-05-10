@@ -29,5 +29,4 @@ class MatchApi {
         processingApi.syncMatchProxy(matchId, summonerId)
         return Response(200, true)
     }
-
 }

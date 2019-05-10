@@ -7,6 +7,7 @@ import util.Constant.GameStage.LATE_GAME
 import util.Constant.GameStage.MID_GAME
 import util.Constant.StatAccumulators.AVG
 import util.Constant.StatAccumulators.MAX
+import util.Constant.StatAccumulators.MIN
 
 /**
  * @author Josiah Kendall
@@ -108,8 +109,8 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
     fun fetchStatDetails(summonerId : String, games : Int, lane: String, statName: String) : StatDetails {
         val history = analysisDao.fetchPerformanceHistory(summonerId,games,lane, statName)
         val max = analysisDao.fetchStat(games,statName,lane,summonerId, MAX)
-        val min = analysisDao.fetchStat(games,statName,lane,summonerId, MAX)
-        val avg = analysisDao.fetchStat(games,statName,lane,summonerId, MAX)
+        val min = analysisDao.fetchStat(games,statName,lane,summonerId, MIN)
+        val avg = analysisDao.fetchStat(games,statName,lane,summonerId, AVG)
 
         return StatDetails(history,max,min,avg)
     }
@@ -253,6 +254,14 @@ class AnalysisPresenter(private val processingApi : ProcessingImpl,
      */
     fun fetchStatsForHalfCard(summonerId : String, numberOfGames: Int, lane: String, statName: String): HeadToHeadStat {
         return analysisDao.fetchHeadToHeadStat(summonerId, numberOfGames,lane,AVG,statName)
+    }
+
+    fun fetchSummonerWinRate(summonerId: String, lane: String) : HeadToHeadStat {
+        return analysisDao.fetchSummonerWinRate(summonerId, 20, lane)
+    }
+
+    fun fetchSummonerWinRate(summonerId: String, lane: String, champKey : String) : HeadToHeadStat {
+        return analysisDao.fetchSummonerWinRate(summonerId, 20, lane, champKey)
     }
 
 

@@ -68,7 +68,7 @@ class SummonerController(private val summonerDao: SummonerDao,
         return Response(500, "Error occurred - sync interface returned false")
     }
 
-    fun refineUserStats(summonerId : String): Response<String> {
+    fun refineUserStats(summonerId : String) : Response<String> {
         val syncResult = processingInterface.refineUserStats(summonerId)
         if (syncResult) {
             return Response(200, "success")
@@ -82,5 +82,7 @@ class SummonerController(private val summonerDao: SummonerDao,
         val syncProgress = processingInterface.getSyncProgress(summonerId)
         return Response(200, syncProgress)
     }
+
+
 
 }

@@ -117,4 +117,6 @@ class SummonerDao(private val dbHelper : DbHelper) : SummonerDAOContract {
     companion object {
         private val log = Logger.getLogger(SummonerDAOContract::class.java.name)
     }
+
+
 }

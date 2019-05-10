@@ -1,5 +1,6 @@
 package database.match
 
+import api.stat.analysis.model.HeadToHeadStat
 import database.DbHelper
 import database.match.model.MatchSummary
 import java.sql.ResultSet
