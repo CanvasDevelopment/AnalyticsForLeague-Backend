@@ -1,0 +1,15 @@
+.idea/
+processing/target/*
+api/target/
+processing/processing.iml
+processing/src/.DS_Store
+processing/main/java/.DS_Store
+processing/src/main/java/dragontail 2.zip
+processing/src/main/java/dragontail 2
+api/api.iml
+api/.DS_Store
+processing/src/main/java/dragontail.zip
+processing/src/main/resources/.DS_Store
+processing/src/main/webapp/.DS_Store
+*.DS_Store
+api/target/
