@@ -1,5 +1,7 @@
 package di
 
+import api.champ.ChampDataDAO
+import api.champ.ChampDataProcessing
 import api.match.MatchController
 import api.stat.analysis.AnalysisDao
 import api.stat.analysis.AnalysisPresenter
@@ -61,6 +63,14 @@ class KodeinManager_api {
 
         bind<RolesAndLanes>() with provider {
             RolesAndLanes()
+        }
+
+        bind<ChampDataProcessing>() with provider {
+            ChampDataProcessing(kodein.instance())
+        }
+
+        bind<ChampDataDAO>() with provider {
+            ChampDataDAO(kodein.instance())
         }
     }
 }

@@ -28,7 +28,7 @@ class ProcessingImpl : ProcessingContract {
     val km = KodeinManager_api()
     private val gson = Gson()
     private val PRODUCTION_URL = "https://processing-dot-analytics-for-league.appspot.com/"
-    private val LOCAL_URL = "http://192.168.0.106:65070"
+    private val LOCAL_URL = "http://192.168.0.103:65070"
 
     private val matchSummaryDao : MatchSummaryDao = km.kodein.instance()
     private val syncQueue = QueueFactory.getDefaultQueue()

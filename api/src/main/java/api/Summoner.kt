@@ -33,6 +33,7 @@ class Summoner {
     private val processingInterface = ProcessingImpl()
     private val summonerController = SummonerController(summonerDao,processingInterface)
 
+
     @ApiMethod(name = "sayHello",
             httpMethod = ApiMethod.HttpMethod.GET,
             path = "sayHello/{name}")

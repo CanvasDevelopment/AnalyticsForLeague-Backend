@@ -3,9 +3,13 @@
     <servlet>
         <servlet-name>EndpointsServlet</servlet-name>
         <servlet-class>com.google.api.server.spi.EndpointsServlet</servlet-class>
+        <!--<init-param>-->
+            <!--<param-name>services</param-name>-->
+            <!--<param-value>api.Summoner</param-value>-->
+        <!--</init-param>-->
         <init-param>
             <param-name>services</param-name>
-            <param-value>api.Summoner</param-value>
+            <param-value>api.stat.analysis.Analysis, api.Summoner, api.match.Match, api.champ.ChampApi</param-value>
         </init-param>
     </servlet>
     <!-- Route API method requests to the backend. -->
@@ -22,7 +26,7 @@
   <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
   <init-param>
    <param-name>services</param-name>
-   <param-value/>
+   <param-value>api.MatchApi,api.Summoner,api.champ.ChampApi,api.match.Match,api.stat.analysis.Analysis</param-value>
   </init-param>
  </servlet>
  <servlet-mapping>

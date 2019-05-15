@@ -148,13 +148,29 @@ class DbHelper {
      * @throws IllegalStateException
      */
     @Throws(SQLException::class, IllegalStateException::class)
-    fun executeSQLScript(query: String): Long { // TODO change this return type to LONG
+    fun executeSQLScript(query: String): Long {
         if (connection == null || !currentlyConnected) {
             throw IllegalStateException("No Current database connection. Use DbConnect() to connect to a database")
         }
 
         val statement = connection!!.prepareStatement(query)
         statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS)
+        val generatedKeys = statement.generatedKeys
+        var id : Long = 0
+        if (generatedKeys.next()) {
+            id = generatedKeys.getLong(1)
+        }
+        return id
+    }
+
+    @Throws(SQLException::class, IllegalStateException::class)
+    fun createTable(query: String): Long {
+        if (connection == null || !currentlyConnected) {
+            throw IllegalStateException("No Current database connection. Use DbConnect() to connect to a database")
+        }
+
+        val statement = connection!!.prepareStatement(query)
+        statement.executeUpdate(query, Statement.CLOSE_ALL_RESULTS)
         val generatedKeys = statement.generatedKeys
         var id : Long = 0
         if (generatedKeys.next()) {

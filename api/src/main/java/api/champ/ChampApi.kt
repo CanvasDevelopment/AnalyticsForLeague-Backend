@@ -5,14 +5,8 @@ import com.google.api.server.spi.config.ApiMethod
 import com.google.api.server.spi.config.ApiNamespace
 import com.google.api.server.spi.config.Named
 import di.KodeinManager_api
-import di.KodeinManager
-import ChampDataProcessing
 import com.github.salomonbrys.kodein.instance
-import db.champion.ChampData
-import db.champion.ChampDataDAO
-import db.champion.SimpleChamp
 import model.Response
-
 
 /**
  * @author Josiah Kendall
@@ -26,8 +20,7 @@ import model.Response
                 packagePath = "")
 )
 class ChampApi {
-    private val km_api = KodeinManager_api()
-    private val km = KodeinManager()
+    private val km = KodeinManager_api()
     private val champDataProcessing  : ChampDataProcessing = km.kodein.instance()
     private val champDataDAO : ChampDataDAO = km.kodein.instance()
 
