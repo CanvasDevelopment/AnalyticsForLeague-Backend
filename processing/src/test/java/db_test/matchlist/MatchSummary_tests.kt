@@ -18,7 +18,7 @@ class MatchSummary_tests {
     lateinit var dbHelper : DBHelper
     lateinit var matchSummaryDAO : MatchSummaryDAO
     val gameId : Long = -1
-    val MATCH_SUMMARY = "matchsummary"
+    val MATCH_SUMMARY = "MatchSummary"
     val summonerId : String = "-1"
     @Before
     fun setUp() {

@@ -68,7 +68,9 @@ class EndpointRateLimitStatusDao(val dbHelper: DBHelper,
     fun doesEndpointExistInDb(endpointId: Int) : Boolean {
         val sql = "SELECT * FROM $TABLE_NAME WHERE $ENDPOINT_ID = $endpointId"
         val result = dbHelper.executeSqlQuery(sql)
-        return result.next()
+        val exists = result.next()
+        result.close()
+        return exists
     }
 
     /**
@@ -85,7 +87,9 @@ class EndpointRateLimitStatusDao(val dbHelper: DBHelper,
             throw IllegalArgumentException("Failed to find endpoint with specified id. Refer to method documentation to prevent this")
         }
         val rates = rateLimitDao.getRateLimitsForEndpoint(endpointId)
-        return result.produceEndpointRateLimitStatus(rates)
+        val rateLimitStatus = result.produceEndpointRateLimitStatus(rates)
+        result.close()
+        return rateLimitStatus
     }
 
     /**

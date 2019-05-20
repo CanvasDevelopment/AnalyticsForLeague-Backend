@@ -21,7 +21,6 @@ import java.util.*
  */
 class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
 
-
     private val tables = Tables()
 
     /**
@@ -43,20 +42,20 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
             lane: String): ArrayList<GameStageStat> {
 
         val sql = "SELECT\n" +
-                "  participantidentity.gameId,\n" +
+                "  ${tables.PARTICIPANT_IDENTITY}.gameId,\n" +
                 "  zeroToTen * 10      AS EarlyGame,\n" +
                 "  tenToTwenty * 10    AS MidGame,\n" +
                 "  twentyToThirty * 10 AS LateGame\n" +
-                "FROM participantidentity\n" +
-                "  JOIN participant ON\n" +
-                "                     participantidentity.gameId = participant.GameId AND\n" +
-                "                     participant.ParticipantId = participantidentity.ParticipantId\n" +
-                "  LEFT JOIN timeline ON timeline.participantRowId = participant.Id\n" +
-                "  LEFT JOIN $deltaName ON $deltaName.timelineId = timeline.Id\n" +
-                "  LEFT JOIN matchtable on participant.GameId = matchtable.GameId\n" +
-                "WHERE participantidentity.SummonerId = '$summonerId'\n" +
-                "      AND participantidentity.lane = '$lane'\n" +
-                "      AND participantidentity.role = '$role'\n" +
+                "FROM ${tables.PARTICIPANT_IDENTITY}\n" +
+                "  JOIN ${tables.PARTICIPANT} ON\n" +
+                "                     ${tables.PARTICIPANT_IDENTITY}.gameId = ${tables.PARTICIPANT}.GameId AND\n" +
+                "                     ${tables.PARTICIPANT}.ParticipantId = ${tables.PARTICIPANT_IDENTITY}.ParticipantId\n" +
+                "  LEFT JOIN ${tables.TIMELINE} ON ${tables.TIMELINE}.participantRowId = ${tables.PARTICIPANT}.Id\n" +
+                "  LEFT JOIN $deltaName ON $deltaName.timelineId = ${tables.TIMELINE}.Id\n" +
+                "  LEFT JOIN ${tables.MATCH_TABLE} on ${tables.PARTICIPANT}.GameId = ${tables.MATCH_TABLE}.GameId\n" +
+                "WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = '$summonerId'\n" +
+                "      AND ${tables.PARTICIPANT_IDENTITY}.lane = '$lane'\n" +
+                "      AND ${tables.PARTICIPANT_IDENTITY}.role = '$role'\n" +
                 "      AND GameDuration > 300"
 
         val result = dbHelper.executeSqlQuery(sql)
@@ -65,6 +64,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
         while (result.next()) {
             results.add(result.produceGameStageRefinedStat())
         }
+        result.close()
         return results
     }
 
@@ -80,22 +80,22 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
                                                   role: String,
                                                   lane: String) : ArrayList<GameStageStat> {
         val sql = "SELECT\n" +
-                "  participantidentity.gameId,\n" +
+                "  ${tables.PARTICIPANT_IDENTITY}.gameId,\n" +
                 "  zeroToTen * 10 as EarlyGame,\n" +
                 "  tenToTwenty * 10 as MidGame,\n" +
                 "  twentyToThirty * 10 as LateGame\n" +
-                "FROM participantidentity\n" +
-                "  JOIN participant ON\n" +
-                "                     participantidentity.gameId = participant.GameId AND\n" +
-                "                     participant.lane = participantidentity.lane AND\n" +
-                "                     participant.role = participantidentity.role AND\n" +
-                "                     participantidentity.teamId != participant.TeamId\n" +
-                "  LEFT JOIN timeline ON timeline.participantRowId = participant.Id\n" +
-                "  LEFT JOIN $deltaName ON $deltaName.timelineId = timeline.Id\n" +
-                "    LEFT JOIN matchtable on participant.GameId = matchtable.GameId\n" +
-                "WHERE participantidentity.SummonerId = '$summonerId'\n" +
-                "      AND participantidentity.lane = '$lane'\n" +
-                "      AND participantidentity.role = '$role'\n" +
+                "FROM ${tables.PARTICIPANT_IDENTITY}\n" +
+                "  JOIN ${tables.PARTICIPANT} ON\n" +
+                "                     ${tables.PARTICIPANT_IDENTITY}.gameId = ${tables.PARTICIPANT}.GameId AND\n" +
+                "                     ${tables.PARTICIPANT}.lane = ${tables.PARTICIPANT_IDENTITY}.lane AND\n" +
+                "                     ${tables.PARTICIPANT}.role = ${tables.PARTICIPANT_IDENTITY}.role AND\n" +
+                "                     ${tables.PARTICIPANT_IDENTITY}.teamId != ${tables.PARTICIPANT}.TeamId\n" +
+                "  LEFT JOIN ${tables.TIMELINE} ON ${tables.TIMELINE}.participantRowId = ${tables.PARTICIPANT}.Id\n" +
+                "  LEFT JOIN $deltaName ON $deltaName.timelineId = ${tables.TIMELINE}.Id\n" +
+                "    LEFT JOIN ${tables.MATCH_TABLE} on ${tables.PARTICIPANT}.GameId = ${tables.MATCH_TABLE}.GameId\n" +
+                "WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = '$summonerId'\n" +
+                "      AND ${tables.PARTICIPANT_IDENTITY}.lane = '$lane'\n" +
+                "      AND ${tables.PARTICIPANT_IDENTITY}.role = '$role'\n" +
                 "      AND GameDuration > 300"
 
         val result = dbHelper.executeSqlQuery(sql)
@@ -104,6 +104,7 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
         while (result.next()) {
             results.add(result.produceGameStageRefinedStat())
         }
+        result.close()
         return results
     }
 
@@ -121,60 +122,60 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
                 "  ${tables.PARTICIPANT}.GameId,\n" +
                 "  ${tables.PARTICIPANT}.championId,\n" +
                 "  ${tables.PARTICIPANT}.teamId,\n" +
-                "  team.Win,\n" +
-                "  team.TowerKills,\n" +
-                "  team.DragonKills,\n" +
-                "  team.BaronKills,\n" +
-                "  team.RiftHeraldKills\n" +
+                "  ${tables.TEAM}.Win,\n" +
+                "  ${tables.TEAM}.TowerKills,\n" +
+                "  ${tables.TEAM}.DragonKills,\n" +
+                "  ${tables.TEAM}.BaronKills,\n" +
+                "  ${tables.TEAM}.RiftHeraldKills\n" +
                 "FROM ${tables.PARTICIPANT_IDENTITY}\n" +
                 "  LEFT JOIN ${tables.PARTICIPANT} ON\n" +
                 "                             ${tables.PARTICIPANT_IDENTITY}.gameId = ${tables.PARTICIPANT}.GameId AND\n" +
                 "                             ${tables.PARTICIPANT_IDENTITY}.ParticipantId = ${tables.PARTICIPANT}.ParticipantId\n" +
-                "  LEFT JOIN team on ${tables.PARTICIPANT}.TeamId = team.TeamId and ${tables.PARTICIPANT_IDENTITY}.gameId = team.GameId\n" +
-                "  LEFT JOIN matchtable on ${tables.PARTICIPANT}.GameId = matchtable.GameId\n" +
+                "  LEFT JOIN ${tables.TEAM} on ${tables.PARTICIPANT}.TeamId = ${tables.TEAM}.TeamId and ${tables.PARTICIPANT_IDENTITY}.gameId = ${tables.TEAM}.GameId\n" +
+                "  LEFT JOIN ${tables.MATCH_TABLE} on ${tables.PARTICIPANT}.GameId = ${tables.MATCH_TABLE}.GameId\n" +
                 "WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = '$summonerId'\n" +
                 "      AND ${tables.PARTICIPANT_IDENTITY}.lane = '$lane'\n" +
                 "      AND ${tables.PARTICIPANT_IDENTITY}.role = '$role'\n" +
-                "      AND matchtable.GameDuration > 300"
+                "      AND ${tables.MATCH_TABLE}.GameDuration > 300"
 
         val result = dbHelper.executeSqlQuery(sql)
         val statList = ArrayList<TeamSummaryStat>()
         while (result.next()) {
             statList.add(result.produceSummaryStat())
         }
-
+        result.close()
         return statList
     }
 
     override fun fetchGameSummaryStatsForVillan(summonerId: String, role: String, lane: String): ArrayList<TeamSummaryStat> {
        val sql = "SELECT\n" +
-               "  participantidentity.SummonerId,\n" +
-               "  participant.GameId,\n" +
-               "  participant.championId,\n" +
-               "  participant.teamId,\n" +
-               "  team.Win,\n" +
-               "  team.TowerKills,\n" +
-               "  team.DragonKills,\n" +
-               "  team.BaronKills,\n" +
-               "  team.RiftHeraldKills\n" +
-               "FROM participantidentity\n" +
-               "  LEFT JOIN participant ON\n" +
-               "                           participantidentity.gameId = participant.GameId AND\n" +
-               "                           participant.lane = participantidentity.lane AND\n" +
-               "                            participant.role = participantidentity.role AND\n" +
-               "                          participantidentity.teamId != participant.TeamId\n" +
-               "  LEFT JOIN team on participantidentity.TeamId != team.TeamId and participantidentity.gameId = team.GameId\n" +
-               "  LEFT JOIN matchtable on participant.GameId = matchtable.GameId\n" +
-               "WHERE participantidentity.SummonerId = '$summonerId'\n" +
-               "      AND participantidentity.lane = '$lane'\n" +
-               "      AND participantidentity.role = '$role'\n" +
-               "      AND matchtable.GameDuration > 300"
+               "  ${tables.PARTICIPANT_IDENTITY}.SummonerId,\n" +
+               "  ${tables.PARTICIPANT}.GameId,\n" +
+               "  ${tables.PARTICIPANT}.championId,\n" +
+               "  ${tables.PARTICIPANT}.teamId,\n" +
+               "  ${tables.TEAM}.Win,\n" +
+               "  ${tables.TEAM}.TowerKills,\n" +
+               "  ${tables.TEAM}.DragonKills,\n" +
+               "  ${tables.TEAM}.BaronKills,\n" +
+               "  ${tables.TEAM}.RiftHeraldKills\n" +
+               "FROM ${tables.PARTICIPANT_IDENTITY}\n" +
+               "  LEFT JOIN ${tables.PARTICIPANT} ON\n" +
+               "                           ${tables.PARTICIPANT_IDENTITY}.gameId = ${tables.PARTICIPANT}.GameId AND\n" +
+               "                           ${tables.PARTICIPANT}.lane = ${tables.PARTICIPANT_IDENTITY}.lane AND\n" +
+               "                            ${tables.PARTICIPANT}.role = ${tables.PARTICIPANT_IDENTITY}.role AND\n" +
+               "                          ${tables.PARTICIPANT_IDENTITY}.teamId != ${tables.PARTICIPANT}.TeamId\n" +
+               "  LEFT JOIN ${tables.TEAM} on ${tables.PARTICIPANT_IDENTITY}.TeamId != ${tables.TEAM}.TeamId and ${tables.PARTICIPANT_IDENTITY}.gameId = ${tables.TEAM}.GameId\n" +
+               "  LEFT JOIN ${tables.MATCH_TABLE} on ${tables.PARTICIPANT}.GameId = ${tables.MATCH_TABLE}.GameId\n" +
+               "WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = '$summonerId'\n" +
+               "      AND ${tables.PARTICIPANT_IDENTITY}.lane = '$lane'\n" +
+               "      AND ${tables.PARTICIPANT_IDENTITY}.role = '$role'\n" +
+               "      AND ${tables.MATCH_TABLE}.GameDuration > 300"
         val result = dbHelper.executeSqlQuery(sql)
         val statList = ArrayList<TeamSummaryStat>()
         while (result.next()) {
             statList.add(result.produceSummaryStat())
         }
-
+        result.close()
         return statList
     }
 
@@ -188,26 +189,27 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
                                               heroRole: String,
                                               heroLane: String) : ArrayList<FullGameStat> {
         val sql = "SELECT\n" +
-                "  participantidentity.gameId,\n" +
-                "  stats.kills,\n" +
-                "  stats.deaths,\n" +
-                "  stats.assists,\n" +
-                "  stats.wardsPlaced,\n" +
-                "  stats.wardsKilled\n" +
-                "FROM participantidentity\n" +
-                "  JOIN participant ON participantidentity.gameId = participant.GameId\n" +
-                "                      AND participant.ParticipantId = participantidentity.ParticipantId\n" +
-                "  JOIN stats ON stats.ParticipantRowId = participant.Id\n" +
-                "  LEFT JOIN matchtable ON participant.GameId = matchtable.GameId\n" +
-                "WHERE participantidentity.lane = '$heroLane'\n" +
-                "      AND participantidentity.role = '$heroRole'\n" +
-                "      AND participantidentity.SummonerId = '$heroSummonerId'\n" +
+                "  ${tables.PARTICIPANT_IDENTITY}.gameId,\n" +
+                "  ${tables.STATS}.kills,\n" +
+                "  ${tables.STATS}.deaths,\n" +
+                "  ${tables.STATS}.assists,\n" +
+                "  ${tables.STATS}.wardsPlaced,\n" +
+                "  ${tables.STATS}.wardsKilled\n" +
+                "FROM ${tables.PARTICIPANT_IDENTITY}\n" +
+                "  JOIN ${tables.PARTICIPANT} ON ${tables.PARTICIPANT_IDENTITY}.gameId = ${tables.PARTICIPANT}.GameId\n" +
+                "                      AND ${tables.PARTICIPANT}.ParticipantId = ${tables.PARTICIPANT_IDENTITY}.ParticipantId\n" +
+                "  JOIN ${tables.STATS} ON ${tables.STATS}.ParticipantRowId = ${tables.PARTICIPANT}.Id\n" +
+                "  LEFT JOIN ${tables.MATCH_TABLE} ON ${tables.PARTICIPANT}.GameId = ${tables.MATCH_TABLE}.GameId\n" +
+                "WHERE ${tables.PARTICIPANT_IDENTITY}.lane = '$heroLane'\n" +
+                "      AND ${tables.PARTICIPANT_IDENTITY}.role = '$heroRole'\n" +
+                "      AND ${tables.PARTICIPANT_IDENTITY}.SummonerId = '$heroSummonerId'\n" +
                 "      AND GameDuration > 300"
         val result = dbHelper.executeSqlQuery(sql)
         val statList = ArrayList<FullGameStat>()
         while (result.next()) {
             statList.add(result.produceFullGameStat())
         }
+        result.close()
         return statList
     }
 
@@ -219,29 +221,30 @@ class RefinedStatsDAO(val dbHelper: DBHelper) : RefinedStatDAOContract {
      */
     override fun fetchPlayerStatisticsForVillian(heroSummonerId: String, heroRole: String, heroLane: String): ArrayList<FullGameStat> {
         val sql = "SELECT\n" +
-                "  participantidentity.gameId,\n" +
-                "  stats.kills,\n" +
-                "  stats.deaths,\n" +
-                "  stats.assists,\n" +
-                "  stats.wardsPlaced,\n" +
-                "  stats.wardsKilled\n" +
-                "FROM participantidentity\n" +
-                "  JOIN participant ON\n" +
-                "                     participantidentity.gameId = participant.GameId AND\n" +
-                "                     participant.lane = participantidentity.lane AND\n" +
-                "                     participant.role = participantidentity.role AND\n" +
-                "                     participantidentity.teamId != participant.TeamId\n" +
-                "  JOIN stats ON stats.ParticipantRowId = participant.Id\n" +
-                "  LEFT JOIN matchtable ON participant.GameId = matchtable.GameId\n" +
-                "WHERE participantidentity.lane = '$heroLane'\n" +
-                "      AND participantidentity.role = '$heroRole'\n" +
-                "      AND participantidentity.SummonerId = '$heroSummonerId'\n" +
+                "  ${tables.PARTICIPANT_IDENTITY}.gameId,\n" +
+                "  ${tables.STATS}.kills,\n" +
+                "  ${tables.STATS}.deaths,\n" +
+                "  ${tables.STATS}.assists,\n" +
+                "  ${tables.STATS}.wardsPlaced,\n" +
+                "  ${tables.STATS}.wardsKilled\n" +
+                "FROM ${tables.PARTICIPANT_IDENTITY}\n" +
+                "  JOIN ${tables.PARTICIPANT} ON\n" +
+                "                     ${tables.PARTICIPANT_IDENTITY}.gameId = ${tables.PARTICIPANT}.GameId AND\n" +
+                "                     ${tables.PARTICIPANT}.lane = ${tables.PARTICIPANT_IDENTITY}.lane AND\n" +
+                "                     ${tables.PARTICIPANT}.role = ${tables.PARTICIPANT_IDENTITY}.role AND\n" +
+                "                     ${tables.PARTICIPANT_IDENTITY}.teamId != ${tables.PARTICIPANT}.TeamId\n" +
+                "  JOIN ${tables.STATS} ON ${tables.STATS}.ParticipantRowId = ${tables.PARTICIPANT}.Id\n" +
+                "  LEFT JOIN ${tables.MATCH_TABLE} ON ${tables.PARTICIPANT}.GameId = ${tables.MATCH_TABLE}.GameId\n" +
+                "WHERE ${tables.PARTICIPANT_IDENTITY}.lane = '$heroLane'\n" +
+                "      AND ${tables.PARTICIPANT_IDENTITY}.role = '$heroRole'\n" +
+                "      AND ${tables.PARTICIPANT_IDENTITY}.SummonerId = '$heroSummonerId'\n" +
                 "      AND GameDuration > 300"
         val result = dbHelper.executeSqlQuery(sql)
         val statList = ArrayList<FullGameStat>()
         while (result.next()) {
             statList.add(result.produceFullGameStat())
         }
+        result.close()
         return statList
     }
 }

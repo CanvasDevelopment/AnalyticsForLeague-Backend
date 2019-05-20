@@ -13,7 +13,7 @@ import kotlin.collections.ArrayList
  */
 class RuneDAO(val dbHelper: DBHelper) {
     val columnNames = ColumnNames()
-    val RUNE_TABLE = "rune"
+    val RUNE_TABLE = "Rune"
     val DEFAULT_PARTICIPANT_ID = -1
 
     fun saveRune(rune: Rune, participantRowId : Long) : Long {
@@ -53,7 +53,10 @@ class RuneDAO(val dbHelper: DBHelper) {
                 "WHERE ${columnNames.ID} = $id"
         val result = dbHelper.executeSqlQuery(sql)
         result.next()
-        return result.produceRune()
+        val rune = result.produceRune()
+        result.close()
+
+        return rune
     }
 
     /**
@@ -68,7 +71,7 @@ class RuneDAO(val dbHelper: DBHelper) {
         while (result.next()) {
             runes.add(result.produceRune())
         }
-
+        result.close()
         return runes
     }
 

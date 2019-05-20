@@ -17,7 +17,7 @@ class MatchDAO(val dbHelper : DBHelper,
                val teamDAO: TeamDAO,
                val participantDAO: ParticipantDAO,
                val participantIdentityDAO: ParticipantIdentityDAO) : MatchDAOContracts.MatchDAOContract {
-
+    private val tables = Tables()
     fun doesMatchTableExist() : Boolean {
         return false
     }
@@ -43,12 +43,12 @@ class MatchDAO(val dbHelper : DBHelper,
     override fun deleteAllMatchesFromRawDBForASummoner(summonerId: String) {
         val tables = Tables()
         dbHelper.connect()
-        dbHelper.executeSQLScript("DELETE FROM matchtable")
-        dbHelper.executeSQLScript("DELETE FROM mastery")
-        dbHelper.executeSQLScript("DELETE FROM participantIdentity")
-        dbHelper.executeSQLScript("DELETE FROM participant")
-        dbHelper.executeSQLScript("DELETE FROM ban")
-        dbHelper.executeSQLScript("DELETE FROM team")
+        dbHelper.executeSQLScript("DELETE FROM MatchTable")
+        dbHelper.executeSQLScript("DELETE FROM Mastery")
+        dbHelper.executeSQLScript("DELETE FROM ParticipantIdentity")
+        dbHelper.executeSQLScript("DELETE FROM Participant")
+        dbHelper.executeSQLScript("DELETE FROM Ban")
+        dbHelper.executeSQLScript("DELETE FROM Team")
         dbHelper.executeSQLScript("DELETE FROM ${tables.CS_DIFF_PER_MIN}")
         dbHelper.executeSQLScript("DELETE FROM ${tables.XP_PER_MIN}")
         dbHelper.executeSQLScript("DELETE FROM ${tables.XP_DIFF_PER_MIN}")
@@ -56,10 +56,10 @@ class MatchDAO(val dbHelper : DBHelper,
         dbHelper.executeSQLScript("DELETE FROM ${tables.DAMAGE_TAKEN_DIFF_PER_MIN}")
         dbHelper.executeSQLScript("DELETE FROM ${tables.CREEPS_PER_MIN}")
         dbHelper.executeSQLScript("DELETE FROM ${tables.GOLD_PER_MIN}")
-        dbHelper.executeSQLScript("DELETE FROM player")
-        dbHelper.executeSQLScript("DELETE FROM rune")
-        dbHelper.executeSQLScript("DELETE FROM stats")
-        dbHelper.executeSQLScript("DELETE FROM timeline")
+        dbHelper.executeSQLScript("DELETE FROM Player")
+        dbHelper.executeSQLScript("DELETE FROM Rune")
+        dbHelper.executeSQLScript("DELETE FROM Stats")
+        dbHelper.executeSQLScript("DELETE FROM Timeline")
 
     }
 
@@ -162,7 +162,9 @@ class MatchDAO(val dbHelper : DBHelper,
         val sql = "Select ${matchColumns.GAME_ID} from $MATCH_TABLE " +
                 "WHERE ${matchColumns.GAME_ID} = $gameId"
         val result = dbHelper.executeSqlQuery(sql)
-        return result.next()
+        val exists =  result.next()
+        result.close()
+        return exists
     }
 
     /**
@@ -178,7 +180,9 @@ class MatchDAO(val dbHelper : DBHelper,
         val participants = participantDAO.getAllParticipantsForMatch(gameId)
         val participantIdentities = participantIdentityDAO.getAllParticipantIdentitiesForAMatch(gameId)
         result.next()
-        return result.produceMatch(teams, participants, participantIdentities)
+        val match =  result.produceMatch(teams, participants, participantIdentities)
+        result.close()
+        return match
     }
 
     /**
@@ -188,12 +192,12 @@ class MatchDAO(val dbHelper : DBHelper,
      */
     fun fetchIdOfMostRecentlySavedMatchForSummoner(summonerId: String) : Long {
         val sql = "SELECT Max($MATCH_TABLE.$GAME_ID) as $GAME_ID, $SUMMONER_ID from $MATCH_TABLE " +
-                "JOIN participant ON $MATCH_TABLE.$GAME_ID = participant.GameId where $SUMMONER_ID = '$summonerId'"
+                "JOIN ${tables.PARTICIPANT} ON $MATCH_TABLE.$GAME_ID = ${tables.PARTICIPANT}.GameId where $SUMMONER_ID = '$summonerId'"
         val result : ResultSet = dbHelper.executeSqlQuery(sql)
         if (result.first()) {
             return result.getLong(GAME_ID)
         }
-
+        result.close()
         return -1
     }
 }

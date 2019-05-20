@@ -5,15 +5,15 @@ package util
  *
  * Just easier access for our roles and lanes so that we dont have to keep typing them
  */
-val TOP = "top"
-val MID = "MID"
+val TOP = "Top"
+val MID = "Mid"
 val BOT = "BOTTOM"
-val JUNGLE = "jungle"
-val SUPPORT = "support"
+val JUNGLE = "Jungle"
+val SUPPORT = "Support"
 
 val SOLO = "SOLO"
 val DUO = "DUO"
 val DUO_CARRY = "DUO_CARRY"
 val DUO_SUPPORT = "DUO_SUPPORT"
 val NONE = "None"
-val ADC = "adc"
+val ADC = "ADC"

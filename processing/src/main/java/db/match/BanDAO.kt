@@ -33,6 +33,7 @@ class BanDAO(val dbHelper: DBHelper) {
         val result = dbHelper.executeSqlQuery(sql)
         result.next()
         val ban = result.produceBan()
+        result.close()
         return ban
     }
 
@@ -47,7 +48,7 @@ class BanDAO(val dbHelper: DBHelper) {
         while(result.next()) {
             bans.add(result.produceBan())
         }
-
+        result.close()
         return bans
     }
 }

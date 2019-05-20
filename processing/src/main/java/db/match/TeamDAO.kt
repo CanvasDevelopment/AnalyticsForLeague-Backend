@@ -16,7 +16,7 @@ import java.util.*
 class TeamDAO(val dbHelper : DBHelper, val banDAO: BanDAO) {
 
     val teamColumns = TeamColumns()
-    val TEAM_TABLE = "team"
+    val TEAM_TABLE = "Team"
 
     /**
      * Save a [Team] for a [Match]
@@ -83,6 +83,7 @@ class TeamDAO(val dbHelper : DBHelper, val banDAO: BanDAO) {
         val bans = banDAO.getAllBansByTeamRowId(teamRowId)
         dbHelper.connect()  // todo this connect disconnect shit is pretty yuck and bug inducing, would love to find a fix to this
         val teamResult = result.produceTeam(bans)
+        result.close()
         return teamResult
     }
 
@@ -103,6 +104,7 @@ class TeamDAO(val dbHelper : DBHelper, val banDAO: BanDAO) {
             dbHelper.connect()
             teams.add(result.produceTeam(bans))
         }
+        result.close()
         return teams
     }
 }

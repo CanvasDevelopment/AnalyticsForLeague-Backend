@@ -4,43 +4,43 @@
 SELECT avg(wardsPlaced)
 FROM (SELECT stats.wardsPlaced
       FROM participantidentity
-        JOIN participant ON participantidentity.gameId = participant.GameId
-                            AND participant.ParticipantId = participantidentity.ParticipantId
+        JOIN participant ON ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId
+                            AND participant.ParticipantId = ${tables.PARTICIPANT_IDENTITY}.ParticipantId
         JOIN stats ON stats.ParticipantRowId = participant.Id
-      WHERE participantidentity.lane = 'JUNGLE' AND participantidentity.SummonerId = 1542360
+      WHERE ${tables.PARTICIPANT_IDENTITY}.lane = 'JUNGLE' AND ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360
       ORDER BY participant.gameId ASC
       LIMIT 20) AS Placed;
 
 #max wards placed
 SELECT max(stats.wardsPlaced)
 FROM participantidentity
-  JOIN participant ON participantidentity.gameId = participant.GameId
-                      AND participant.ParticipantId = participantidentity.ParticipantId
+  JOIN participant ON ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId
+                      AND participant.ParticipantId = ${tables.PARTICIPANT_IDENTITY}.ParticipantId
   JOIN stats ON stats.ParticipantRowId = participant.Id
-WHERE participantidentity.lane = 'JUNGLE' AND participantidentity.SummonerId = 1542360
+WHERE ${tables.PARTICIPANT_IDENTITY}.lane = 'JUNGLE' AND ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360
 ORDER BY participant.gameId ASC
 LIMIT 20;
 
 # stats stats
 SELECT
-  participantidentity.gameId,
+  ${tables.PARTICIPANT_IDENTITY}.gameId,
   stats.kills,
   stats.deaths,
   stats.assists,
   stats.wardsPlaced,
   stats.wardsKilled
 FROM participantidentity
-  JOIN participant ON participantidentity.gameId = participant.GameId
-                      AND participant.ParticipantId = participantidentity.ParticipantId
+  JOIN participant ON ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId
+                      AND participant.ParticipantId = ${tables.PARTICIPANT_IDENTITY}.ParticipantId
   JOIN stats ON stats.ParticipantRowId = participant.Id
   LEFT JOIN matchtable ON participant.GameId = matchtable.GameId
-WHERE participantidentity.lane = 'JUNGLE'
-      AND participantidentity.role = 'NONE'
-      AND participantidentity.SummonerId = 1542360
+WHERE ${tables.PARTICIPANT_IDENTITY}.lane = 'JUNGLE'
+      AND ${tables.PARTICIPANT_IDENTITY}.role = 'NONE'
+      AND ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360
       AND GameDuration > 300;
 # Opponenets stats
 SELECT
-  participantidentity.gameId,
+  ${tables.PARTICIPANT_IDENTITY}.gameId,
   stats.kills,
   stats.deaths,
   stats.assists,
@@ -48,15 +48,15 @@ SELECT
   stats.wardsKilled
 FROM participantidentity
   JOIN participant ON
-                     participantidentity.gameId = participant.GameId AND
-                     participant.lane = participantidentity.lane AND
-                     participant.role = participantidentity.role AND
-                     participantidentity.teamId != participant.TeamId
+                     ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId AND
+                     participant.lane = ${tables.PARTICIPANT_IDENTITY}.lane AND
+                     participant.role = ${tables.PARTICIPANT_IDENTITY}.role AND
+                     ${tables.PARTICIPANT_IDENTITY}.teamId != participant.TeamId
   JOIN stats ON stats.ParticipantRowId = participant.Id
   LEFT JOIN matchtable ON participant.GameId = matchtable.GameId
-WHERE participantidentity.lane = 'JUNGLE'
-      AND participantidentity.role = 'NONE'
-      AND participantidentity.SummonerId = 1542360
+WHERE ${tables.PARTICIPANT_IDENTITY}.lane = 'JUNGLE'
+      AND ${tables.PARTICIPANT_IDENTITY}.role = 'NONE'
+      AND ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360
       AND GameDuration > 300;
 
 # opponent kda.
@@ -66,53 +66,53 @@ SELECT
   stats.assists
 FROM participantidentity
   JOIN participant ON
-                     participantidentity.gameId = participant.GameId AND
-                     participant.lane = participantidentity.lane AND
-                     participant.role = participantidentity.role AND
-                     participantidentity.teamId != participant.TeamId
+                     ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId AND
+                     participant.lane = ${tables.PARTICIPANT_IDENTITY}.lane AND
+                     participant.role = ${tables.PARTICIPANT_IDENTITY}.role AND
+                     ${tables.PARTICIPANT_IDENTITY}.teamId != participant.TeamId
   JOIN stats ON stats.ParticipantRowId = participant.Id
   LEFT JOIN matchtable ON participant.GameId = matchtable.GameId
 
-WHERE participantidentity.lane = 'JUNGLE' AND participantidentity.SummonerId = 1542360
+WHERE ${tables.PARTICIPANT_IDENTITY}.lane = 'JUNGLE' AND ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360
 
 ORDER BY participant.gameId ASC;
 
 # Enemy game stage stats when we are in a specific role, with a bit extra
 SELECT
-  participantidentity.gameId,
+  ${tables.PARTICIPANT_IDENTITY}.gameId,
   zeroToTen * 10      AS EarlyGame,
   tenToTwenty * 10    AS MidGame,
   twentyToThirty * 10 AS LateGame
 FROM participantidentity
   JOIN participant ON
-                     participantidentity.gameId = participant.GameId AND
-                     participant.lane = participantidentity.lane AND
-                     participant.role = participantidentity.role AND
-                     participantidentity.teamId != participant.TeamId
+                     ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId AND
+                     participant.lane = ${tables.PARTICIPANT_IDENTITY}.lane AND
+                     participant.role = ${tables.PARTICIPANT_IDENTITY}.role AND
+                     ${tables.PARTICIPANT_IDENTITY}.teamId != participant.TeamId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
   LEFT JOIN goldpermin ON goldpermin.timelineId = timeline.Id
   LEFT JOIN matchtable ON participant.GameId = matchtable.GameId
-WHERE participantidentity.SummonerId = 1542360
-      AND participantidentity.lane = 'Top'
-      AND participantidentity.role = 'Solo'
+WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360
+      AND ${tables.PARTICIPANT_IDENTITY}.lane = 'Top'
+      AND ${tables.PARTICIPANT_IDENTITY}.role = 'Solo'
       AND GameDuration > 300;
 
 # Our game stage stats in a specific role
 SELECT
-  participantidentity.gameId,
+  ${tables.PARTICIPANT_IDENTITY}.gameId,
   zeroToTen * 10      AS EarlyGame,
   tenToTwenty * 10    AS MidGame,
   twentyToThirty * 10 AS LateGame
 FROM participantidentity
   JOIN participant ON
-                     participantidentity.gameId = participant.GameId AND
-                     participant.ParticipantId = participantidentity.ParticipantId
+                     ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId AND
+                     participant.ParticipantId = ${tables.PARTICIPANT_IDENTITY}.ParticipantId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
   LEFT JOIN damagetakenpermin ON damagetakenpermin.timelineId = timeline.Id
   LEFT JOIN matchtable ON participant.GameId = matchtable.GameId
-WHERE participantidentity.SummonerId = 1542360
-      AND participantidentity.lane = 'TOP'
-      AND participantidentity.role = 'Solo'
+WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360
+      AND ${tables.PARTICIPANT_IDENTITY}.lane = 'TOP'
+      AND ${tables.PARTICIPANT_IDENTITY}.role = 'Solo'
       AND GameDuration > 300;
 
 # enemy adc game stats when im playing support
@@ -122,13 +122,13 @@ SELECT
   avg(twentyToThirty) * 10 AS LateGame
 FROM participantidentity
   JOIN participant ON
-                     participantidentity.gameId = participant.GameId AND
-                     participantidentity.teamId != participant.TeamId
+                     ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId AND
+                     ${tables.PARTICIPANT_IDENTITY}.teamId != participant.TeamId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
   LEFT JOIN creepspermin ON creepspermin.timelineId = timeline.Id
-WHERE participantidentity.SummonerId = 1542360
-      AND participantidentity.lane = 'Bottom'
-      AND participantidentity.role = 'DUO_SUPPORT'
+WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360
+      AND ${tables.PARTICIPANT_IDENTITY}.lane = 'Bottom'
+      AND ${tables.PARTICIPANT_IDENTITY}.role = 'DUO_SUPPORT'
       AND participant.lane = 'BOTTOM'
       AND participant.role = 'DUO_CARRY';
 
@@ -139,13 +139,13 @@ SELECT
   avg(twentyToThirty) * 10 AS LateGame
 FROM participantidentity
   JOIN participant ON
-                     participantidentity.gameId = participant.GameId AND
-                     participantidentity.teamId != participant.TeamId
+                     ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId AND
+                     ${tables.PARTICIPANT_IDENTITY}.teamId != participant.TeamId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
   LEFT JOIN goldpermin ON goldpermin.timelineId = timeline.Id
-WHERE participantidentity.SummonerId = 1542360
-      AND participantidentity.lane = 'JUNGLE'
-      AND participantidentity.role = 'NONE'
+WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360
+      AND ${tables.PARTICIPANT_IDENTITY}.lane = 'JUNGLE'
+      AND ${tables.PARTICIPANT_IDENTITY}.role = 'NONE'
       AND participant.lane = 'TOP'
       AND participant.role = 'SOLO';
 
@@ -156,13 +156,13 @@ SELECT
   avg(twentyToThirty) * 10 AS LateGame
 FROM participantidentity
   JOIN participant ON
-                     participantidentity.gameId = participant.GameId AND
-                     participantidentity.teamId = participant.TeamId
+                     ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId AND
+                     ${tables.PARTICIPANT_IDENTITY}.teamId = participant.TeamId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
   LEFT JOIN goldpermin ON goldpermin.timelineId = timeline.Id
-WHERE participantidentity.SummonerId = 1542360
-      AND participantidentity.lane = 'JUNGLE'
-      AND participantidentity.role = 'NONE'
+WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360
+      AND ${tables.PARTICIPANT_IDENTITY}.lane = 'JUNGLE'
+      AND ${tables.PARTICIPANT_IDENTITY}.role = 'NONE'
       AND participant.lane = 'TOP'
       AND participant.role = 'SOLO';
 
@@ -173,13 +173,13 @@ SELECT
   avg(twentyToThirty) * 10 AS LateGame
 FROM participantidentity
   JOIN participant ON
-                     participantidentity.gameId = participant.GameId AND
-                     participantidentity.teamId = participant.TeamId
+                     ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId AND
+                     ${tables.PARTICIPANT_IDENTITY}.teamId = participant.TeamId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
   LEFT JOIN creepspermin ON creepspermin.timelineId = timeline.Id
-WHERE participantidentity.SummonerId = 1542360
-      AND participantidentity.lane = 'Bottom'
-      AND participantidentity.role = 'DUO_SUPPORT'
+WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360
+      AND ${tables.PARTICIPANT_IDENTITY}.lane = 'Bottom'
+      AND ${tables.PARTICIPANT_IDENTITY}.role = 'DUO_SUPPORT'
       AND participant.lane = 'BOTTOM'
       AND participant.role = 'DUO_CARRY';
 
@@ -190,35 +190,35 @@ SELECT
   avg(twentyToThirty) * 10 AS LateGame
 FROM participantidentity
   JOIN participant ON
-                     participantidentity.gameId = participant.GameId AND
-                     participant.ParticipantId = participantidentity.ParticipantId
+                     ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId AND
+                     participant.ParticipantId = ${tables.PARTICIPANT_IDENTITY}.ParticipantId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
   LEFT JOIN csdiffpermin ON csdiffpermin.timelineId = timeline.Id
-WHERE participantidentity.SummonerId = 1542360
-      AND participantidentity.lane = 'TOP'
-      AND participantidentity.role = 'Solo';
+WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360
+      AND ${tables.PARTICIPANT_IDENTITY}.lane = 'TOP'
+      AND ${tables.PARTICIPANT_IDENTITY}.role = 'Solo';
 
 
-SELECT participantidentity.gameId
+SELECT ${tables.PARTICIPANT_IDENTITY}.gameId
 FROM participantidentity
   JOIN participant
-    ON participantidentity.gameId = participant.GameId AND participant.ParticipantId = participantidentity.ParticipantId
+    ON ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId AND participant.ParticipantId = ${tables.PARTICIPANT_IDENTITY}.ParticipantId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
   LEFT JOIN creepspermin ON creepspermin.timelineId = timeline.Id
-WHERE participantidentity.SummonerId = 1542360 AND participantidentity.lane = 'Bottom' AND
-      participantidentity.role = 'DUO_CARRY' AND participantidentity.gameId;
+WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360 AND ${tables.PARTICIPANT_IDENTITY}.lane = 'Bottom' AND
+      ${tables.PARTICIPANT_IDENTITY}.role = 'DUO_CARRY' AND ${tables.PARTICIPANT_IDENTITY}.gameId;
 
-SELECT participantidentity.gameId
+SELECT ${tables.PARTICIPANT_IDENTITY}.gameId
 FROM participantidentity
-  JOIN participant ON participantidentity.gameId = participant.GameId AND participant.lane
+  JOIN participant ON ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId AND participant.lane
                                                                           =
-                                                                          participantidentity.lane
+                                                                          ${tables.PARTICIPANT_IDENTITY}.lane
                       AND
                       participant.role
                       =
-                      participantidentity.role
+                      ${tables.PARTICIPANT_IDENTITY}.role
                       AND
-                      participantidentity.teamId
+                      ${tables.PARTICIPANT_IDENTITY}.teamId
                       !=
                       participant.TeamId
   LEFT JOIN timeline
@@ -228,21 +228,21 @@ FROM participantidentity
     ON creepspermin.timelineId =
        timeline.Id
 WHERE
-  participantidentity.SummonerId =
+  ${tables.PARTICIPANT_IDENTITY}.SummonerId =
   1542360 AND
-  participantidentity.lane =
+  ${tables.PARTICIPANT_IDENTITY}.lane =
   'Bottom' AND
-  participantidentity.role =
+  ${tables.PARTICIPANT_IDENTITY}.role =
   'DUO_CARRY';
 
 SELECT count(*)
 FROM participantidentity
   JOIN participant ON
-                     participantidentity.gameId = participant.GameId AND participant.lane = participantidentity.lane AND
-                     participant.role = participantidentity.role AND participantidentity.teamId != participant.TeamId
+                     ${tables.PARTICIPANT_IDENTITY}.gameId = participant.GameId AND participant.lane = ${tables.PARTICIPANT_IDENTITY}.lane AND
+                     participant.role = ${tables.PARTICIPANT_IDENTITY}.role AND ${tables.PARTICIPANT_IDENTITY}.teamId != participant.TeamId
   LEFT JOIN timeline ON timeline.participantRowId = participant.Id
   LEFT JOIN creepspermin ON creepspermin.timelineId = timeline.Id
-WHERE participantidentity.SummonerId = 1542360 AND participantidentity.lane = 'Bottom' AND
+WHERE ${tables.PARTICIPANT_IDENTITY}.SummonerId = 1542360 AND participantidentity.lane = 'Bottom' AND
       participantidentity.role = 'DUO_CARRY';
 
 # get the avg for each game stage for the delta stats for our opposite lane
@@ -274,7 +274,7 @@ FROM participantidentity
   JOIN player ON player.ParticipantIdentityRowId = participantidentity.Id
   JOIN participant ON participantidentity.gameId = participant.GameId
                       AND participant.ParticipantId = participantidentity.ParticipantId
-  JOIN team ON team.GameId = participantidentity.gameId AND team.TeamId = participant.TeamId
+  JOIN team ON ${tables.TEAM}.GameId = participantidentity.gameId AND ${tables.TEAM}.TeamId = participant.TeamId
   JOIN timeline ON timeline.participantRowId = participant.Id
 WHERE accountId = 200774483 AND lane = 'JUNGLE';
 
@@ -287,7 +287,7 @@ FROM participantidentity
   JOIN player ON player.ParticipantIdentityRowId = participantidentity.Id
   JOIN participant ON participantidentity.gameId = participant.GameId
                       AND participant.ParticipantId = participantidentity.ParticipantId
-  JOIN team ON team.GameId = participantidentity.gameId AND team.TeamId = participant.TeamId
+  JOIN team ON ${tables.TEAM}.GameId = participantidentity.gameId AND ${tables.TEAM}.TeamId = participant.TeamId
   JOIN timeline ON timeline.participantRowId = participant.Id
   JOIN creepspermin ON creepspermin.timelineId = timeline.Id
 WHERE accountId = 200774483 AND lane = 'JUNGLE';
@@ -301,7 +301,7 @@ FROM participantidentity
   JOIN player ON player.ParticipantIdentityRowId = participantidentity.Id
   JOIN participant ON participantidentity.gameId = participant.GameId
                       AND participant.ParticipantId = participantidentity.ParticipantId
-  JOIN team ON team.GameId = participantidentity.gameId AND team.TeamId != participant.TeamId
+  JOIN team ON ${tables.TEAM}.GameId = participantidentity.gameId AND ${tables.TEAM}.TeamId != participant.TeamId
   JOIN timeline ON timeline.participantRowId = participant.Id
   JOIN creepspermin ON creepspermin.timelineId = timeline.Id
 WHERE accountId = 200774483 AND lane = 'JUNGLE';
@@ -315,7 +315,7 @@ FROM participantidentity
   JOIN player ON player.ParticipantIdentityRowId = participantidentity.Id
   JOIN participant ON participantidentity.gameId = participant.GameId
                       AND participant.ParticipantId = participantidentity.ParticipantId
-  JOIN team ON team.GameId = participantidentity.gameId AND team.TeamId = participant.TeamId
+  JOIN team ON ${tables.TEAM}.GameId = participantidentity.gameId AND ${tables.TEAM}.TeamId = participant.TeamId
   JOIN timeline ON timeline.participantRowId = participant.Id
   JOIN creepspermin ON creepspermin.timelineId = timeline.Id
 WHERE accountId = 200774483 AND lane = 'JUNGLE';
@@ -329,7 +329,7 @@ FROM participantidentity
   JOIN player ON player.ParticipantIdentityRowId = participantidentity.Id
   JOIN participant ON participantidentity.gameId = participant.GameId
                       AND participant.ParticipantId = participantidentity.ParticipantId
-  JOIN team ON team.GameId = participantidentity.gameId AND team.TeamId != participant.TeamId
+  JOIN team ON ${tables.TEAM}.GameId = participantidentity.gameId AND ${tables.TEAM}.TeamId != participant.TeamId
   JOIN timeline ON timeline.participantRowId = participant.Id
   JOIN creepspermin ON creepspermin.timelineId = timeline.Id
 WHERE accountId = 200774483 AND lane = 'JUNGLE';
@@ -368,7 +368,7 @@ FROM participantidentity
   JOIN player ON player.ParticipantIdentityRowId = participantidentity.Id
   JOIN participant
     ON participantidentity.gameId = participant.GameId AND participant.ParticipantId = participantidentity.ParticipantId
-  JOIN team ON team.GameId = participantidentity.gameId AND team.TeamId != participant.TeamId
+  JOIN team ON ${tables.TEAM}.GameId = participantidentity.gameId AND ${tables.TEAM}.TeamId != participant.TeamId
   JOIN timeline ON timeline.participantRowId = participant.Id
   JOIN stats ON stats.ParticipantRowId = participant.Id
   JOIN creepspermin ON creepspermin.timelineId = timeline.Id

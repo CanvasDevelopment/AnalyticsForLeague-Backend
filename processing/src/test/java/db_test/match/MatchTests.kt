@@ -43,7 +43,7 @@ class MatchTests {
     @After
     fun cleanUp() {
         val tables = Tables()
-        dbHelper.executeSQLScript("DELETE FROM matchtable")
+        dbHelper.executeSQLScript("DELETE FROM ${tables.MATCH_TABLE}.")
         dbHelper.executeSQLScript("DELETE FROM mastery")
         dbHelper.executeSQLScript("DELETE FROM participantIdentity")
         dbHelper.executeSQLScript("DELETE FROM participant")

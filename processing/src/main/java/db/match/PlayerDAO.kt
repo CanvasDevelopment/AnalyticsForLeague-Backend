@@ -10,7 +10,7 @@ import java.sql.ResultSet
  */
 class PlayerDAO(val dbHelper: DBHelper) {
 
-    private val PLAYER_TABLE_NAME : String = "player"
+    private val PLAYER_TABLE_NAME : String = "Player"
 
     fun savePlayer(player: Player?, participantIdentityRowId: Long) : Long {
         // todo find a better situation for this player?
@@ -37,6 +37,8 @@ class PlayerDAO(val dbHelper: DBHelper) {
         val sqlQuery = "SELECT * FROM $PLAYER_TABLE_NAME WHERE ${dbHelper.ID_COLUMN} = $rowId"
         val result : ResultSet = dbHelper.executeSqlQuery(sqlQuery)
         result.next()
-        return result.producePlayer()
+        val player = result.producePlayer()
+        result.close()
+        return player
     }
 }

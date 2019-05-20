@@ -9,9 +9,10 @@ import util.*
  */
 class Sync (val matchControl: MatchControl) {
 
-
     fun refineStats(summonerId: String) : Int {
         val savedTop = matchControl.refineMatchData(summonerId, SOLO, TOP)
+
+//
         val savedMid = matchControl.refineMatchData(summonerId, SOLO, MID)
         val savedJungle = matchControl.refineMatchData(summonerId, NONE, JUNGLE)
         val savedSup = matchControl.refineMatchData(summonerId, DUO_SUPPORT, BOT)
@@ -45,6 +46,8 @@ class Sync (val matchControl: MatchControl) {
      */
     fun syncMatchSummaries(summonerId: String): Int {
         matchControl.downloadAndSaveMatchSummaries(summonerId)
+        matchControl.fetchAndSaveMatchesForASummoner(summonerId, 500)
+
         return 200
     }
 

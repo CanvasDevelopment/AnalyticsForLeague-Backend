@@ -11,7 +11,7 @@ import kotlin.collections.ArrayList
  * @author Josiah Kendall
  */
 class MasteryDAO(val dbHelper : DBHelper) {
-    val MASTERY_TABLE = "mastery"
+    val MASTERY_TABLE = "Mastery"
     val columnNames = ColumnNames()
     val DEFAULT_PARTICIPANT_ID = -1
 
@@ -54,12 +54,14 @@ class MasteryDAO(val dbHelper : DBHelper) {
                 "${dbHelper.ID_COLUMN} = $id"
         val result = dbHelper.executeSqlQuery(querySql)
         result.next()
-        return result.produceMastery()
+         val mastery = result.produceMastery()
+        result.close()
+        return mastery
     }
 
     fun clearMasteriesForDefaultParticipant() {
         val SQL = "DELETE FROM $MASTERY_TABLE WHERE ${columnNames.PARTICIPANT_ROW_ID} = $DEFAULT_PARTICIPANT_ID"
-        dbHelper.executeSQLScript(SQL);
+        dbHelper.executeSQLScript(SQL)
     }
 
     /**
@@ -74,7 +76,7 @@ class MasteryDAO(val dbHelper : DBHelper) {
         while (results.next()) {
             masteries.add(results.produceMastery())
         }
-
+        results.close()
         return masteries
     }
 }

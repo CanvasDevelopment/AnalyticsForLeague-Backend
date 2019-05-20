@@ -4,6 +4,7 @@ import db.requests.DBHelper
 import extensions.produceParticipantIdentity
 import model.match.ParticipantIdentity
 import util.MID
+import util.Tables
 import util.columnnames.ParticipantIdentityColumns
 import java.sql.ResultSet
 import java.util.*
@@ -12,8 +13,8 @@ import java.util.*
  * @author Josiah Kendall
  */
 class ParticipantIdentityDAO(val dbHelper: DBHelper, val playerDAO: PlayerDAO) {
-
-    private val PARTICIPANT_IDENTITY_TABLE = "participantidentity"
+    private val tables = Tables()
+    private val PARTICIPANT_IDENTITY_TABLE = "ParticipantIdentity"
     private val participantIdentityColumns = ParticipantIdentityColumns()
 
     fun saveParticipantIdentity(participantIdentity: ParticipantIdentity,
@@ -53,30 +54,33 @@ class ParticipantIdentityDAO(val dbHelper: DBHelper, val playerDAO: PlayerDAO) {
 
     fun getParticipantIdentity(gameId: Long, summonerId: String) : ParticipantIdentity  {
         val selectSQL = "select * from $PARTICIPANT_IDENTITY_TABLE\n" +
-                "join player on participantidentity.Id = player.ParticipantIdentityRowId\n" +
-                "where participantidentity.gameId = $gameId and participantidentity.summonerId = '$summonerId'"
+                "join player on ${tables.PARTICIPANT_IDENTITY}.Id = player.ParticipantIdentityRowId\n" +
+                "where ${tables.PARTICIPANT_IDENTITY}.gameId = $gameId and ${tables.PARTICIPANT_IDENTITY}.summonerId = '$summonerId'"
         val result : ResultSet = dbHelper.executeSqlQuery(selectSQL)
         result.next()
-        return result.produceParticipantIdentity()
+        val participantIdentity = result.produceParticipantIdentity()
+        result.close()
+        return participantIdentity
     }
 
     // This gets? todo fix me
     fun getAllParticipantIdentitiesForAMatch(gameId: Long) : ArrayList<ParticipantIdentity> {
         val selectSQL = "select * from $PARTICIPANT_IDENTITY_TABLE\n" +
-                "join player on participantidentity.Id = player.ParticipantIdentityRowId\n" +
-                "where participantidentity.gameId = $gameId"
+                "join player on ${tables.PARTICIPANT_IDENTITY}.Id = player.ParticipantIdentityRowId\n" +
+                "where ${tables.PARTICIPANT_IDENTITY}.gameId = $gameId"
         val result : ResultSet = dbHelper.executeSqlQuery(selectSQL)
         val participantIdentities = ArrayList<ParticipantIdentity>()
         while (result.next()) {
             participantIdentities.add(result.produceParticipantIdentity())
         }
+        result.close()
         return participantIdentities
     }
 
 //    // This gets the players for
 //    fun getAllParticipantIdentitiesForAMatch(gameId: Long) : ArrayList<ParticipantIdentity> {
 //        val selectSQL = "select * from $PARTICIPANT_IDENTITY_TABLE\n" +
-//                "where participantidentity.gameId = $gameId"
+//                "where ${tables.PARTICIPANT_IDENTITY}.gameId = $gameId"
 //        val result : ResultSet = dbHelper.executeSqlQuery(selectSQL)
 //        val participantIdentities = ArrayList<ParticipantIdentity>()
 //        while (result.next()) {

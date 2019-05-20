@@ -3,6 +3,7 @@ package db.matchlist
 import db.requests.DBHelper
 import extensions.produceMatchSummary
 import model.matchlist.MatchSummary
+import util.logToConsole
 import java.sql.ResultSet
 import java.util.*
 
@@ -11,7 +12,7 @@ import java.util.*
  */
 class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
 
-    private val MATCH_SUMMARY = "matchsummary"
+    private val MATCH_SUMMARY = "MatchSummary"
     private val PLATFORM_ID = "PlatformId"
     private val GAME_ID = "GameId"
     private val CHAMPION = "Champion"
@@ -66,8 +67,10 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
             ms.role = result.getString(ROLE)
             ms.lane = result.getString(LANE)
             ms.summonerId = result.getString(SUMMONER_ID)
+            result.close()
             return ms
         }
+        result.close()
         // need to handle this in our tests
         return MatchSummary()
     }
@@ -80,7 +83,12 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
     override fun exists(gameId: Long) : Boolean {
         val queryString = "SELECT * From $MATCH_SUMMARY WHERE GameId = $gameId"
         val result = dbHelper.executeSqlQuery(queryString)
-        if (result.next()) return true
+        if (result.next()) {
+            result.close()
+            return true
+        }
+
+        result.close()
         return false
     }
 
@@ -93,7 +101,9 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
         val queryString = "SELECT * FROM $MATCH_SUMMARY WHERE GameId = $gameId"
         val result : ResultSet = dbHelper.executeSqlQuery(queryString)
         if (result.next()) {
-            return result.produceMatchSummary()
+            val ms = result.produceMatchSummary()
+            result.close()
+            return ms
         }
         // need to handle this in our tests
         return MatchSummary()
@@ -106,12 +116,13 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
      */
     override fun getAllMatchesBySummonerId(summonerId: String) : ArrayList<MatchSummary> {
         val queryString = "SELECT * FROM $MATCH_SUMMARY WHERE $SUMMONER_ID = '$summonerId'"
+        logToConsole("running query: $queryString")
         val result = dbHelper.executeSqlQuery(queryString)
         val summaries = ArrayList<MatchSummary>()
         while (result.next()) {
             summaries.add(result.produceMatchSummary())
         }
-
+        result.close()
         return summaries
     }
 
@@ -134,7 +145,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
         while (result.next()) {
             summaries.add(result.produceMatchSummary())
         }
-
+        result.close()
         return summaries
     }
 
@@ -147,7 +158,9 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
         val sql = "SELECT count($GAME_ID) as $numberOfMatches from $MATCH_SUMMARY where $SUMMONER_ID = '$summonerId'"
         val result = dbHelper.executeSqlQuery(sql)
         while (result.first()) {
-            return result.getInt(numberOfMatches)
+            val numberOfMatches = result.getInt(numberOfMatches)
+            result.close()
+            return numberOfMatches
         }
 
         return -1
@@ -167,7 +180,9 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
 
         val result = dbHelper.executeSqlQuery(sql)
         if (result.first()) {
-            return result.getInt(numberOfMatches)
+            val numberOfMatches = result.getInt(numberOfMatches)
+            result.close()
+            return numberOfMatches
         }
 
         return -1

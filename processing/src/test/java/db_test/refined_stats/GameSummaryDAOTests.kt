@@ -19,7 +19,7 @@ import java.util.*
  */
 class GameSummaryDAOTests {
 
-    private val GAME_SUMMARY_TABLE = "top_summaryStats"
+    private val GAME_SUMMARY_TABLE = "top_SummaryStats"
     private val tableName = "top"
     lateinit var dbHelper: DBHelper
     private lateinit var gameSummaryDAO: GameSummaryDAO
@@ -1106,7 +1106,7 @@ class GameSummaryDAOTests {
      */
     private fun getNumberOfRowsInTopGameSummaryForSummoner(summonerId: String) : Int {
         val numberOfRows = "numberOfRows"
-        val sql = "select count(*) as $numberOfRows from top_summarystats"
+        val sql = "select count(*) as $numberOfRows from top_SummaryStats"
         val result = dbHelper.executeSqlQuery(sql)
         if (result.next()) {
             return result.getInt(numberOfRows)

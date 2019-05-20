@@ -1,5 +1,7 @@
 package application.domain
 
+import com.google.appengine.api.taskqueue.QueueFactory
+import com.google.appengine.api.taskqueue.TaskOptions
 import db.match.MatchDAO
 import db.matchlist.MatchSummaryDAO
 import db.refined_stats.GameSummaryDaoContract
@@ -29,6 +31,7 @@ class MatchControl(private val matchDAO: MatchDAO,
                    private val gameSummaryDaoContract: GameSummaryDaoContract) {
 
     private val log = Logger.getLogger(this::class.java.name)
+    private val syncQueue = QueueFactory.getDefaultQueue()
 
     val tables = Tables()
 
@@ -106,9 +109,19 @@ class MatchControl(private val matchDAO: MatchDAO,
         matchSummaries.forEach { matchSummary ->
             val alreadySaved = gameSummaryDaoContract.doesGameSummaryForSummonerExist(matchSummary.gameId, summonerId)
             if (!alreadySaved) {
-                fetchAndSaveMatch(matchSummary.gameId, summonerId)
+                dispatchSyncMatchRequest(matchSummary.gameId, summonerId)
             }
         }
+    }
+
+    fun dispatchSyncMatchRequest(gameId : Long, summonerId: String) {
+        val syncMatchUrl = "/_ah/processing/api/v1/syncMatch/$gameId/$summonerId"
+
+        // if production, do it different?
+        val task = TaskOptions.Builder.withDefaults()
+        task.method(TaskOptions.Method.GET)
+        task.url(syncMatchUrl)
+        syncQueue.add(task)
     }
 
     /**

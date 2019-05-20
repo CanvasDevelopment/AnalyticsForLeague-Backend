@@ -20,7 +20,7 @@ class ParticipantDAO(val dbHelper : DBHelper,
                      val masteryDAO: MasteryDAO,
                      val statDAO: StatDAO) {
 
-    val PARTICIPANT_TABLE = "participant"
+    val PARTICIPANT_TABLE = "Participant"
     val participantColumns = ParticipantColumns()
 
     /**
@@ -103,6 +103,8 @@ class ParticipantDAO(val dbHelper : DBHelper,
             val participant = result.produceParticipant(timeline, stats, masteries, runes)
             participants.add(participant)
         }
+
+        result.close()
         return participants
     }
 
@@ -115,7 +117,9 @@ class ParticipantDAO(val dbHelper : DBHelper,
         val sql = "select * from $PARTICIPANT_TABLE where Id = $participantRowId"
         val result = dbHelper.executeSqlQuery(sql)
         result.next()
-        return result.produceParticipant(timeline,stats,masteries,runes)
+        val participant = result.produceParticipant(timeline,stats,masteries,runes)
+        result.close()
+        return participant
     }
 
     private fun saveRunes(runes : ArrayList<Rune>?, participantRowId : Long) {

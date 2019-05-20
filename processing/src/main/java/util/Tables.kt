@@ -11,7 +11,10 @@ class Tables {
     val XP_DIFF_PER_MIN = "xpdiffpermin"
     val DAMAGE_TAKEN_PER_MIN = "damagetakenpermin"
     val DAMAGE_TAKEN_DIFF_PER_MIN = "damagetakendiffpermin"
-    val PARTICIPANT = "participant"
-    val PARTICIPANT_IDENTITY = "participantidentity"
-    val TIMELINE = "timeline"
+    val PARTICIPANT = "Participant"
+    val TEAM = "Team"
+    val PARTICIPANT_IDENTITY = "ParticipantIdentity"
+    val TIMELINE = "Timeline"
+    val MATCH_TABLE = "MatchTable"
+    val STATS = "Stats"
 }

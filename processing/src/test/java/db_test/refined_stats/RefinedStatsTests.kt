@@ -4,6 +4,7 @@ import com.github.salomonbrys.kodein.instance
 import com.google.gson.GsonBuilder
 import db.requests.DBHelper
 import db.match.MatchDAO
+import db.refined_stats.RefinedStatDAOContract
 import db.refined_stats.RefinedStatsDAO
 import di.KodeinManager
 import network.riotapi.MatchServiceApi
@@ -25,7 +26,7 @@ class RefinedStatsTests {
 
     companion object {
         lateinit var dbHelper: DBHelper
-        lateinit var refinedStatsDAO: RefinedStatsDAO
+        lateinit var refinedStatsDAO: RefinedStatDAOContract
         lateinit var matchDAO: MatchDAO
         private val km = KodeinManager()
 
@@ -79,7 +80,7 @@ class RefinedStatsTests {
         @JvmStatic
         private fun getMatchData(gameId: Long): String {
 
-            val inputs = FileInputStream("C:\\Users\\jek40\\Desktop\\analyticsforleague.com\\afl_backend\\processing\\src\\main\\resources\\json\\$gameId.json")
+            val inputs = FileInputStream("src/main/resources/json/$gameId.json")
             val buf = BufferedReader(InputStreamReader(inputs))
             var line = buf.readLine()
             val sb = StringBuilder()
@@ -93,7 +94,7 @@ class RefinedStatsTests {
 
         @JvmStatic
         private fun getListData(): String {
-            val inputs = FileInputStream("C:\\Users\\jek40\\Desktop\\analyticsforleague.com\\afl_backend\\processing\\src\\main\\resources\\json\\recent.json")
+            val inputs = FileInputStream("src/main/resources/json/recent.json")
             val buf = BufferedReader(InputStreamReader(inputs))
             var line = buf.readLine()
             val sb = StringBuilder()

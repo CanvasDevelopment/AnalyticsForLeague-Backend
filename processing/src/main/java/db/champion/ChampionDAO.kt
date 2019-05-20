@@ -14,8 +14,8 @@ import model.champion.ChampionImage
  */
 class ChampionDAO(val dbHelper : DBHelper) {
 
-    private val CHAMPION_TABLE = "champion"
-    private val CHAMPION_IMAGE_TABLE = "championimage"
+    private val CHAMPION_TABLE = "Champion"
+    private val CHAMPION_IMAGE_TABLE = "ChampionImage"
     private val CHAMP_ID_COLUMN = "Id"
     private val FULL_COLUMN = "Full"
     private val SPRITE_COLUMN = "Sprite"
@@ -79,8 +79,10 @@ class ChampionDAO(val dbHelper : DBHelper) {
             val champImageId = result.getLong(CHAMP_IMAGE_ID_COLUMN)
             val championImage = getChampionImage(champImageId)
             val champion = result.produceChampion(championImage)
+            result.close()
             return champion
         }
+        result.close()
         return null
     }
 
@@ -88,6 +90,8 @@ class ChampionDAO(val dbHelper : DBHelper) {
         val queryString = "SELECT * from $CHAMPION_IMAGE_TABLE WHERE $CHAMP_ID_COLUMN = $champImageId"
         val result = dbHelper.executeSqlQuery(queryString)
         result.next()
-        return result.produceChampionImage()
+        val champImage = result.produceChampionImage()
+        result.close()
+        return champImage
     }
 }

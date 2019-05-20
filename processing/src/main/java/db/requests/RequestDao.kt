@@ -42,8 +42,12 @@ class RequestDao(val dbHelper: DBHelper,
         val sql = "SELECT * from $RIOT_API_REQUEST_TABLE Where id > 0"
         val result = dbHelper.executeSqlQuery(sql)
         if (result.next()) {
-            return result.produceDifferenceBetweenEarliestTimeStampAndNow().toInt()
+            val diff = result.produceDifferenceBetweenEarliestTimeStampAndNow().toInt()
+            result.close()
+            return diff
         }
+        result.close()
+
         return -1
     }
 
@@ -54,8 +58,13 @@ class RequestDao(val dbHelper: DBHelper,
     override fun requestsSinceLastClearedRates(): Int {
         val sql = "select count(*) as $NUMBER_OF_REQUESTS from $RIOT_API_REQUEST_TABLE"
         val result = dbHelper.executeSqlQuery(sql)
-        if (result.next())
-            return result.getInt(NUMBER_OF_REQUESTS)
+        if (result.next()){
+            val numberOfRequests = result.getInt(NUMBER_OF_REQUESTS)
+            result.close()
+            return numberOfRequests
+        }
+        result.close()
+
         return 0
     }
 

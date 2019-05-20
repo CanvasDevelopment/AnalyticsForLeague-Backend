@@ -6,12 +6,16 @@
 package db.requests
 
 import com.google.appengine.api.utils.SystemProperty
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import util.Constant
 
 import java.sql.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import java.sql.DriverManager
+
+
 
 
 
@@ -43,7 +47,9 @@ class DBHelper {
     private var password: String? = null
 
     private var connection: Connection? = null
+    private var connectionPool : HikariDataSource? = null
     private var currentlyConnected = false
+    private val logger = Logger.getLogger(DBHelper::class.java.name)
 
     /**
      * Creates a default localhost connection;
@@ -55,7 +61,7 @@ class DBHelper {
         this.password = Constant.DEFAULT_PASSWORD
     }
 
-    constructor(host: String, username: String, password: String) {
+    constructor(host: String, username : String, password : String) {
         this.host = host
         this.username = username
         this.password = password
@@ -75,7 +81,7 @@ class DBHelper {
                 // App engine sql driver
                 Class.forName("com.mysql.jdbc.GoogleDriver")
                 return try {
-                    connection = DriverManager.getConnection(url)
+                    connection = getConnectionPool().connection
                     currentlyConnected = connection!!.isValid(1000)
                     currentlyConnected
                 } catch (sqlException: SQLException) {
@@ -138,19 +144,19 @@ class DBHelper {
             connect()
         }
 
-
         val statement = connection!!.createStatement()
+        statement.closeOnCompletion()
         return statement.executeQuery(query)
     }
 
     /**
      * Execute a statement that updates the database
      * @param script The script to run against the database.
-     * *
+     *
      * @return 0 if nothing, or the number of rows effected (i think).
-     * *
+     *
      * @throws java.sql.SQLException
-     * *
+     *
      * @throws IllegalStateException
      */
     @Throws(SQLException::class, IllegalStateException::class)
@@ -158,21 +164,53 @@ class DBHelper {
         if (connection == null || !currentlyConnected) {
             throw IllegalStateException("No Current database connection. Use DbConnect() to connect to a database")
         }
-
         try {
             val statement = connection!!.prepareStatement(script)
+            statement.closeOnCompletion()
             statement.executeUpdate(script, Statement.RETURN_GENERATED_KEYS)
             val generatedKeys : ResultSet = statement.generatedKeys
             var id : Long = 0
             if (generatedKeys.next()) {
                 id = generatedKeys.getLong(1)
             }
-
+            statement.close()
             return id
         } catch (error : SQLSyntaxErrorException) {
-            Logger.getLogger(DBHelper::class.java.name).log(Level.SEVERE, "There was a sql syntax error", error)
-            Logger.getLogger(DBHelper::class.java.name).log(Level.SEVERE, "SQL script was: ", script)
+            Logger.getLogger(DBHelper::class.java.name).log(Level.WARNING, "There was a sql syntax error", error)
+            Logger.getLogger(DBHelper::class.java.name).log(Level.WARNING, "SQL script was: ", script)
         }
         return -1
+    }
+
+    private fun getConnectionPool() : HikariDataSource {
+        if (connectionPool != null) {
+            return connectionPool!!
+        }
+        val config = HikariConfig()
+
+        // Configure which instance and what database user to connect with.
+        config.jdbcUrl = String.format("jdbc:mysql:///%s", Constant.DB_NAME)
+        config.username = Constant.DEFAULT_USERNAME // e.g. "root", "postgres"
+        config.password = Constant.DEFAULT_PASSWORD // e.g. "my-password"
+
+        // For Java users, the Cloud SQL JDBC Socket Factory can provide authenticated connections.
+        // See https://github.com/GoogleCloudPlatform/cloud-sql-jdbc-socket-factory for details.
+        config.addDataSourceProperty("socketFactory", "com.google.cloud.sql.mysql.SocketFactory")
+        config.addDataSourceProperty("cloudSqlInstance", Constant.PRODUCTION_NA_SQL_DB_INSTANCE)
+        config.addDataSourceProperty("useSSL", "false")
+        config.addDataSourceProperty("driverType", "thin")
+
+        // ... Specify additional connection properties here.
+        // ...
+//        config.connectionTimeout = 10000 // 10 seconds
+        // idleTimeout is the maximum amount of time a connection can sit in the pool. Connections that
+        // sit idle for this many milliseconds are retried if minimumIdle is exceeded.
+        config.maxLifetime = 1800000 // 30 minutes
+        logger.log(Level.INFO, "max connections is: ${config.maximumPoolSize}")
+        config.maximumPoolSize = 20
+        config.leakDetectionThreshold = 20000
+        // Initialize the connection pool using the configuration object.
+        connectionPool = HikariDataSource(config)
+        return connectionPool!!
     }
 }

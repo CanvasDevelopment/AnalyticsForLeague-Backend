@@ -11,12 +11,12 @@ import java.util.logging.Logger
  * @author Josiah Kendall
  */
 class CreepsPerMinDAOImpl(private val dbHelper: DBHelper) : CreepsPerMinDAO {
-
+    private val tableName = "creepspermin"
     override fun saveCreepsPerMin(creepsPerMin: CreepsPerMin): Long {
 
         try {
             val queryString = String.format(
-                    "Insert into creepspermindeltas ("
+                    "Insert into $tableName ("
                             + "ZeroToTen,"
                             + "TenToTwenty,"
                             + "TwentyToThirty,"
@@ -45,7 +45,7 @@ class CreepsPerMinDAOImpl(private val dbHelper: DBHelper) : CreepsPerMinDAO {
 
     override fun getCreepsPerMin(creepsPerMinId: Long): CreepsPerMin {
         try {
-            val query = "SELECT * from creepspermindeltas WHERE Id = " + creepsPerMinId
+            val query = "SELECT * from $tableName WHERE Id = " + creepsPerMinId
             val resultSet = dbHelper.executeSqlQuery(query)
             if (resultSet.next()) {
                 val cmpd = CreepsPerMin()

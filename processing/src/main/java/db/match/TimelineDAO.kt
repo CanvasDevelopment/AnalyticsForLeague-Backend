@@ -15,7 +15,7 @@ import java.util.logging.Logger
  */
 class TimelineDAO(val dbHelper : DBHelper, val gameStageDeltasDAO: GameStageDeltaDAOImpl) {
 
-    val TIMELINE_TABLE = "timeline"
+    val TIMELINE_TABLE = "Timeline"
     val timelineColumns = TimelineColumns()
     val tables = Tables()
 
@@ -64,12 +64,13 @@ class TimelineDAO(val dbHelper : DBHelper, val gameStageDeltasDAO: GameStageDelt
         val csdpm = gameStageDeltasDAO.getGameStageDeltasForTimeline(id, tables.CS_DIFF_PER_MIN)
         val xpdpm = gameStageDeltasDAO.getGameStageDeltasForTimeline(id, tables.XP_DIFF_PER_MIN)
         val dtdpm = gameStageDeltasDAO.getGameStageDeltasForTimeline(id, tables.DAMAGE_TAKEN_DIFF_PER_MIN)
-        return result.produceTimeline(cpm, xpm, gpm, dtpm, csdpm, xpdpm, dtdpm)
-
+        val timeline =  result.produceTimeline(cpm, xpm, gpm, dtpm, csdpm, xpdpm, dtdpm)
+        result.close()
+        return timeline
     }
 
     private fun Long.logId(tableName : String) {
         val message = "Saved item to table $tableName with id result : $this"
-        Logger.getLogger(TimelineDAO::class.java.name).log(Level.SEVERE, message, "")
+        Logger.getLogger(TimelineDAO::class.java.name).log(Level.INFO, message, "")
     }
 }

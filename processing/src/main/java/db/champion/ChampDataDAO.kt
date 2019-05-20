@@ -53,7 +53,9 @@ class ChampDataDAO(private val dbHelper: DBHelper) {
         val sql = "select * from $tableName " +
                 "where id = '$id'"
         val result = dbHelper.executeSqlQuery(sql)
-        return result.first()
+        val exists = result.first()
+        result.close()
+        return exists
     }
 
     fun loadChampData(champId : String, summonerId : String) : ChampData {
@@ -62,7 +64,10 @@ class ChampDataDAO(private val dbHelper: DBHelper) {
                 "WHERE Id = '$champId'"
         val result = dbHelper.executeSqlQuery(sql)
         result.next()
-        return result.produceChampData(summonerId)
+        val champData =  result.produceChampData(summonerId)
+        result.close()
+
+        return champData
     }
 
     /**
@@ -91,6 +96,7 @@ class ChampDataDAO(private val dbHelper: DBHelper) {
         while(result.next()) {
             champs.add(result.produceChampData(summonerId))
         }
+        result.close()
         return champs
     }
 

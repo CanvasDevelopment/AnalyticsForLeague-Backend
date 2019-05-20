@@ -87,7 +87,7 @@ class SummonerDAOContractImpl
                 summoner.summonerLevel = resultSet.getInt("SummonerLevel")
                 summoner.accountId = resultSet.getString("AccountId")
                 summoner.revisionDate = resultSet.getLong("RevisionDate")
-
+                resultSet.close()
                 log.info("Successfully loaded summoner : \n" + summoner.toString())
                 return summoner
             }
@@ -111,7 +111,7 @@ class SummonerDAOContractImpl
                 summoner.summonerLevel = resultSet.getInt("SummonerLevel")
                 summoner.accountId = resultSet.getString("AccountId")
                 summoner.revisionDate = resultSet.getLong("RevisionDate")
-
+                resultSet.close()
                 log.info("Successfully loaded summoner : \n" + summoner.toString())
                 return summoner
             }

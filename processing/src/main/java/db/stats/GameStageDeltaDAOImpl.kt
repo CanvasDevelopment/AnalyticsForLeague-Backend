@@ -53,7 +53,10 @@ class GameStageDeltaDAOImpl(private val dbHelper: DBHelper) : GameStageDeltasDAO
                 "WHERE timelineId = $timelineId"
         val result = dbHelper.executeSqlQuery(sql)
         result.next()
-        return result.produceGameStageStat()
+        val gameStage = result.produceGameStageStat()
+        result.close()
+
+        return gameStage
     }
 
     override fun getGameStageDeltas(gameStageDeltasId: Long, tableName: String): GameStageDelta? {
@@ -68,6 +71,7 @@ class GameStageDeltaDAOImpl(private val dbHelper: DBHelper) : GameStageDeltasDAO
                 gameStageDelta.tenToTwenty = resultSet.getDouble("TenToTwenty")
                 gameStageDelta.twentyToThirty = resultSet.getDouble("TwentyToThirty")
                 gameStageDelta.thirtyToEnd = resultSet.getDouble("ThirtyToEnd")
+                resultSet.close()
 
                 return gameStageDelta
             }

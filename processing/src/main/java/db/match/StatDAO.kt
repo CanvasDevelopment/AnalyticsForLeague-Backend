@@ -10,7 +10,7 @@ import util.columnnames.StatsColumns
  */
 class StatDAO(val dbHelper: DBHelper) {
     val statsColumns = StatsColumns()
-    val STATS_TABLE = "stats"
+    val STATS_TABLE = "Stats"
     fun saveStats(stats: Stats, participantRowId: Long) : Long {
         val sql = "insert into $STATS_TABLE(${statsColumns.PARTICIPANT_ROW_ID},\n" +
                 "${statsColumns.PARTICIPANT_ID},\n" +
@@ -152,7 +152,9 @@ class StatDAO(val dbHelper: DBHelper) {
                 "WHERE ${statsColumns.PARTICIPANT_ROW_ID} = $particpantRowId"
         val result = dbHelper.executeSqlQuery(sql)
         result.next()
-        return result.produceStats()
+        val stats = result.produceStats()
+        result.close()
+        return stats
     }
 
 

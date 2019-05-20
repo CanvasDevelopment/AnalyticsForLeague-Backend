@@ -13,7 +13,7 @@ class RateLimitDao(val dbHelper: DBHelper) {
 
     private val log = Logger.getLogger(this::class.java.name)
 
-    val TABLE_NAME = "rateLimitBucket"
+    val TABLE_NAME = "RateLimitBucket"
     val ID = "id"
     private val ENDPOINT_ID = "endpointId"
     private val MAX_REQUESTS = "maxRequests"
@@ -63,7 +63,7 @@ class RateLimitDao(val dbHelper: DBHelper) {
         while (resultSet.next()) {
             rates.add(resultSet.produceRateLimit())
         }
-
+        resultSet.close()
         return rates
     }
 
@@ -147,7 +147,9 @@ class RateLimitDao(val dbHelper: DBHelper) {
         val sql = "SELECT * FROM $TABLE_NAME WHERE $ENDPOINT_ID = $endpointId " +
                 "AND $RATE_DURATION = ${bucket.rateDuration}"
         val result = dbHelper.executeSqlQuery(sql)
-        return result.next()
+        val exists = result.next()
+        result.close()
+        return exists
     }
 
     private fun ResultSet.produceRateLimit() : RateLimitBucket {
