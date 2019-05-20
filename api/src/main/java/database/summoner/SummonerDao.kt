@@ -82,12 +82,12 @@ class SummonerDao(private val dbHelper : DbHelper) : SummonerDAOContract {
                         resultSet.getLong("RevisionDate"))
 
                 log.info("Successfully loaded summoner : \n" + summoner.toString())
+                resultSet.close()
                 return summoner
             }
         } catch (ex: SQLException) {
             log.severe(ex.message)
         }
-
         return null
     }
 

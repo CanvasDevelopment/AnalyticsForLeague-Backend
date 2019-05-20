@@ -39,7 +39,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
         val sqlEarlyGame = Builder()
                 .select("$accumulatorType(${hero+statName+gameStage}) as ${hero+statName+ gameStage}, " +
                         "$accumulatorType(${villan + statName + gameStage}) as ${villan+statName+ gameStage}")
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' And ${hero+statName+gameStage} Is Not Null and ${hero+statName+gameStage} > 0")
                 .limit(numberOfGames)
                 .toSql()
@@ -71,7 +71,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
          val sqlEarlyGame = Builder()
                 .select("$accumulatorType(${hero+statName+gameStage}) as ${hero+statName+ gameStage}, " +
                         "$accumulatorType(${villan + statName + gameStage}) as ${villan+statName+ gameStage}")
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 // note that we put > 0 for the select type - that is because the number of delta should never be 0
                 .where("heroSummonerId = '$summonerId' And ${hero+statName+gameStage} Is Not Null and ${hero+statName+gameStage} > 0 AND heroChampId = $champId")
                 .limit(numberOfGames)
@@ -99,7 +99,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
     fun fetchHeadToHeadStat(summonerId : String, numberOfGames: Int, lane : String, accumulatorType: String, statName: String, champId: Int) : HeadToHeadStat {
         val sqlEarlyGame = Builder()
                 .select("$accumulatorType(hero$statName) as hero$statName,$accumulatorType(villan$statName) as villan$statName")
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' And hero$statName Is Not Null and hero$statName > 0 AND heroChampId = $champId")
                 .limit(numberOfGames)
                 .toSql()
@@ -128,7 +128,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
 
         val sqlEarlyGame = Builder()
                 .select("${hero+statName} , ${villan+statName}")
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' And ${hero + statName} Is Not Null") // we do not put > 0 here, as it is not a delta select
                 .limit(numberOfGames)
                 .toSql()
@@ -159,7 +159,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
 
         val sqlEarlyGame = Builder()
                 .select("${hero+statName} , ${villan+statName}")
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' And ${hero + statName} Is Not Null And heroChampId = $heroChampId") // we do not put > 0 here, as it is not a delta select
                 .limit(numberOfGames)
                 .toSql()
@@ -191,7 +191,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
 
         val sql = Builder()
                 .select("${hero+statName+gameStage} , ${villan+statName + gameStage}")
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' " +
                         "And ${hero + statName + gameStage} Is Not Null " +
                         "And ${hero+statName+gameStage} > 0 " +
@@ -226,7 +226,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
 
         val sql = Builder()
                 .select("${hero+statName+gameStage} , ${villan+statName + gameStage}")
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' " +
                         "And ${hero + statName + gameStage} Is Not Null " +
                         "And ${hero+statName+gameStage} > 0 " +
@@ -259,7 +259,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
         val sqlEarlyGame = Builder()
                 .select("$accumulatorType(${hero+statName}) as ${hero+statName}, " +
                         "$accumulatorType(${villan + statName}) as ${villan+statName}")
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' And ${hero+statName} Is Not Null") // we do not put > 0 here, as it is not a delta select
                 .limit(numberOfGames)
                 .toSql()
@@ -353,7 +353,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
                         "$statAccumulator(${hero+deltaType}MidGame) as $heroMidGame," +
                         "$statAccumulator(${villan+deltaType}MidGame) as $villanMidGame," +
                         "$statAccumulator(${hero+deltaType}LateGame) as $heroLateGame,"+
-                        "$statAccumulator(${villan+deltaType}LateGame) as $villanLateGame").tableName("${lane}_summarystats")
+                        "$statAccumulator(${villan+deltaType}LateGame) as $villanLateGame").tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId'")
                 .limit(numberOfGames)
                 .toSql()
@@ -382,7 +382,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
                         "$statAccumulator(${hero+deltaType}MidGame) as $heroMidGame," +
                         "$statAccumulator(${villan+deltaType}MidGame) as $villanMidGame," +
                         "$statAccumulator(${hero+deltaType}LateGame) as $heroLateGame,"+
-                        "$statAccumulator(${villan+deltaType}LateGame) as $villanLateGame").tableName("${lane}_summarystats")
+                        "$statAccumulator(${villan+deltaType}LateGame) as $villanLateGame").tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' and heroChampId = $champId")
                 .limit(numberOfGames)
                 .toSql()
@@ -412,7 +412,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
         val statName = hero + statType+gameStage
         val sqlEarlyGame = Builder()
                 .select("$statAccumulator($statName) as $gameStage")
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' And $statName Is Not Null and $statName > 0")
                 .limit(numberOfGames)
                 .toSql()
@@ -441,7 +441,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
     fun fetchStat(numberOfGames : Int, statType: String, lane: String, summonerId : String, gameStage: String, statAccumulator: String, champId: Int) : Float {
         val sqlEarlyGame = Builder()
                 .select("$statAccumulator(${statType+gameStage}) as $gameStage")
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 // note that we put > 0 for the select type - that is because the number of delta should never be 0
                 .where("heroSummonerId = '$summonerId' And ${statType+gameStage} Is Not Null and ${statType+gameStage} > 0 AND heroChampId = $champId")
                 .limit(numberOfGames)
@@ -469,7 +469,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
     fun fetchStat(numberOfGames : Int, statType: String, lane: String, summonerId : String, statAccumulator: String, champId: Int) : Float {
         val sqlEarlyGame = Builder()
                 .select("$statAccumulator(${hero+statType}) as ${hero+statType}")
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' And ${hero+statType} Is Not Null AND heroChampId = $champId")
                 .limit(numberOfGames)
                 .toSql()
@@ -495,7 +495,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
     fun fetchStat(numberOfGames : Int, statType: String, lane: String, summonerId : String, statAccumulator: String) : Float {
         val sqlEarlyGame = Builder()
                 .select("$statAccumulator(${hero+statType}) as ${hero+statType}")
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' And ${hero+statType} Is Not Null") // we do not put > 0 here, as it is not a delta select
                 .limit(numberOfGames)
                 .toSql()
@@ -522,7 +522,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
 
         val sqlEarlyGame = Builder()
                 .select(statType)
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' And $statType Is Not Null And heroChampId = $heroChampId") // we do not put > 0 here, as it is not a delta select
                 .limit(numberOfGames)
                 .toSql()
@@ -550,7 +550,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
     fun fetchStatList(numberOfGames : Int, statType: String, lane: String, summonerId : String) : ArrayList<Float> {
         val sqlEarlyGame = Builder()
                 .select(statType)
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' And $statType Is Not Null") // we do not put > 0 here, as it is not a delta select
                 .limit(numberOfGames)
                 .toSql()
@@ -569,7 +569,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
         val statType = "heroWin"
         val sqlResult = Builder()
                 .select(statType)
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' And $statType Is Not Null") // we do not put > 0 here, as it is not a delta select
                 .limit(numberOfMatches)
                 .toSql()
@@ -582,7 +582,7 @@ class AnalysisDao (private val dbHelper: DbHelper){
         val statType = "heroWin"
         val sqlResult = Builder()
                 .select(statType)
-                .tableName("${lane}_summarystats")
+                .tableName("${lane}_SummaryStats")
                 .where("heroSummonerId = '$summonerId' And $statType Is Not Null And heroChampId = $champKey") // we do not put > 0 here, as it is not a delta select
                 .limit(numberOfMatches)
                 .toSql()

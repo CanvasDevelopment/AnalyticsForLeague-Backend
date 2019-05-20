@@ -70,7 +70,7 @@ class MatchDaoTests {
     @Before
     fun setUp() {
         val sql = "Delete from matchSummary"
-        val sql2 = "Delete from top_summarystats"
+        val sql2 = "Delete from top_SummaryStats"
         dbHelper.executeSQLScript(sql)
         dbHelper.executeSQLScript(sql2)
     }
@@ -205,7 +205,7 @@ class MatchDaoTests {
     @Test
     fun `Test That We Can Fetch Correct Game Result And Champ Ids`() {
         val summonerId = "1542360L"
-        val tableName = "top_summarystats"
+        val tableName = "top_SummaryStats"
         val gameId = 161346846L
 
         val resultSet = matchDao.fetchWinAndChampIds(gameId,summonerId,tableName)
@@ -232,7 +232,7 @@ class MatchDaoTests {
         columnNames.add("villanCreepsEarlyGame")
         columnNames.add("villanCreepsMidGame")
         columnNames.add("villanCreepsLateGame")
-        val resultSet = matchDao.fetchMatchDetails(heroSummonerId,gameId,columnNames,"top_summarystats")
+        val resultSet = matchDao.fetchMatchDetails(heroSummonerId,gameId,columnNames,"top_SummaryStats")
         assert(resultSet.first())
 
         Assert.assertEquals(resultSet.getFloat("heroCreepsEarlyGame"), heroCreepsEarlyGame, 0.05f)
@@ -258,7 +258,7 @@ class MatchDaoTests {
         columnNames.add("villanCreepsEarlyGame")
         columnNames.add("villanCreepsMidGame")
         columnNames.add("villanCreepsLateGame")
-        val resultSet = matchDao.fetchMatchDetails(heroSummonerId, gameId2,columnNames,"top_summarystats")
+        val resultSet = matchDao.fetchMatchDetails(heroSummonerId, gameId2,columnNames,"top_SummaryStats")
         assert(resultSet.first())
         Assert.assertEquals(resultSet.getFloat("heroCreepsEarlyGame"), heroCreepsEarlyGame, 0.05f)
         Assert.assertEquals(resultSet.getFloat("heroCreepsMidGame"), heroCreepsMidGame, 0.05f)
@@ -271,7 +271,7 @@ class MatchDaoTests {
 
     private fun produceSqlToSaveMatch(gameId : Long) :String {
         // sql to save all these stats
-        return "insert INTO top_summarystats(" +
+        return "insert INTO Top_SummaryStats(" +
                 "gameId, " +
                 "heroSummonerId, " +
                 "heroChampId, " +

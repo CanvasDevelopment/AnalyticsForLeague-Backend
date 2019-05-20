@@ -29,7 +29,7 @@ class TableNames {
      * @return      The table name that we can use to pull data from the table.
      */
     fun getRefinedStatsTableName(role : Int) : String {
-        return "${produceRoleString(role)}_summarystats"
+        return "${produceRoleString(role)}_SummaryStats"
     }
 
     /**
@@ -38,6 +38,6 @@ class TableNames {
      * @return      The table name that we can use to pull data from the table.
      */
     fun getRefinedStatsTableName(role : String) : String {
-        return "${role}_summarystats"
+        return "${role}_SummaryStats"
     }
 }

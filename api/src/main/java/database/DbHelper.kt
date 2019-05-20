@@ -1,6 +1,8 @@
 package database
 
 import com.google.appengine.api.utils.SystemProperty
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import util.Constant
 import java.sql.*
 import java.util.logging.Level
@@ -33,6 +35,7 @@ class DbHelper {
     private var password: String? = null
 
     private var connection: Connection? = null
+    private var connectionPool : HikariDataSource? = null
     private var currentlyConnected = false
 
     /**
@@ -43,14 +46,14 @@ class DbHelper {
         this.host = Constant.Database.DEFAULT_HOST
         this.username = Constant.Database.DEFAULT_USERNAME
         this.password = Constant.Database.DEFAULT_PASSWORD
-        connect()
+//        connect()
     }
 
     constructor(host: String, username: String, password: String) {
         this.host = host
         this.username = username
         this.password = password
-        connect()
+//        connect()
     }
 
     /**
@@ -67,7 +70,10 @@ class DbHelper {
                 // App engine sql driver
                 Class.forName("com.mysql.jdbc.GoogleDriver")
                 return try {
-                    connection = DriverManager.getConnection(url)
+                    if (connection != null) {
+                        connection!!.close()
+                    }
+                    connection = getConnectionPool().connection
                     currentlyConnected = connection!!.isValid(1000)
                     currentlyConnected
                 } catch (sqlException: SQLException) {
@@ -133,6 +139,7 @@ class DbHelper {
 //            throw IllegalStateException("No Current database connection. Use DbConnect() to connect to a database")
         }
         val statement = connection!!.createStatement()
+        statement.closeOnCompletion()
         val resultSet = statement.executeQuery(query)
         return resultSet
     }
@@ -141,7 +148,7 @@ class DbHelper {
      * Execute a statement that updates the database
      * @param query The query to run against the database.
      * *
-     * @return 0 if nothing, or the number of rows effected (i think).
+     * @return 0 if nothing, or the number of rows effected.
      * *
      * @throws java.sql.SQLException
      * *
@@ -155,11 +162,13 @@ class DbHelper {
 
         val statement = connection!!.prepareStatement(query)
         statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS)
+        statement.closeOnCompletion()
         val generatedKeys = statement.generatedKeys
         var id : Long = 0
         if (generatedKeys.next()) {
             id = generatedKeys.getLong(1)
         }
+        statement.close()
         return id
     }
 
@@ -177,5 +186,38 @@ class DbHelper {
             id = generatedKeys.getLong(1)
         }
         return id
+    }
+
+    private fun getConnectionPool() : HikariDataSource {
+        if (connectionPool != null) {
+            return connectionPool!!
+        }
+        val config = HikariConfig()
+
+        // Configure which instance and what database user to connect with.
+        config.jdbcUrl = String.format("jdbc:mysql:///%s", Constant.Database.DB_NAME)
+        config.username = Constant.Database.DEFAULT_USERNAME // e.g. "root", "postgres"
+        config.password = Constant.Database.DEFAULT_PASSWORD // e.g. "my-password"
+
+        // For Java users, the Cloud SQL JDBC Socket Factory can provide authenticated connections.
+        // See https://github.com/GoogleCloudPlatform/cloud-sql-jdbc-socket-factory for details.
+        config.addDataSourceProperty("socketFactory", "com.google.cloud.sql.mysql.SocketFactory")
+        config.addDataSourceProperty("cloudSqlInstance", Constant.Database.PRODUCTION_NA_SQL_DB_INSTANCE)
+        config.addDataSourceProperty("useSSL", "false")
+        config.addDataSourceProperty("driverType", "thin")
+
+        // ... Specify additional connection properties here.
+        // ...
+        config.connectionTimeout = 10000 // 10 seconds
+        // idleTimeout is the maximum amount of time a connection can sit in the pool. Connections that
+        // sit idle for this many milliseconds are retried if minimumIdle is exceeded.
+        config.idleTimeout = 50000 // about 45 seconds
+        config.maxLifetime = 1800000 // 30 minutes
+        config.maximumPoolSize = 20
+        config.leakDetectionThreshold = 20000
+
+        // Initialize the connection pool using the configuration object.
+        connectionPool = HikariDataSource(config)
+        return connectionPool!!
     }
 }

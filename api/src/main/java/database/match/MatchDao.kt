@@ -12,14 +12,14 @@ import java.sql.ResultSet
 class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
 
     private val gameIdColumn = "gameId"
-    private val laneColumn = "lane"
-    private val roleColumn = "role"
+    private val laneColumn = "Lane"
+    private val roleColumn = "Role"
     private val timestampColumn = "TIMESTAMP"
-    private val matchSummaryTable = "matchsummary"
+    private val matchSummaryTable = "MatchSummary"
     private val summonerIdColumn = "SummonerId"
     private val heroSummonerIdColumn = "heroSummonerId"
-    private val matchTable = "matchtable"
-    private val champColumn = "champion"
+    private val matchTable = "MatchTable"
+    private val champColumn = "Champion"
     private val heroChampId = "heroChampId"
     private val villainChampId = "villanChampId"
     private val heroWin = "heroWin"
@@ -52,7 +52,7 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
                     resultSet.getLong(timestampColumn),
                     summonerId))
         }
-
+        resultSet.close()
         return results
     }
 
@@ -83,7 +83,7 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
                         resultSet.getLong(timestampColumn),
                         summonerId))
         }
-
+        resultSet.close()
         return results
     }
 
@@ -109,7 +109,7 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
                     resultSet.getLong(timestampColumn),
                     summonerId))
         }
-
+        resultSet.close()
         return results
     }
 
@@ -133,7 +133,7 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
                     resultSet.getLong(timestampColumn),
                     summonerId))
         }
-
+        resultSet.close()
         return results
     }
 
@@ -157,7 +157,7 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
                     resultSet.getLong(timestampColumn),
                     summonerId))
         }
-
+        resultSet.close()
         return results
     }
 
@@ -181,7 +181,7 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
                     resultSet.getLong(timestampColumn),
                     summonerId))
         }
-
+        resultSet.close()
         return results
     }
 
@@ -214,7 +214,7 @@ class MatchDao(private val dbHelper : DbHelper) : MatchDaoContract {
 //        // todo make this smarter.
 //        // we are currently just defaulting stats to the following
 //
-//        val tableName = "{$role}_summarystats"
+//        val tableName = "{$role}_SummaryStats"
 //        val sql = Builder()
 //                .select("$gameIdColumn, $summonerIdColumn, $champColumn")
 //                .tableName(tableName)

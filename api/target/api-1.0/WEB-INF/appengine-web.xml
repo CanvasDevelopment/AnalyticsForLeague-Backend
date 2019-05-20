@@ -9,6 +9,9 @@
         <include path="/champion/**.png" >
         </include>
     </static-files>
+    <system-properties>
+        <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
+    </system-properties>
     <basic-scaling>
         <max-instances>5</max-instances>
     </basic-scaling>

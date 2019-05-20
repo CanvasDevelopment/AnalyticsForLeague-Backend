@@ -27,11 +27,12 @@ class ProcessingImpl : ProcessingContract {
 
     val km = KodeinManager_api()
     private val gson = Gson()
-    private val PRODUCTION_URL = "https://processing-dot-analytics-for-league.appspot.com/"
+    private val PRODUCTION_URL = "https://processing-dot-analytics-gg.appspot.com"
     private val LOCAL_URL = "http://192.168.0.103:65070"
 
     private val matchSummaryDao : MatchSummaryDao = km.kodein.instance()
     private val syncQueue = QueueFactory.getDefaultQueue()
+    private val log = Logger.getLogger(this::class.java.name)
 
     private val url : String
 
@@ -44,7 +45,7 @@ class ProcessingImpl : ProcessingContract {
     }
 
     override fun syncUser(summonerId : String) : Boolean {
-        val syncUrl = url + "/_ah/processing/api/v1/syncUser/$summonerId"
+        val syncUrl = "$url/_ah/processing/api/v1/syncUser/$summonerId"
         val result = sendHttpGetRequest(Response::class.java, URL(syncUrl))
         return result.code == 200
     }
@@ -58,11 +59,12 @@ class ProcessingImpl : ProcessingContract {
     }
 
     private fun <T> sendHttpGetRequest(type : Class<T>, url : URL) : NetworkResult<T> {
+        log.info("Sending request to url: $url")
         val conn = url.openConnection() as HttpURLConnection
         conn.doOutput = true
         conn.requestMethod = "GET"
-        conn.connectTimeout = 10000
-        conn.readTimeout = 10000
+        conn.connectTimeout = 250000
+        conn.readTimeout = 250000
 
         val respCode = conn.responseCode
         if (respCode == HttpURLConnection.HTTP_OK) {
@@ -76,6 +78,9 @@ class ProcessingImpl : ProcessingContract {
             }
             reader.close()
             val result = gson.fromJson(response.toString(), type)
+            // more logging
+            log.info("received successful response : $response")
+
             return NetworkResult(result, 200)
         }
         // return our error
@@ -83,15 +88,15 @@ class ProcessingImpl : ProcessingContract {
     }
 
     override fun syncUserMatchList(summonerId: String): Boolean {
-        val syncUrl = url + "/_ah/processing/api/v1/syncMatchList/$summonerId"
+        val syncUrl = "$url/_ah/processing/api/v1/syncMatchList/$summonerId"
         val result : NetworkResult<Response> = sendHttpGetRequest(Response::class.java, URL(syncUrl))
 
         // send request to the database
         if (result.code == 200) {
 
             // fetch the match list from the db, and dispatch a bunch of tasks to the task queue.
-
-            queueTasksForMatches(summonerId, syncQueue)
+            // todo rather than fetching all the matches from the server, the processing should dispatch all the requests itself.
+//            queueTasksForMatches(summonerId, syncQueue)
         }
 
         return result.code == 200
@@ -119,6 +124,7 @@ class ProcessingImpl : ProcessingContract {
         val syncMatchUrl = "/_ah/api/match/v1/syncMatch"
 
         listOfSummaries.forEach {
+            // if production, do it different?
             Logger.getLogger(this::class.java.name).log(Level.SEVERE, "Dispatching task for ${it.gameId}", "")
             val task = TaskOptions.Builder.withDefaults()
             task.method(TaskOptions.Method.GET)

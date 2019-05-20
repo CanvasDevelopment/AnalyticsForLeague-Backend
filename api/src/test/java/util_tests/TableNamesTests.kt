@@ -13,7 +13,7 @@ class TableNamesTests {
         val role = "adc"
         val tableNames = TableNames()
         val tableName = tableNames.getRefinedStatsTableName(role)
-        assert(tableName == "adc_summarystats")
+        assert(tableName == "adc_SummaryStats")
     }
 
     @Test
@@ -21,6 +21,6 @@ class TableNamesTests {
         val role = 1 // 1 = top
         val tableNames = TableNames()
         val tableName = tableNames.getRefinedStatsTableName(role)
-        assert(tableName == "top_summarystats")
+        assert(tableName == "top_SummaryStats")
     }
 }

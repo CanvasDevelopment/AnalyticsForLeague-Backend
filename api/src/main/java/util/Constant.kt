@@ -8,6 +8,9 @@ class Constant {
         val DEFAULT_HOST = "jdbc:mysql://127.0.0.1:3306/lol_analytics?useLegacyDatetimeCode=false&serverTimezone=UTC"
         val DEFAULT_USERNAME = "root"
         val DEFAULT_PASSWORD = "Idnw2bh2"
+
+        val PRODUCTION_NA_SQL_DB_INSTANCE = "analytics-gg:us-central1:analytics-gg"
+        val DB_NAME: Any = "lol_analytics"
     }
 
 

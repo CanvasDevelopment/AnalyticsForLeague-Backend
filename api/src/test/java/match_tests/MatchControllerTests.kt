@@ -34,7 +34,7 @@ class MatchControllerTests {
         val role = 1
         val summonerId = "1L"
         val matchId = 1L
-        val tableName = "top_summarystats"
+        val tableName = "top_SummaryStats"
         val resultSet = mock(ResultSet::class.java)
         val resultSet2 = mock(ResultSet::class.java)
         val headToHeadStat = HeadToHeadStat(50f, 50f)

@@ -62,6 +62,7 @@ class Setup {
         dbHelper.executeSQLScript(sql28)
         dbHelper.executeSQLScript(sql29)
         dbHelper.executeSQLScript(sql30)
+        dbHelper.executeSQLScript(sql31)
     }
 
     // TODO make this read the string from the [initiate.sql] file
@@ -636,4 +637,15 @@ private val sql7 = "Create TABLE csdiffpermin(\n" +
             "  FirstRequestTime BIGINT,\n" +
             "  RateDuration INTEGER\n" +
             ");"
+
+            private val sql31 = "create table ChampData\n" +
+                    "(\n" +
+                    "  version    varchar(32)   null,\n" +
+                    "  id         varchar(32)   not null\n" +
+                    "    primary key,\n" +
+                    "  champ_key  varchar(32)   null,\n" +
+                    "  champ_name varchar(32)   null,\n" +
+                    "  title      varchar(64)   null,\n" +
+                    "  burb       varchar(1024) null\n" +
+                    ");"
 }

@@ -16,6 +16,8 @@ import java.sql.ResultSet
 fun ResultSet.produceHeadToHeadStat(performanceProfile : HashMap<String, Float>) : HeadToHeadStat{
 
     val resultSetController = ResultSetController(this)
-    return resultSetController.produceHeadToHeadStat(performanceProfile)
+    val headToHead = resultSetController.produceHeadToHeadStat(performanceProfile)
+    close()
+    return headToHead
 }
 

@@ -8,7 +8,7 @@ import java.util.ArrayList
 
 class MatchSummaryDao(val dbHelper: DbHelper){
 
-    private val MATCH_SUMMARY = "matchsummary"
+    private val MATCH_SUMMARY = "MatchSummary"
     private val PLATFORM_ID = "PlatformId"
     private val GAME_ID = "GameId"
     private val CHAMPION = "Champion"
@@ -63,6 +63,7 @@ class MatchSummaryDao(val dbHelper: DbHelper){
             ms.role = result.getString(ROLE)
             ms.lane = result.getString(LANE)
             ms.summonerId = result.getString(SUMMONER_ID)
+            result.close()
             return ms
         }
         // need to handle this in our tests
@@ -77,7 +78,11 @@ class MatchSummaryDao(val dbHelper: DbHelper){
     fun exists(gameId: Long) : Boolean {
         val queryString = "SELECT * From $MATCH_SUMMARY WHERE GameId = $gameId"
         val result = dbHelper.executeSqlQuery(queryString)
-        if (result.next()) return true
+        if (result.next()) {
+            result.close()
+            return true
+        }
+        result.close()
         return false
 
     }
@@ -130,7 +135,7 @@ class MatchSummaryDao(val dbHelper: DbHelper){
         while (result.next()) {
             summaries.add(result.produceMatchSummary())
         }
-
+        result.close()
         return summaries
     }
 

@@ -175,7 +175,7 @@ class MatchController(private val matchDao : MatchDao,
         }
 
         val detailsUrl = "$role/$matchId/$summonerId"
-        return MatchSummary(
+        val ms = MatchSummary(
                 matchId,
                 resultSet.getInt(HERO_CHAMP_ID),
                 resultSet.getInt(VILLAN_CHAMP_ID),
@@ -186,6 +186,9 @@ class MatchController(private val matchDao : MatchDao,
                 detailsUrl,
                 summonerId
              )
+
+        resultSet.close()
+        return ms
     }
 
     fun testResultSet(result : ResultSet) : Boolean{
@@ -231,7 +234,9 @@ class MatchController(private val matchDao : MatchDao,
         columnNames.add(StatColumns.VILLAN_LATE_GAME_GOLD)
         columnNames.add(StatColumns.VILLAN_LATE_GAME_XP)
         val resultSet = matchDao.fetchMatchDetails(summonerId,matchId,columnNames,tableName)
-        return produceMatchPerformanceDetails(resultSet)
+        val matchPerformanceDetails =  produceMatchPerformanceDetails(resultSet)
+        resultSet.close()
+        return matchPerformanceDetails
         // produce a match val from the result set
     }
 
@@ -305,6 +310,8 @@ class MatchController(private val matchDao : MatchDao,
                 result.getFloat(VILLAN_LATE_GAME_XP),
                 result.getFloat(HERO_LATE_GAME_XP)
         ))
+
+        result.close()
         return MatchPerformanceDetails(
                 kda,
                 creeps,
