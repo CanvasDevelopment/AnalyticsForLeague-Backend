@@ -31,7 +31,7 @@ class MatchControl(private val matchDAO: MatchDAO,
                    private val gameSummaryDaoContract: GameSummaryDaoContract) {
 
     private val log = Logger.getLogger(this::class.java.name)
-    private val syncQueue = QueueFactory.getDefaultQueue()
+    private val syncQueue = QueueFactory.getQueue("sync")
 
     val tables = Tables()
 
@@ -372,6 +372,9 @@ class MatchControl(private val matchDAO: MatchDAO,
     fun fetchSyncProgress(summonerId: String) : SyncProgress {
         val latestSyncedMatchId = matchDAO.fetchIdOfMostRecentlySavedMatchForSummoner(summonerId)
         val numberOfSyncedMatches = matchSummaryDAO.loadNumberOfMatchSummariesUpToAndIncludingGivenMatchId(summonerId, latestSyncedMatchId)
+        // fetch number of matches in the match table
+        // number of syncable matches in the match summary list
+
         val numberOfMatches = matchSummaryDAO.loadNumberOfMatchSummariesForASummoner(summonerId)
         return SyncProgress(numberOfMatches, numberOfSyncedMatches)
     }

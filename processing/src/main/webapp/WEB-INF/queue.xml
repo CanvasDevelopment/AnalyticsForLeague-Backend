@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queue-entries>
+    <queue>
+        <name>sync</name>
+        <target>processing</target>
+        <bucket-size>25</bucket-size>
+        <rate>100/s</rate>
+    </queue>
+</queue-entries>

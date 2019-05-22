@@ -68,11 +68,11 @@ class Constant {
     }
 
     object LANE {
-        const val TOP = "top"
-        const val MID = "mid"
-        const val JUNGLE = "jungle"
-        const val ADC = "adc"
-        const val SUPPORT = "support"
+        const val TOP = "Top"
+        const val MID = "Mid"
+        const val JUNGLE = "Jungle"
+        const val ADC = "Adc"
+        const val SUPPORT = "Support"
     }
 
 }

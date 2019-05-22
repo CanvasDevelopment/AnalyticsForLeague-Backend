@@ -14,11 +14,11 @@ class TableNames {
      */
     private fun produceRoleString(roleValue: Int) : String {
         when(roleValue) {
-            role.TOP -> return "top"
-            role.JUNGLE -> return "jungle"
-            role.MID -> return "mid"
-            role.ADC -> return "adc"
-            role.SUPPORT -> return "support"
+            role.TOP -> return "Top"
+            role.JUNGLE -> return "Jungle"
+            role.MID -> return "Mid"
+            role.ADC -> return "ADC"
+            role.SUPPORT -> return "Support"
         }
         throw IllegalStateException("Value given was not a valid role")
     }

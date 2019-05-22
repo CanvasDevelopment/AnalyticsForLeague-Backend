@@ -155,6 +155,7 @@ class MatchSummaryDAO(val dbHelper: DBHelper) : MatchSummaryDaoContract{
      */
     fun loadNumberOfMatchSummariesForASummoner(summonerId: String) : Int {
         val numberOfMatches = "numberOfMatches"
+        // select count of matches that are
         val sql = "SELECT count($GAME_ID) as $numberOfMatches from $MATCH_SUMMARY where $SUMMONER_ID = '$summonerId'"
         val result = dbHelper.executeSqlQuery(sql)
         while (result.first()) {

@@ -56,10 +56,10 @@ class DefaultStatTypes {
 
     fun getDefaultStats(summonerId: String, role : String) : ArrayList<AnalysisStatCardSkeleton> {
 
-        val creepsCard = produceFullStatCard(summonerId, role, CREEPS, "Creeps Per Minute")
-        val damage = produceFullStatCard(summonerId, role, DAMAGE_DEALT, "Damage Dealt Per Minute")
-        val xp = produceFullStatCard(summonerId, role, XP, "XP Per Minute")
-        val gold= produceFullStatCard(summonerId, role, GOLD, "Gold Per Minute")
+        val creepsCard = produceFullStatCard(summonerId, role, CREEPS, "Creeps")
+        val damage = produceFullStatCard(summonerId, role, DAMAGE_DEALT, "Damage Dealt")
+        val xp = produceFullStatCard(summonerId, role, XP, "XP")
+        val gold= produceFullStatCard(summonerId, role, GOLD, "Gold")
 
         val kda = AnalysisStatCardSkeleton(
                 FULL_STAT,

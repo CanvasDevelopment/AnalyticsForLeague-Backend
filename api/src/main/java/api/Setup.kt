@@ -17,6 +17,7 @@ import di.KodeinManager_api
                 ownerName = "com.analyticsforleague",
                 packagePath = "")
 )
+
 class Setup {
 
     private val km = KodeinManager_api()
@@ -28,11 +29,13 @@ class Setup {
     fun initiate(@Named("password") password : String) {
         if (!password.isEmpty()) {
             // do initiate
+            dbHelper.connect()
             initiateTables()
         }
     }
 
     private fun initiateTables() {
+        dbHelper.executeSQLScript(sql31)
         dbHelper.executeSQLScript(sql)
         dbHelper.executeSQLScript(otherSql)
         dbHelper.executeSQLScript(sql3)
@@ -62,8 +65,18 @@ class Setup {
         dbHelper.executeSQLScript(sql28)
         dbHelper.executeSQLScript(sql29)
         dbHelper.executeSQLScript(sql30)
-        dbHelper.executeSQLScript(sql31)
     }
+
+    private val sql31 = "create table ChampData\n" +
+            "(\n" +
+            "  version    varchar(32)   null,\n" +
+            "  id         varchar(32)   not null\n" +
+            "    primary key,\n" +
+            "  champ_key  varchar(32)   null,\n" +
+            "  champ_name varchar(32)   null,\n" +
+            "  title      varchar(64)   null,\n" +
+            "  burb       varchar(1024) null\n" +
+            ");"
 
     // TODO make this read the string from the [initiate.sql] file
     private val sql = "Create Table Ban(\n" +
@@ -638,14 +651,5 @@ private val sql7 = "Create TABLE csdiffpermin(\n" +
             "  RateDuration INTEGER\n" +
             ");"
 
-            private val sql31 = "create table ChampData\n" +
-                    "(\n" +
-                    "  version    varchar(32)   null,\n" +
-                    "  id         varchar(32)   not null\n" +
-                    "    primary key,\n" +
-                    "  champ_key  varchar(32)   null,\n" +
-                    "  champ_name varchar(32)   null,\n" +
-                    "  title      varchar(64)   null,\n" +
-                    "  burb       varchar(1024) null\n" +
-                    ");"
+
 }
