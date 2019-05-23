@@ -192,6 +192,7 @@ class DbHelper {
         if (connectionPool != null) {
             return connectionPool!!
         }
+
         val config = HikariConfig()
 
         // Configure which instance and what database user to connect with.
@@ -202,7 +203,7 @@ class DbHelper {
         // For Java users, the Cloud SQL JDBC Socket Factory can provide authenticated connections.
         // See https://github.com/GoogleCloudPlatform/cloud-sql-jdbc-socket-factory for details.
         config.addDataSourceProperty("socketFactory", "com.google.cloud.sql.mysql.SocketFactory")
-        config.addDataSourceProperty("cloudSqlInstance", Constant.Database.PRODUCTION_NA_SQL_DB_INSTANCE)
+        config.addDataSourceProperty("cloudSqlInstance", Constant.Database.PRODUCTION_OCE_SQL_DB_INSTANCE)
         config.addDataSourceProperty("useSSL", "false")
         config.addDataSourceProperty("driverType", "thin")
 

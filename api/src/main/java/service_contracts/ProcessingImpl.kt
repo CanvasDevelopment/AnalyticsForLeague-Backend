@@ -147,6 +147,9 @@ class ProcessingImpl : ProcessingContract {
     override fun getSyncProgress(summonerId : String): SyncProgress {
         val syncProgressUrl = "$url/_ah/processing/api/v1/syncProgress/$summonerId"
         val result : NetworkResult<Response> = sendHttpGetRequest(Response::class.java, URL(syncProgressUrl))
+        if (result.data == null) {
+            return SyncProgress()
+        }
         return gson.fromJson(result.data!!.data, SyncProgress::class.java)
     }
 

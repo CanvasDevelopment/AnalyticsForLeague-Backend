@@ -1,4 +1,5 @@
 queue:
 - name: sync
   target: processing
-  rate: 50/s
+  rate: 20/s
+  bucket_size: 5

@@ -3,7 +3,7 @@
     <queue>
         <name>sync</name>
         <target>processing</target>
-        <bucket-size>25</bucket-size>
-        <rate>100/s</rate>
+        <bucket-size>15</bucket-size>
+        <rate>50/s</rate>
     </queue>
 </queue-entries>

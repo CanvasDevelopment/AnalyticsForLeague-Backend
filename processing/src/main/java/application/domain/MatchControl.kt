@@ -42,7 +42,6 @@ class MatchControl(private val matchDAO: MatchDAO,
      * @return
      */
     fun downloadAndSaveMatchSummaries(summonerId: String) : Boolean {
-
         // if we don't get a summoner, return
         val summoner = summonerDAOContract.getSummoner(summonerId) ?: return false
         val networkResult : NetworkResult<MatchList> = matchServiceApi.getMatchListForAccount(RIOT_API_KEY, summoner.accountId)
@@ -370,13 +369,15 @@ class MatchControl(private val matchDAO: MatchDAO,
     }
 
     fun fetchSyncProgress(summonerId: String) : SyncProgress {
-        val latestSyncedMatchId = matchDAO.fetchIdOfMostRecentlySavedMatchForSummoner(summonerId)
-        val numberOfSyncedMatches = matchSummaryDAO.loadNumberOfMatchSummariesUpToAndIncludingGivenMatchId(summonerId, latestSyncedMatchId)
+//        val latestSyncedMatchId = matchDAO.fetchIdOfMostRecentlySavedMatchForSummoner(summonerId)
+
+//        val numberOfSyncedMatches = matchSummaryDAO.loadNumberOfMatchSummariesUpToAndIncludingGivenMatchId(summonerId, latestSyncedMatchId)
         // fetch number of matches in the match table
         // number of syncable matches in the match summary list
-
+        val taskStatistics = syncQueue.fetchStatistics()
         val numberOfMatches = matchSummaryDAO.loadNumberOfMatchSummariesForASummoner(summonerId)
-        return SyncProgress(numberOfMatches, numberOfSyncedMatches)
+        val numberSynced = numberOfMatches - taskStatistics.numTasks
+        return SyncProgress(numberOfMatches, numberSynced)
     }
 
 

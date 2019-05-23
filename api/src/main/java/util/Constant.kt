@@ -10,6 +10,8 @@ class Constant {
         val DEFAULT_PASSWORD = "Idnw2bh2"
 
         val PRODUCTION_NA_SQL_DB_INSTANCE = "analytics-gg:us-central1:analytics-gg"
+        val PRODUCTION_OCE_SQL_DB_INSTANCE = "analytics-gg:australia-southeast1:oce-analytics-gg"
+
         val DB_NAME: Any = "lol_analytics"
     }
 

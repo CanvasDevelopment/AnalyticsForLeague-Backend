@@ -11,6 +11,7 @@ public class Constant {
     public static final String DEFAULT_PASSWORD = "Idnw2bh2";
 
     public static final String PRODUCTION_NA_SQL_DB_INSTANCE = "analytics-gg:us-central1:analytics-gg";
+    public static final String PRODUCTION_OCE_SQL_DB_INSTANCE = "analytics-gg:australia-southeast1:oce-analytics-gg";
 
     public static final Object DB_NAME = "lol_analytics";
 }

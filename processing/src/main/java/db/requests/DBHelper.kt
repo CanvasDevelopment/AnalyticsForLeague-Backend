@@ -186,6 +186,7 @@ class DBHelper {
         if (connectionPool != null) {
             return connectionPool!!
         }
+
         val config = HikariConfig()
 
         // Configure which instance and what database user to connect with.
@@ -196,7 +197,7 @@ class DBHelper {
         // For Java users, the Cloud SQL JDBC Socket Factory can provide authenticated connections.
         // See https://github.com/GoogleCloudPlatform/cloud-sql-jdbc-socket-factory for details.
         config.addDataSourceProperty("socketFactory", "com.google.cloud.sql.mysql.SocketFactory")
-        config.addDataSourceProperty("cloudSqlInstance", Constant.PRODUCTION_NA_SQL_DB_INSTANCE)
+        config.addDataSourceProperty("cloudSqlInstance", Constant.PRODUCTION_OCE_SQL_DB_INSTANCE)
         config.addDataSourceProperty("useSSL", "false")
         config.addDataSourceProperty("driverType", "thin")
 
@@ -206,8 +207,10 @@ class DBHelper {
         // idleTimeout is the maximum amount of time a connection can sit in the pool. Connections that
         // sit idle for this many milliseconds are retried if minimumIdle is exceeded.
         config.maxLifetime = 1800000 // 30 minutes
+        config.idleTimeout = 18000
+        config.maximumPoolSize = 40
+        config.connectionTimeout = 10000 // 10 seconds
         logger.log(Level.INFO, "max connections is: ${config.maximumPoolSize}")
-        config.maximumPoolSize = 20
         config.leakDetectionThreshold = 20000
         // Initialize the connection pool using the configuration object.
         connectionPool = HikariDataSource(config)

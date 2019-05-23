@@ -46,7 +46,7 @@ class Sync (val matchControl: MatchControl) {
      */
     fun syncMatchSummaries(summonerId: String): Int {
         matchControl.downloadAndSaveMatchSummaries(summonerId)
-        matchControl.fetchAndSaveMatchesForASummoner(summonerId, 500)
+        matchControl.fetchAndSaveMatchesForASummoner(summonerId, 0)
 
         return 200
     }
