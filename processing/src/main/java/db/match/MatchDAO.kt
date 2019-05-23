@@ -96,7 +96,8 @@ class MatchDAO(val dbHelper : DBHelper,
                 "'${match.gameMode}'," +
                 "'${match.gameType}')"
 
-        dbHelper.executeSQLScript(sql)
+        val result = dbHelper.executeSQLScript(sql)
+        util.logToConsole("Saved match with game id : ${match.gameId}. Result was : $result")
         //save teams and children
         val startTime = System.currentTimeMillis()
         util.logToConsole("Starting saving of teams")
@@ -199,5 +200,17 @@ class MatchDAO(val dbHelper : DBHelper,
         }
         result.close()
         return -1
+    }
+
+    fun fetchNumberOfMatchesForUser(summonerId: String): Int {
+        val sql = "SELECT count($MATCH_TABLE.$GAME_ID) as numberOfGames FROM $MATCH_TABLE " +
+                "JOIN ${tables.PARTICIPANT} ON $MATCH_TABLE.$GAME_ID = ${tables.PARTICIPANT}.$GAME_ID where $SUMMONER_ID = '$summonerId'"
+        val result : ResultSet = dbHelper.executeSqlQuery(sql)
+        var numberOfMatches = 0
+        if (result.first()) {
+            numberOfMatches = result.getInt("numberOfGames")
+        }
+        result.close()
+        return numberOfMatches
     }
 }

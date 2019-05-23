@@ -375,9 +375,10 @@ class MatchControl(private val matchDAO: MatchDAO,
         // fetch number of matches in the match table
         // number of syncable matches in the match summary list
         val taskStatistics = syncQueue.fetchStatistics()
-        val numberOfMatches = matchSummaryDAO.loadNumberOfMatchSummariesForASummoner(summonerId)
-        val numberSynced = numberOfMatches - taskStatistics.numTasks
-        return SyncProgress(numberOfMatches, numberSynced)
+        val numberOfMatchSummaries = matchSummaryDAO.loadNumberOfMatchSummariesForASummoner(summonerId)
+        val numberOfMatches = matchDAO.fetchNumberOfMatchesForUser(summonerId)
+        val numberSynced = numberOfMatchSummaries - taskStatistics.numTasks
+        return SyncProgress(numberOfMatchSummaries, numberSynced)
     }
 
 

@@ -92,7 +92,7 @@ class SummonerDAOContractImpl
                 return summoner
             }
         } catch (ex: SQLException) {
-            log.severe(ex.message)
+            log.warning(ex.message)
         }
 
         return null

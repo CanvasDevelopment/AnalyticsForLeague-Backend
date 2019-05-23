@@ -20,7 +20,7 @@ class Sync (val matchControl: MatchControl) {
 
         if (savedJungle &&  savedAdc && savedMid && savedSup && savedTop) {
             // Clear out the data to save space and monies - mayber remove this at some point
-            matchControl.clearRawDatabasesOfSummoner(summonerId)
+//            matchControl.clearRawDatabasesOfSummoner(summonerId)
             return 200
         }
 

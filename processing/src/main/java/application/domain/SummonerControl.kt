@@ -43,6 +43,7 @@ class SummonerControl(private val summonerDao: SummonerDAOContractImpl,
             return false
         }
         if (result.code == 200) {
+
             if (summonerDao.getSummonerByName(summoner.id) == null) {
                 val saveSummonerResult = summonerDao.saveSummoner(summoner)
                 if (saveSummonerResult != (-1).toLong()) {

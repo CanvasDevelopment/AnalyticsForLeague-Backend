@@ -31,7 +31,7 @@ class SummonerServiceImpl(private val requestHandler: RequestHandler,
                 ".api.riotgames.com/" +
                 "lol/summoner/v4/summoners/by-name/$summonerName?api_key=$apiKey"
         return requestHandler.requestDataWithRateLimiting (
-                { requestHandler.sendHttpGetRequest(Summoner::class.java, URL(url), endpoints.V3_SUMMONER) },
+                { requestHandler.sendHttpGetRequest(Summoner::class.java, URL(url.replace(" ", "%20")), endpoints.V3_SUMMONER) },
                 endpoints.V3_DEFAULT
         )
     }

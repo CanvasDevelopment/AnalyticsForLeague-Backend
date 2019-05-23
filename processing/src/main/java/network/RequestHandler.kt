@@ -1,6 +1,7 @@
 package network
 
 import com.google.gson.Gson
+import db.requests.DBHelper
 import db.requests.EndpointRateLimitStatusDao
 import db.requests.RateLimitDao
 import db.requests.RequestDAOContract
@@ -13,6 +14,8 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import model.match.Match
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * @author Josiah Kendall
@@ -24,6 +27,8 @@ class RequestHandler(private val requestDAOContract: RequestDAOContract,
                      private val rateLimiter: RateLimiter,
                      private val riotApiResponseHeaderParser: RiotApiResponseHeaderParser) {
 
+
+    private val logger = Logger.getLogger(this::class.java.name)
 
     /**
      * This is the duration on which we limit to a certain number of requests
@@ -64,6 +69,7 @@ class RequestHandler(private val requestDAOContract: RequestDAOContract,
         endpointRateLimitDao.saveEndpointRateLimitStatus(rateLimitsFromHeaders.appKeyRateLimit)
 
         val respCode = conn.responseCode
+        logger.info("Request $url returned code: $respCode")
         if (respCode == HttpURLConnection.HTTP_OK) {
             val response = StringBuffer()
             val reader = BufferedReader(InputStreamReader(conn.inputStream))
@@ -74,7 +80,7 @@ class RequestHandler(private val requestDAOContract: RequestDAOContract,
                 response.append(line)
             }
             reader.close()
-
+            logger.info("Response data: $response")
             val result : T = gson.fromJson(response.toString(), type)
             return NetworkResult(result, 200)
         }
